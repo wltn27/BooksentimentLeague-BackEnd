@@ -1,7 +1,7 @@
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { signinResponseDTO, checkNickResponseDTO} from "./../dtos/user.response.dto.js"
-import { addUser, getUser, existNick} from "../models/user.dao.js";
+import { signinResponseDTO, checkNickResponseDTO, loginResponseDTO} from "./../dtos/user.response.dto.js"
+import { addUser, getUser, existNick, confirmUser} from "../models/user.dao.js";
 
 export const joinUser = async (body) => {
 
@@ -19,10 +19,25 @@ export const joinUser = async (body) => {
 
 export const checkingNick = async (nickname) => {
 
-    const niccknameData = await existNick(nickname);
+    const nicknameData = await existNick(nickname);
 
-    if(niccknameData == -1){
-        throw new BaseError(status.NICKNAME_ALREADY_EXISTㅊ);
+    if(nicknameData == -1){
+        throw new BaseError(status.NICKNAME_ALREADY_EXIST);
     }
-    return checkNickResponseDTO(niccknameData);
+    return checkNickResponseDTO(nicknameData);
 }
+
+export const loginUser = async (body) => {
+    const loginUserData = await confirmUser({
+        'email': body.email,
+        'password' : body.password
+    });
+
+    if (loginUserData == -1) {
+        return loginUserData;
+    } else if((loginUserData == -2)){
+        return loginUserData;
+    } else {
+        return loginResponseDTO(await getUser(loginUserData));
+    }
+ }
