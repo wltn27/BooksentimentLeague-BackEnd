@@ -3,7 +3,7 @@
 import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { confirmEmail, insertUserSql, getUserID } from "./../models/user.sql.js";
+import { confirmEmail, insertUserSql, getUserID, confirmNick } from "./../models/user.sql.js";
 
 export const addUser = async (data) => {
     try{
@@ -39,6 +39,27 @@ export const getUser = async (userId) => {
 
         conn.release();
         return user;
+        
+     } catch (err) {
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+     }
+}
+
+export const existNick = async (nickname) => {
+    try {
+        const conn = await pool.getConnection();
+        console.log(nickname);
+        const [confirm] = await pool.query(confirmNick, nickname);
+
+        console.log(confirm);
+
+        if(confirm[0].isExistNick){
+            conn.release();
+            return -1;
+        }
+
+        conn.release();
+        return confirm;
         
      } catch (err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
