@@ -8,10 +8,12 @@ import { wrSentiment, rewrSentiment, delSentiment } from "../controllers/sentime
 export const sentimentRouter = express.Router({mergeParams: true});
 
 // 센티멘트 작성
-sentimentRouter.post('/:user-id/write', asyncHandler(wrSentiment));
+sentimentRouter.post('/:userId/write', asyncHandler(wrSentiment));
+// GET /sentiments/:userId/write 에 대한 라우팅
+//sentimentRouter.get('/:userId/write', asyncHandler(getSentiment));
 
 // 센티멘트 수정
-sentimentRouter.patch('/:sentiment-id/rewrite', asyncHandler(rewrSentiment));
+sentimentRouter.patch('/:sentimentId/rewrite', asyncHandler(rewrSentiment));
 
 // 센티멘트 삭제
-sentimentRouter.delete('/:sentiment-id/delete', asyncHandler(delSentiment));
+sentimentRouter.delete('/:sentimentId/delete', asyncHandler(delSentiment));

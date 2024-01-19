@@ -4,7 +4,7 @@ import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
 // import DTOs
-import { wrSentimentDTO, rewrSentimentDTO } from "../dtos/sentiment.dto.js";
+import { sentimentDTO, commentDTO } from "../dtos/sentiment.dto.js";
 
 // import DAOs
 import { addSentiment, getSentiment } from "../models/sentiment.dao.js";
@@ -14,31 +14,36 @@ import { eliminateSentiment } from "../models/sentiment.dao.js";
 
 // 센티멘트 작성
 export const insertSentiment = async(userId, body) => {
+    //console.log(body);
     const insertSentimnetData = await addSentiment(userId, {
-        'sentiment_id' : body.sentiment_id,
-        'user_id' : body.user_id,
+        //'sentiment_id' : body.sentiment_id,
+        'user_id' : userId,
+        'sentiment_title' : body.sentiment_title,
         'book_title' : body.book_title,
         'score' : body.score,
         'content' : body.content,
+        "image" : body.image,
         'book_image' : body.book_image,
-        'season' : body.season
+        'season' : 1 // body에 season 없음 -> req에 시즌이 없음 -> 1로 정해놓음 
     });
 
     if (insertSentimnetData == -1 ) {
         throw new BaseError(status.SENTIMENT_ALREADY_EXIST);
     } else {
-        return wrSentimentDTO(await getSentiment(insertSentimnetData));
+        return sentimentDTO(await getSentiment(insertSentimnetData));
     }
 }
 
 // 센티멘트 수정
 export const updateSentiment = async (sentimentId, body ) => {
     try {
+
         // 현재 로그인한 사용자와 작성자의 id가 동일한지 확인... 해야하는데 어케하죠 ?
         // const equalUser = await 
         // if (equalUser) { 참이라면 밑에 실행 }
         const existingSentiment = await getSentiment(sentimentId);
-    
+        // 디버깅을 위한 로그
+        console.log('Existing Sentiment:', existingSentiment);
         if (!existingSentiment) {
           throw new BaseError(status.SENTIMENT_NOT_FOUND);
         }
@@ -53,7 +58,7 @@ export const updateSentiment = async (sentimentId, body ) => {
 		      "book_title" : body.book_title,
 		      "score" : body.score,
 		      "content" : body.content,
-		      "image_path": body.image,
+		      "image": body.image,
 		      /* 
           댓글도 여기서 수정 못함
           "comments" : [
@@ -64,9 +69,10 @@ export const updateSentiment = async (sentimentId, body ) => {
         });
     
         // 수정된 센티멘트 정보 반환
-        return rewrSentimentDTO(await getSentiment(modifiedData));
+        return sentimentDTO(await getSentiment(modifiedData));
 
       } catch (err) {
+        console.error('Error:', err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
       }
 
@@ -75,12 +81,13 @@ export const updateSentiment = async (sentimentId, body ) => {
 // 센티멘트 삭제 
 export const deleteSentiment = async (sentimentId) => {
   try {
-      // 센티멘트 존재 여부 확인
-      const existingSentiment = await getSentiment(sentimentId);
-  
-      if (!existingSentiment) {
-        return { message: '센티멘트를 찾을 수 없습니다.' };
-      }
+    // 센티멘트 존재 여부 확인
+     
+    const sentimentInfo = await getSentiment(sentimentId);
+
+    if (sentimentInfo === -1) {
+      return { message: '센티멘트를 찾을 수 없습니다.' };
+    }
   
       // 센티멘트 삭제 실행
       await eliminateSentiment(sentimentId);
@@ -88,6 +95,7 @@ export const deleteSentiment = async (sentimentId) => {
       // 삭제 후 반환
       return { message: '센티멘트가 성공적으로 삭제되었습니다.' };
     } catch (err) {
+      console.error(err);
       throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 

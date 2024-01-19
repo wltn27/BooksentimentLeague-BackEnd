@@ -10,18 +10,17 @@ import { deleteSentiment } from "../services/sentiment.service.js";
 // 센티멘트 작성
 export const wrSentiment = async (req, res, next ) => {
     console.log("센티멘트 작성 요청");
-
-    res.send(response(status.SUCCESS, await insertSentiment(req.params.user-id, req.body)));
+    res.send(response(status.SUCCESS, await insertSentiment(req.params.userId, req.body)));
 }
 
 // 센티멘트 수정
 export const rewrSentiment = async (req, res, next ) => {
     console.log("센티멘트 수정 요청");
-    res.send(response(status.SUCCESS, await updateSentiment(req.params.sentiment-id, req.body)));
+    res.send(response(status.SUCCESS, await updateSentiment(req.params.sentimentId, req.body)));
 }
 
 // 센티멘트 삭제
 export const delSentiment = async (req, res, next ) => {
     console.log("센티멘트 삭제 요청");
-    res.send(response(status.SUCCESS, await deleteSentiment(req.params.sentiment-id)));
+    res.send(response(status.SUCCESS, await deleteSentiment(req.params.sentimentId)));
 }

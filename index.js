@@ -1,7 +1,7 @@
-import { userRouter } from './src/routes/user.route.js';
+// import { userRouter } from './src/routes/user.route.js';
 import { sentimentRouter } from './src/routes/sentiment.route.js';
-import { searchRouter } from './src/routes/search.route.js';
-import { rankRouter } from './src/routes/rank.route.js';
+// import { searchRouter } from './src/routes/search.route.js';
+// import { rankRouter } from './src/routes/rank.route.js';
 
 import { specs } from './config/swagger.config.js';
 import { status } from './config/response.status.js';
@@ -11,7 +11,7 @@ import SwaggerUi from 'swagger-ui-express';
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import axios from 'axios';
+// import axios from 'axios';
 
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)
 
@@ -29,14 +29,15 @@ app.use(express.urlencoded({extended: false})); // 단순 객체 문자열 형�
 app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 
 // router setting
-app.use('/users', userRouter);
-app.use('/users/:userId', userRouter);
+// app.use('/users', userRouter);
+// app.use('/users/:userId', userRouter);
 app.use('/sentiments', sentimentRouter);
 // app.use('/sentiments/:sentimentId', sentimentRouter);
+/* 
 app.use('/search', searchRouter);
 app.use('/ranks/', rankRouter);
 app.use('/search', searchRouter);
-
+*/
 /*
 // 네이버 검색 API 예제 - 책 검색
 const client_id = 'yFYCUKN3fb2RGTD9IWM2';
