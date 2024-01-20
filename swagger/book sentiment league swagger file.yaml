@@ -138,6 +138,96 @@ paths:
                   message:
                     type: string
                     example: 서버 에러, 관리자에게 문의 바랍니다
+  /users/signin/email:
+    post:
+      tags:
+        - User
+      summary: email
+      requestBody:
+        x-name: body
+        required: true
+        content:
+          application/json: 
+            schema:
+              required:
+              - email
+              properties:
+                nickname:
+                  type: string
+                  description: 이메일일
+                  example: taeyoung132@mail.com
+               
+          
+      responses:
+        '200':
+          description: 회원가입
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "SwaggerTest1a"
+                  isSuccess:
+                    type: string
+                    example: "login1"
+                  code:
+                    type: string
+                    example: "sdkoa"
+                  message:
+                    type: string
+                    example: "success!"
+                  data:
+                    type: object
+                    example: {
+                      "email": "swaggerTest@mail.com",
+                      "name": "swagger",
+                      "preferCategory": [
+                        "한식",
+                        "일식"
+                      ]
+                    }
+                
+        '400':
+          description: 잘못된 요청
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON001
+                  message:
+                    type: string
+                    example: 잘못된 요청입니다
+
+        '500':
+          description: 서버 에러
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON000
+                  message:
+                    type: string
+                    example: 서버 에러, 관리자에게 문의 바랍니다
                     
   /users/signin/nickcheck:
     post:
@@ -230,4 +320,99 @@ paths:
                     type: string
                     example: 서버 에러, 관리자에게 문의 바랍니다
 
+  /users/login:
+    post:
+      tags:
+        - User
+      summary: login
+      requestBody:
+        x-name: body
+        required: true
+        content:
+          application/json: 
+            schema:
+              required:
+              - email
+              - password
+              properties:
+                email:
+                  type: string
+                  description: 이메일
+                  example: taeyoung1@mail.com
+                password:
+                  type: string
+                  description: 비밀번호
+                  example: abcd1234
+               
+          
+      responses:
+        '200':
+          description: 회원가입
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "SwaggerTest1a"
+                  isSuccess:
+                    type: string
+                    example: "login1"
+                  code:
+                    type: string
+                    example: "sdkoa"
+                  message:
+                    type: string
+                    example: "success!"
+                  data:
+                    type: object
+                    example: {
+                      "email": "swaggerTest@mail.com",
+                      "name": "swagger",
+                      "preferCategory": [
+                        "한식",
+                        "일식"
+                      ]
+                    }
+                
+        '400':
+          description: 잘못된 요청
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 400
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON001
+                  message:
+                    type: string
+                    example: 잘못된 요청입니다
+
+        '500':
+          description: 서버 에러
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 500
+                  isSuccess:
+                    type: boolean
+                    example: false
+                  code:
+                    type: integer
+                    example: COMMON000
+                  message:
+                    type: string
+                    example: 서버 에러, 관리자에게 문의 바랍니다
 

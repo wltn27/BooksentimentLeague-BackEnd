@@ -1,13 +1,17 @@
 // 회원가입 DTO 반환 안 시킴
-export const signinResponseDTO = (user) => {
+export const signinResponseDTO = () => {
     console.log("signinResponseDTO clear");
-    return {"email": user[0].email, "password": user[0].password, "nickname": user[0].nickname};
+    return {"message" : "회원 가입에 성공하였습니다."};
 }
 
-export const checkNickResponseDTO = (nicknameData) => {
+export const checkEmailResponseDTO = () => {
+    console.log("checkEmailResponseDTO clear");
+    return {"message" : "사용 가능한 이메일입니다."};
+}
+
+export const checkNickResponseDTO = () => {
     console.log("checkNickResponseDTO clear");
-    if(nicknameData != -1)
-        return {"message" : "사용 가능한 닉네임입니다."};
+    return {"message" : "사용 가능한 닉네임입니다."};
 }
 
 export const loginResponseDTO = (user) => {
