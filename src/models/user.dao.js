@@ -1,17 +1,9 @@
-import { pool, config } from '../../config/db.config.js';
-import * as userSql from './user.sql.js';
-
-export const getUserByEmail = async (email) => {
-    const [user] = await db.query(userSql.getUserByEmail, [email]);
-    return user;
-};
-
 // models/user.dao.js
 
 import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData, changeUserPassword, getUserId } from "./../models/user.sql.js";
+import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData, changeUserPassword, getUserId, getUserFromEmail } from "./../models/user.sql.js";
 
 // DB에 유저 추가하기
 export const addUser = async (data) => {
@@ -47,21 +39,22 @@ export const getUser = async (userId) => {
 }
 
 // 유저 정보 수정하기
-export const updateUserPassword = async (userId) => {
+export const updateUserPassword = async (password, userId) => {
     try {
         const conn = await pool.getConnection();
-        const [user] = await pool.query(changeUserPassword, userId);
+        console.log(userId)
+        const [user] = await pool.query(changeUserPassword, [password, userId]);
 
-        if(user.length == 0){
+        if(user.changedRows != 1){              // 비밀번호가 바뀌지 않았다면
             return false;
         }
 
         conn.release();
         return true;
         
-     } catch (err) {
+    } catch (err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
-     }
+    }
 }
 
 // 이메일 중복되는 지 확인
@@ -137,3 +130,8 @@ export const getUserIdFromEmail = async (email) => {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
+
+export const getUserByEmail = async (email) => {
+    const [user] = await db.query(getUserFromEmail, [email]);
+    return user;
+};

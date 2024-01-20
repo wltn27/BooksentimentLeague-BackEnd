@@ -1,41 +1,10 @@
-
-import nodemailer from 'nodemailer';
-import { BaseError } from "../../config/error.js";
-import { status } from "../../config/response.status.js";
 import { config } from '../../config/db.config.js';
-import { successResponseDTO , errorResponseDTO } from '../dtos/user.response.dto.js';
-import { getUserByEmail } from '../models/user.dao.js';
-
-const transporter = nodemailer.createTransport({
-    host: config.emailHost,
-    port: config.emailPort,
-    secure: false, // 추후 보안 설정 필요
-    auth: {
-      user: config.emailUser,
-      pass: config.emailPass,
-    },
-  });
-
-  export const sendEmail = async (to, subject, text) => {
-    const mailOptions = {
-      from: config.emailUser,
-      to,
-      subject,
-      text,
-    };
-  
-    try {
-      await transporter.sendMail(mailOptions);
-      return successResponseDTO('Email sent successfully');
-    } catch (error) {
-      return errorResponseDTO('Error sending email', error);
-    }
-  };
-
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { signinResponseDTO, checkNickResponseDTO, loginResponseDTO} from "./../dtos/user.response.dto.js"
+import { signinResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO} from "./../dtos/user.response.dto.js"
 import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword} from "../models/user.dao.js";
+import nodemailer from 'nodemailer';
+import Redis from 'redis';
 
 export const joinUser = async (body) => {
    
@@ -84,16 +53,70 @@ export const loginUser = async (body) => {
     return loginResponseDTO(await getUser(user_id));
 }
 
- export const findUser = async (email) => {
-    const loginUserData = await confirmUser({
-        'email': email
-    });
+export const findUser = async (email, verificationCode) => {
+    if(await existEmail(email))
+        throw new BaseError(status.EMAIL_NOT_EXIST);
 
-    if (loginUserData == -1) {
-        return loginUserData;
-    } 
-    else {
-        return loginResponseDTO(await getUser(loginUserData));
+    const client = Redis.createClient();
+    await client.connect();
+
+    if(verificationCode != await client.get(email)){
+        throw new BaseError(status.AUTH_NOT_EQUAL);
     }
- }
+    
+    return // 성공했다는 json 반환
+    
+}
 
+export const changeUser = async (password, userId) => {
+    if(await updateUserPassword(password, userId)){
+        throw new BaseError(status.INTERNAL_SERVER_ERROR);
+    }
+    return // 성공했다는 json 반환
+}
+
+export const saveVerificationCode = async (email, verificationCode) => {
+    try{
+        const client = Redis.createClient();
+        console.log(`email: ${email}, verificationCode: ${verificationCode}`);
+        await client.connect();
+        await client.setEx(`${email}`, 300, `${verificationCode}`, (err, result) => {
+            if (err) {
+              console.error('Error setting data in Redis:', err);
+            } else {
+              console.log('Data stored successfully!');
+            }
+        });
+        await client.quit();
+    }
+    catch (error){
+        throw new BaseError(status.EMAIL_NOT_EXIST); // error status 변경 필요
+    }    
+};
+
+export const sendEmail = async (to, subject, text) => {
+    console.log(`to: ${to} subject: ${subject} text: ${text}`);
+    const mailOptions = {
+      from: config.emailUser,
+      to,
+      subject,
+      text,
+    };
+  
+    try {
+      await transporter.sendMail(mailOptions);
+      return successResponseDTO('Email sent successfully');
+    } catch (error) {
+      return errorResponseDTO('Error sending email', error);
+    }
+};
+
+const transporter = nodemailer.createTransport({
+    host: config.emailHost,
+    port: config.emailPort,
+    secure: false, // 추후 보안 설정 필요
+    auth: {
+      user: config.emailUser,
+      pass: config.emailPass,
+    },
+});

@@ -31,7 +31,6 @@ app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 // router setting
 app.use('/users', userRouter);
 app.use('/users/:userId', userRouter);
-app.use('/api/auth', authRouter);
 /**app.use('/sentiments', sentimentRouter);
  app.use('/sentiments/:sentimentId', sentimentRouter);
  app.use('/search', searchRouter);

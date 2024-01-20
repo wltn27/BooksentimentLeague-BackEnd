@@ -1,24 +1,6 @@
-import { response } from '../../config/response.js';
-import { status } from '../../config/response.status.js';
 import { StatusCodes } from "http-status-codes";
-
 import { sendEmail } from '../services/user.service.js';
-import { errorResponse } from '../../config/error.js';
-
-export const sendEmailVerification = async (req, res, next) => {
-    console.log("Received request:", req.body);
-    const { email } = req.body;
-    const verificationCode = Math.floor(100000 + Math.random() * 900000); // 6자리 인증번호 생성
-
-    try {
-        await sendEmail(email, 'Your Verification Code', `Your code is: ${verificationCode}`);
-        res.status(200).send('Verification email sent');
-    } catch (error) {
-        res.status(500).send('Error sending verification email');
-    }
-};
-
-import { joinUser, checkingNick, checkingEmail, loginUser, findUser} from './../services/user.service.js';
+import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode} from './../services/user.service.js';
 
 export const userSignin = async (req, res, next) => {
     const signIn = req.body;
@@ -57,17 +39,36 @@ export const userLogin = async (req, res, next) => {
     
 }
 
-export const userFindPass = async (req, res, next) => {
-    const email = req.body.email;
-    console.log("비밀 번호 찾기를 요청하였습니다!");
-    const findUserData = await findUser(email);
+export const sendEmailVerification = async (req, res, next) => {
+    console.log("Received request:", req.body);
+    const { email } = req.body;
+    const verificationCode = Math.floor(100000 + Math.random() * 900000); // 6자리 인증번호 생성
 
-    if (findUserData == -1) {
-        console.log("존재하지 않는 유저입니다");
-        return res.status(StatusCodes.MEMBER_NOT_FOUND).json({ message: "존재하지 않는 유저입니다" });
+    // redis에 인증번호 저장 service 함수
+    try {
+        await saveVerificationCode(email, verificationCode);      // redis에 코드 저장
+        await sendEmail(email, 'Your Verification Code', `Your code is: ${verificationCode}`);
+        res.status(200).send('Verification email sent');
+    } catch (error) {
+        res.status(500).send('Error sending verification email');
     }
-    else {
-        console.log("비밀번호 찾기를 성공하였습니다.");
-        return res.status(StatusCodes.OK).send(findUserData);
-    }
+};
+
+export const userFindPass = async (req, res, next) => {
+    const { email, verificationCode}= req.body;
+    console.log("비밀 번호 찾기를 요청하였습니다!");
+    const findUserData = await findUser(email, verificationCode);
+
+    console.log("비밀번호 찾기를 성공하였습니다.");
+    return res.status(StatusCodes.OK).json(findUserData);
+}
+
+export const userChangePass = async (req, res, next) => {
+    const password = req.body.password;
+    const userId = req.params.userId;
+    console.log("비밀 번호 변경을 요청하였습니다!");
+    const changeUserData = await changeUser(password, userId);
+
+    console.log("비밀번호 변경을 성공하였습니다.");
+    return res.status(StatusCodes.OK).json(changeUserData);
 }

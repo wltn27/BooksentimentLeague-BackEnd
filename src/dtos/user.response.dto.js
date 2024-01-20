@@ -1,19 +1,3 @@
-
-export const successResponseDTO = (message, data = {}) => {
-    return {
-      status: 'success',
-      message,
-      data,
-    };
-  };
-  
-  export const errorResponseDTO = (message, error = {}) => {
-    return {
-      status: 'error',
-      message,
-      error,
-    };
-
 // 회원가입 DTO 반환 안 시킴
 export const signinResponseDTO = () => {
     console.log("signinResponseDTO clear");
@@ -34,3 +18,20 @@ export const loginResponseDTO = (user) => {
     console.log("loginResponseDTO clear");
     return {"email": user[0].email, "nickname": user[0].nickname};
 }
+
+// 성공 응답 DTO 
+export const successResponseDTO = (message, data = {}) => {
+    return {
+      status: 'success',
+      message,
+      data,
+    };
+  };
+  
+  export const errorResponseDTO = (message, error = {}) => {
+    return {
+      status: 'error',
+      message,
+      error,
+    };
+  }
