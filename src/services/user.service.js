@@ -4,27 +4,29 @@ import { signinResponseDTO, checkNickResponseDTO, loginResponseDTO} from "./../d
 import { addUser, getUser, existNick, confirmUser} from "../models/user.dao.js";
 
 export const joinUser = async (body) => {
+    let joinUserId = await addUser({
+            'email' : body.email,
+            'password' : body.password,
+            'nickname' : body.nickname
+    })
 
-    const joinUserData = await addUser({
-        'email': body.email,
-        'password': body.password,
-        'nickname': body.nickname,
-    });
+    return signinResponseDTO(await getUser(joinUserId));
+}
 
-    if(joinUserData == -1){
-        throw new BaseError(status.ID_ALREADY_EXIST);
+export const checkingEmail = async (email) => {
+
+    if(!existEmail(email)){
+        throw new BaseError(status.EMAIL_ALREADY_EXIST);
     }
-    return signinResponseDTO(await getUser(joinUserData));
+    //return checkNickResponseDTO(nicknameData);  수정 필요
 }
 
 export const checkingNick = async (nickname) => {
 
-    const nicknameData = await existNick(nickname);
-
-    if(nicknameData == -1){
+    if(!existNick(nickname)){
         throw new BaseError(status.NICKNAME_ALREADY_EXIST);
     }
-    return checkNickResponseDTO(nicknameData);
+    //return checkNickResponseDTO(nicknameData);  수정 필요
 }
 
 export const loginUser = async (body) => {
@@ -38,6 +40,19 @@ export const loginUser = async (body) => {
     } else if((loginUserData == -2)){
         return loginUserData;
     } else {
+        return loginResponseDTO(await getUser(loginUserData));
+    }
+ }
+
+ export const findUser = async (email) => {
+    const loginUserData = await confirmUser({
+        'email': email
+    });
+
+    if (loginUserData == -1) {
+        return loginUserData;
+    } 
+    else {
         return loginResponseDTO(await getUser(loginUserData));
     }
  }

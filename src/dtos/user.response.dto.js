@@ -1,3 +1,4 @@
+// 회원가입 DTO 반환 안 시킴
 export const signinResponseDTO = (user) => {
     console.log("signinResponseDTO clear");
     return {"email": user[0].email, "password": user[0].password, "nickname": user[0].nickname};

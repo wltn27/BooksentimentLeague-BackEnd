@@ -1,7 +1,7 @@
 import { response } from '../../config/response.js';
 import { status } from '../../config/response.status.js';
 import { StatusCodes } from "http-status-codes";
-import { joinUser, checkingNick, loginUser} from './../services/user.service.js';
+import { joinUser, checkingNick, loginUser, findUser} from './../services/user.service.js';
 
 export const userSignin = async (req, res, next) => {
     const signIn = req.body;
@@ -56,5 +56,20 @@ export const userLogin = async (req, res, next) => {
     else {
         console.log("로그인에 성공하였습니다.");
         return res.status(StatusCodes.OK).send(loginUserData);
+    }
+}
+
+export const findPass = async (req, res, next) => {
+    const email = req.body.email;
+    console.log("비밀 번호 찾기를 요청하였습니다!");
+    const findUserData = await findUser(email);
+
+    if (findUserData == -1) {
+        console.log("존재하지 않는 유저입니다");
+        return res.status(StatusCodes.MEMBER_NOT_FOUND).json({ message: "존재하지 않는 유저입니다" });
+    }
+    else {
+        console.log("비밀번호 찾기를 성공하였습니다.");
+        return res.status(StatusCodes.OK).send(findUserData);
     }
 }
