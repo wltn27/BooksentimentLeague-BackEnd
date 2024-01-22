@@ -21,6 +21,9 @@ export const bookSearch = async(bookId, body) => {
         throw new BaseError(status.SENTIMENT_ALREADY_EXIST);
     } else {
         return bookSearchDTO(await getSentiment(bookSearchData));
+
+	const bookSearchData = await getBook(bookSearchData);
+        return bookSearchData.map(book => bookSearchDTO(book));
     }
 }
 
@@ -40,6 +43,9 @@ export const sentimentSearch = async(bookId, body) => {
         throw new BaseError(status.SENTIMENT_NOT_FOUND);
     } else {
         return sentimentSearchDTO(await getSentiment(sentimentSearchData));
+
+	const sentimentsData = await getSentiment(bookSearchData);
+        return sentimentsData.map(sentiment => bookSearchDTO(sentiment));
     }
 }
 
@@ -60,5 +66,8 @@ export const userSearch = async(userId, body) => {
         throw new BaseError(status.SENTIMENT_ALREADY_EXIST);
     } else {
         return userSearchDTO(await getUser(userSearchData));
+
+	    const userSearchData = await getuser(userSearchData);
+        return userSearchData.map(user => userSearchDTO(user));
     }
 }
