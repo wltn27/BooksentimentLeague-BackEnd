@@ -4,6 +4,8 @@
     tags: 
       - Sentiment
     summary: 센티멘트 작성
+    consumes:
+        - multipart/form-data  # 문서 타입 지정
     parameters:
       - name: userId
         in: path
@@ -38,9 +40,8 @@
       - name: image
         in: formData
         required: true
-        schema:
-          type: string
-          example: "/img/img1"
+        type: file
+         
       - name: book_image
         in: formData
         required: true
@@ -113,7 +114,7 @@
               example: 서버 에러, 관리자에게 문의 바랍니다.
 
 
-/sentiments/{sentimentId}/rewrite:
+/sentiments/{userId}/rewrite/{sentimentId}:
   patch:
     tags: 
       - Sentiment
@@ -152,9 +153,7 @@
       - name: image
         in: formData
         required: true
-        schema:
-          type: string
-          example: "/img/img1"
+        type: file
      # - name: book_image
       #  in: formData
       #  required: true
@@ -228,7 +227,7 @@
               type: string
               example: 서버 에러, 관리자에게 문의 바랍니다.
 
-/sentiments/{sentimentId}/delete:
+/sentiments/{userId}/delete/{sentimentId}:
   delete:
     tags: 
       - Sentiment
@@ -239,7 +238,7 @@
         required: true
         schema:
           properties:
-            sentiment-id:
+            sentimentId:
               type: integer
               example: 1
 

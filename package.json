@@ -11,21 +11,27 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.496.0",
+    "@aws-sdk/lib-storage": "^3.496.0",
+    "aws-sdk": "^2.1540.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
+    "express-session": "^1.17.3",
     "http-status-codes": "^2.3.0",
     "moment": "^2.30.1",
     "multer": "^1.4.5-lts.1",
-    "mysql2": "^3.6.5"
+    "multer-s3": "^2.9.0",
+    "mysql2": "^3.6.5",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.4",
     "@babel/core": "^7.23.7",
     "@babel/node": "^7.22.19",
     "@babel/preset-env": "^7.23.7",
-    "nodemon": "^3.0.2",
+    "nodemon": "^3.0.3",
     "swagger-cli": "^4.0.4",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"

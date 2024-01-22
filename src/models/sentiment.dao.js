@@ -1,5 +1,4 @@
 // sentiment.dao.js
-import moment from 'moment';
 import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
@@ -27,17 +26,17 @@ function getCurrentDateTime() {
 // Sentiment 데이터 삽입
 export const addSentiment = async(userId, data) => {
     try {
+        console.log(userId);
         const conn = await pool.getConnection();
         // userId에 해당하는 닉네임 가져오기
         const [nicknameResult] = await pool.query(getNickname, userId);
         const nickname = nicknameResult[0].nickname;
         
         const [confirm] = await pool.query(confirmSentiment, [userId, data.book_title]);
+        const newDate = new Date();
 
         console.log("Data: ", data);
         console.log("Confirm Result:", confirm);
-        const currentDate = getCurrentDateTime();
-        console.log(currentDate);
         
         if (confirm[0].isExistSentiment) {
             conn.release();
@@ -71,7 +70,7 @@ export const addSentiment = async(userId, data) => {
             data.content,
             data.book_image,
             data.season,
-            currentDate
+            newDate
         ]);
         //const result = await pool.query(insertSentimentSql,[data.sentiment_title, data.book_title, parseFloat(data.score), data.content, data.book_image, data.season, currentDate]);
         //console.log("Result of Insert Query:", result); // 추가한 로그
@@ -84,9 +83,11 @@ export const addSentiment = async(userId, data) => {
         }
 
         conn.release();
+        console.log("return : ",result);
         return result[0].insertId; // sentimnet_id 반환
 
     } catch (err) {
+        console.log(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
@@ -104,14 +105,18 @@ export const getSentiment = async(sentimentID) => {
 
         const [nicknameResult] = await pool.query(getNickname, userId);
         const nickname = nicknameResult[0].nickname;
+        const [imageResult] = await pool.query(getImageSql, [sentimentID]);
+        const image = imageResult[0].image;
+        
+        sentiment[0].nickname = nickname;
+        sentiment[0].image_path=image;
         console.log(sentiment);
-
         if(sentiment.length == 0) {
             return -1;
         }
 
         conn.release();
-        return {nickname, sentiment};
+        return sentiment;
 
     } catch (err) {
         console.log("ERROR: ",err);

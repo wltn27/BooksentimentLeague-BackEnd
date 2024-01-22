@@ -2,6 +2,8 @@
 
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
+import { pool } from "../../config/db.config.js";
+import session from 'express-session';
 
 // import DTOs
 import { sentimentDTO, commentDTO } from "../dtos/sentiment.dto.js";
@@ -10,10 +12,11 @@ import { sentimentDTO, commentDTO } from "../dtos/sentiment.dto.js";
 import { addSentiment, getSentiment } from "../models/sentiment.dao.js";
 import { modifySentiment } from "../models/sentiment.dao.js";
 import { eliminateSentiment } from "../models/sentiment.dao.js";
+import { getUserId } from "../models/sentiment.sql.js";
 
 
 // 센티멘트 작성
-export const insertSentiment = async(userId, body) => {
+export const insertSentiment = async(userId, body, file) => {
     //console.log(body);
     const insertSentimnetData = await addSentiment(userId, {
         //'sentiment_id' : body.sentiment_id,
@@ -22,7 +25,7 @@ export const insertSentiment = async(userId, body) => {
         'book_title' : body.book_title,
         'score' : body.score,
         'content' : body.content,
-        "image" : body.image,
+        "image" : file.path,
         'book_image' : body.book_image,
         'season' : 1 // body에 season 없음 -> req에 시즌이 없음 -> 1로 정해놓음 
     });
@@ -37,10 +40,10 @@ export const insertSentiment = async(userId, body) => {
 // 센티멘트 수정
 export const updateSentiment = async (sentimentId, body ) => {
     try {
-
-        // 현재 로그인한 사용자와 작성자의 id가 동일한지 확인... 해야하는데 어케하죠 ?
-        // const equalUser = await 
-        // if (equalUser) { 참이라면 밑에 실행 }
+      /*
+      const postId = await pool.query(getUserId,[sentimentId]);
+      const currentId = req.session.userId;
+      if ( postId == currentId ) { // 현재 로그인한 사용자와 작성자의 id가 동일한지 확인 */
         const existingSentiment = await getSentiment(sentimentId);
         // 디버깅을 위한 로그
         console.log('Existing Sentiment:', existingSentiment);

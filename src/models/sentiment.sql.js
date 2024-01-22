@@ -9,7 +9,7 @@ export const getImageSql = "SELECT image FROM image WHERE sentiment_id = ?;"
 
 export const insertImageSql = "INSERT INTO image ( sentiment_id, image ) VALUES ( ?, ?);";
 
-export const insertSentimentSql = "INSERT INTO sentiment (SELECT user_id FROM sentiment WHERE sentiment_id = ?;user_id, sentiment_title, book_title, score, content, book_image, season, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+export const insertSentimentSql = "INSERT INTO sentiment (user_id, sentiment_title, book_title, score, content, book_image, season, created_at) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? );";
 
 export const getNickname = "SELECT nickname FROM user WHERE user_id = ?;";
 

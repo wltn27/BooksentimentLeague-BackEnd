@@ -24,7 +24,8 @@ export const status = {
     
     // 굳이 필요 없을 것 같기도 하지만 일단 추가 
     SENTIMENT_ALREADY_EXIST: { status: StatusCodes.CONFLICT, "isSuccess": false, "code": "MEMBER4007", "message": "작성한 센티멘트가 이미 존재합니다.."}, // 
-    SENTIMENT_NOT_FOUND: { statis: StatusCodes.NOT_FOUND, "isSuccess": false, "code": "MEMBER4008", "message": "센티멘트가 존재하지 않습니다."},
+    SENTIMENT_NOT_FOUND: { status: StatusCodes.NOT_FOUND, "isSuccess": false, "code": "MEMBER4008", "message": "센티멘트가 존재하지 않습니다."},
+    NOT_EQUAL_USER: {status:StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4009", "message": "현재 사용자와 작성자가 일치하지 않습니다."},
     // article err
     ARTICLE_NOT_FOUND: {status: StatusCodes.NOT_FOUND, "isSuccess": false, "code": "ARTICLE4001", "message": "게시글이 없습니다."}
 }
