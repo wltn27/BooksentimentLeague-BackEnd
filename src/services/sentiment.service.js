@@ -4,12 +4,12 @@ import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 import { pool } from "../../config/db.config.js";
 import session from 'express-session';
-
+import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
 // import DTOs
 import { sentimentDTO, commentDTO } from "../dtos/sentiment.dto.js";
 
 // import DAOs
-import { addSentiment, getSentiment } from "../models/sentiment.dao.js";
+import { addSentiment, getSentiment, modifyImage } from "../models/sentiment.dao.js";
 import { modifySentiment } from "../models/sentiment.dao.js";
 import { eliminateSentiment } from "../models/sentiment.dao.js";
 import { getUserId } from "../models/sentiment.sql.js";
@@ -25,12 +25,12 @@ export const insertSentiment = async(userId, body, file) => {
         'book_title' : body.book_title,
         'score' : body.score,
         'content' : body.content,
-        "image" : file.path,
+        "image" : file.location,
         'book_image' : body.book_image,
         'season' : 1 // body에 season 없음 -> req에 시즌이 없음 -> 1로 정해놓음 
     });
 
-    if (insertSentimnetData == -1 ) {
+    if (insertSentimnetData == -1 ) { // 추후 이미지 삽입 dao를 따로 짜서 로직을 변경해야함
         throw new BaseError(status.SENTIMENT_ALREADY_EXIST);
     } else {
         return sentimentDTO(await getSentiment(insertSentimnetData));
@@ -50,25 +50,19 @@ export const updateSentiment = async (sentimentId, body ) => {
         if (!existingSentiment) {
           throw new BaseError(status.SENTIMENT_NOT_FOUND);
         }
-    
+        
+        // 이미지 삭제 또는 추가 삽입 로직 추가
+
+
+        // 이후 실행하여 변경된 image 테이블에 저장된 데이터를 포함하여 전체적으로 업데이트
         const modifiedData = await modifySentiment(sentimentId, {
-          /* "nickname" : "string",
-		      "created_at" : "2023-12-18 12:34", // 얘네는req에 없음... 
-          근데 얘네는 센티멘트 수정페이지에서 고치는것이 아니고 닉네임은 유저 정보 변경에서 생성시간은 변경 불가능
-          -> 안고쳐도 됨
-          */
+        
 		      "sentiment_title" : body.sentiment_title,
 		      "book_title" : body.book_title,
 		      "score" : body.score,
 		      "content" : body.content,
 		      "image": body.image,
-		      /* 
-          댓글도 여기서 수정 못함
-          "comments" : [
-					  { comment_id : 1, nick : "str", content : "댓글 내용", parent_id : NULL }, // 얘네도 req에 없음 
-					  { comment_id : 2, nick : "str", content : "댓글 내용", parent_id : 1 } // 위 댓글의 대댓글
-					]
-          */
+		   
         });
     
         // 수정된 센티멘트 정보 반환
@@ -102,4 +96,18 @@ export const deleteSentiment = async (sentimentId) => {
       throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 
+}
+
+// 이미지 삭제
+export const deleteImage = async(file) => {
+   // 이미지 삭제 로직
+   const key = file.key; // 이미지의 S3 키를 얻는 방법에 따라 key를 설정하세요.
+   try {
+     await deleteImageFromS3(key);
+     console.log('Image deleted from S3:', key);
+   } catch (error) {
+     console.error('Error deleting image from S3:', error);
+   }
+
+   const deleteImageResult = await modifyImage(key);
 }

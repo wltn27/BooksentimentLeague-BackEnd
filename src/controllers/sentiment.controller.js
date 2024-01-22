@@ -6,6 +6,7 @@ import { status } from "../../config/response.status.js";
 import { insertSentiment } from "../services/sentiment.service.js";
 import { updateSentiment } from "../services/sentiment.service.js";
 import { deleteSentiment } from "../services/sentiment.service.js";
+import { deleteImage } from "../services/sentiment.service.js";
 
 // 센티멘트 작성
 export const wrSentiment = async (req, res, next ) => {
@@ -38,4 +39,11 @@ export const rewrSentiment = async (req, res, next ) => {
 export const delSentiment = async (req, res, next ) => {
     console.log("센티멘트 삭제 요청");
     res.send(response(status.SUCCESS, await deleteSentiment(req.params.sentimentId)));
+}
+
+
+// 이미지 삭제
+export const delImage = async(req, res, next ) => {
+    console.log("이미지 삭제 요청");
+    res.send(response(status.SUCCESS, await deleteImage(req.file)));
 }

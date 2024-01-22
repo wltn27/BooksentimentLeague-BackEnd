@@ -199,3 +199,10 @@ export const eliminateSentiment = async(sentimentID) => {
     }
     
 }
+
+// 이미지 삭제하기
+export const modifyImage = async(key) => {
+
+}
+
+// 이미지 삽입 
