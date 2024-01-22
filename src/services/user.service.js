@@ -6,8 +6,17 @@ import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFro
 import nodemailer from 'nodemailer';
 import Redis from 'redis';
 
+// 이메일 형식 검증 함수 추가
+const isValidEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    return emailRegex.test(email);
+  };
+
 export const joinUser = async (body) => {
-   
+    // 이메일 형식 검증
+    if (!await isValidEmail(body.email)) 
+        throw new BaseError(status.EMAIL_NOT_VAILD);
+    
     if(!await existEmail(body.email))
         throw new BaseError(status.EMAIL_ALREADY_EXIST);
     
