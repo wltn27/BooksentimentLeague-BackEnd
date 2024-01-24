@@ -49,8 +49,8 @@ export const loginUser = async (body) => {
         throw new BaseError(status.EMAIL_ALREADY_EXIST);
 
     const user_id = await getUserIdFromEmail(body.email);
-
-    return loginResponseDTO(await getUser(user_id));
+    const userData = await getUser(user_id);
+    return userData[0];
 }
 
 export const findUser = async (email, verificationCode) => {
