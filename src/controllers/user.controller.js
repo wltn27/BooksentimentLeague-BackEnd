@@ -70,6 +70,16 @@ export const userLogin = async (req, res, next) => {
             httpOnly : true,
         })
 
+        if (!req.session[loginUserData.user_id]) {
+            // 세션 저장
+            req.session[loginUserData.user_id] = {
+                email: logIn.email,
+                isAuthenticated: true
+            };
+        }
+
+        console.log(req.session[loginUserData.user_id]);
+
         console.log("로그인에 성공하였습니다.");
         return res.status(StatusCodes.OK).json(loginUserData);
 
@@ -143,9 +153,32 @@ export const refreshToken = async (req, res, next) => {
 
 export const userLogout = async (req, res, next) => {
     try {
+        const token = req.cookies.accessToken;
+        const data = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (req.session[data.user_id]) {
+            // 로그인된 상태
+            console.log('로그아웃합니다.');
+            
+            req.session.destroy(function(err) {
+                if (err) {throw err;}
+                
+                console.log('세션을 삭제하고 로그아웃되었습니다.');
+            });
+        }
+
         res.cookie('accessToken', '');
         res.status(200).json("Logout Success");
     } catch (err){
         res.status(500).json(err);
     }
+}
+
+export const myPage = async (req, res, next) => {
+    const myPage = req.body;
+    console.log("마이페이지 조회를 요청하였습니다.");
+    const myPageMessage = await readMyPage(myPage);
+    
+    console.log("마이페이지 조회에 성공하였습니다.");
+    return res.status(StatusCodes.OK).json(myPageMessage)
 }

@@ -1,6 +1,3 @@
-export const authRouter = express.Router();
-authRouter.post('/send-verification-email', asyncHandler(sendEmailVerification));
-
 // user.route.js
 
 import express from "express";
@@ -20,7 +17,7 @@ userRouter.post('/findpass', asyncHandler(userFindPass));
 userRouter.post('/changepass', asyncHandler(userChangePass));
 
 userRouter.get('/refreshtoken', asyncHandler(refreshToken));
-// userRouter.get('/mypage', asyncHandler(myPage));
+//userRouter.get('/mypage', asyncHandler(myPage));
 // userRouter.get('/sentiment', asyncHandler(sentiment));
 // userRouter.get('/scrap', asyncHandler(scrap));
 // userRouter.get('/follower', asyncHandler(follower));
