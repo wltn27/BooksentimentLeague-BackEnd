@@ -140,3 +140,12 @@ export const refreshToken = async (req, res, next) => {
          res.status(StatusCodes.BAD_GATEWAY).json(err);
     }
 }
+
+export const userLogout = async (req, res, next) => {
+    try {
+        res.cookie('accessToken', '');
+        res.status(200).json("Logout Success");
+    } catch (err){
+        res.status(500).json(err);
+    }
+}
