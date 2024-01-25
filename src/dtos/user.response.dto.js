@@ -19,9 +19,10 @@ export const loginResponseDTO = (user) => {
     return {"email": user[0].email, "nickname": user[0].nickname};
 }
 
-export const followResponseDTO = (followingId, userId) => {
-    console.log("followResponseDTO clear");
-    return {"follow_status" : "follow"};
+export const followResponseDTO = (followStatus) => {
+    console.log("followResponseDTO:", followStatus);
+    return { "follow_status": followStatus };
+    
 };
 
 // 성공 응답 DTO 

@@ -22,4 +22,4 @@ export const insertFollow = "INSERT INTO follow (following_id, follower_id) VALU
 
 export const confirmFollow = "SELECT EXISTS (SELECT * FROM follow WHERE following_id = ? AND follower_id = ?) as isExistFollow;"
 
-export const deleteFollow = "DELETE FROM follow WHERE follower_id = ? AND following_id = ?;";
+export const deleteFollow = "DELETE FROM follow WHERE following_id = ? AND follower_id = ?;";

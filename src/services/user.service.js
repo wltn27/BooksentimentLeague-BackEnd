@@ -2,7 +2,7 @@ import { config } from '../../config/db.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, followResponseDTO} from "./../dtos/user.response.dto.js"
-import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, updateUserFollow, existFollow} from "../models/user.dao.js";
+import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, updateUserFollow, existFollow, updateUserUnFollow} from "../models/user.dao.js";
 import nodemailer from 'nodemailer';
 import Redis from 'redis';
 
@@ -122,12 +122,23 @@ const transporter = nodemailer.createTransport({
 });
 
 export const followUser = async (followingId, userId) => {
-    if(!await existFollow(followingId, userId)){
-        throw new BaseError(status.FOLLOW_ALREADY_EXIST);
+    try {
+        // 팔로우 상태 확인
+        const isFollowing = await existFollow(followingId, userId);
+        
+        if (isFollowing) {
+            // 이미 팔로우 중인 경우, 언팔로우 수행
+            await updateUserUnFollow(followingId, userId);
+            // return { message: "언팔로우 성공" };
+            return followResponseDTO("following"); // "following" 상태 반환
+        } else {
+            // 팔로우 수행
+            await updateUserFollow(followingId, userId);
+            // return { message: "팔로우 성공" };
+            return followResponseDTO("follow"); // "follow" 상태 반환
+        }
+    } catch (error) {
+        console.error('Error in followUser:', error);
+        throw error;
     }
-
-    if(!await updateUserFollow(followingId, userId)){
-        throw new BaseError(status.INTERNAL_SERVER_ERROR);
-    }
-    return followResponseDTO(); 
 }

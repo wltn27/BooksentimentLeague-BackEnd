@@ -77,15 +77,15 @@ export const userFollow = async (req, res, next) => {
     try {
         const followingId = req.body.followingId;
         const userId = req.params.userId;
-        console.log("팔로우를 요청하였습니다!");
-        const followUserData = await followUser(followingId, userId);
+        // console.log("팔로우를 요청하였습니다!");
+        // const followUserData = await followUser(followingId, userId);
 
-        console.log("팔로우를 성공하였습니다.");
-        return res.status(StatusCodes.OK).json(followUserData);
+        // console.log("팔로우를 성공하였습니다.");
+        // return res.status(StatusCodes.OK).json(followUserData);
+        const result = await followUser(followingId, userId);
+        res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userFollow:', error);
-        // 적절한 HTTP 응답 코드와 메시지 반환
-        // return res.status(error.data.status || 500).json({ message: error.data.message });
         return res.status(StatusCodes.OK).json({message: error.data.message});
     }
 }
