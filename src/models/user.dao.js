@@ -3,7 +3,7 @@
 import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData, changeUserPassword, getUserId, getUserFromEmail } from "./../models/user.sql.js";
+import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData, changeUserPassword, getUserId, getUserFromEmail, insertFollow, confirmFollow } from "./../models/user.sql.js";
 
 // DB에 유저 추가하기
 export const addUser = async (data) => {
@@ -135,3 +135,38 @@ export const getUserByEmail = async (email) => {
     const [user] = await db.query(getUserFromEmail, [email]);
     return user;
 };
+
+// 팔로우 수정하기
+export const updateUserFollow = async (followingId, userId) => {
+    try {
+        const conn = await pool.getConnection();
+        console.log(userId)
+        const [user] = await pool.query(insertFollow, [followingId, userId]);
+
+        conn.release();
+        return true;
+        
+    } catch (err) {
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
+// 팔로우 중복되는 지 확인
+export const existFollow = async (followingId, userId) => {
+    try{
+        const conn = await pool.getConnection();
+        
+        const [confirm] = await pool.query(confirmFollow, [followingId, userId]);
+        
+        if(confirm[0].isExistFollow){
+            conn.release();
+            return false;
+        }
+        
+        conn.release();
+        return true;
+
+    }catch (err) {
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}

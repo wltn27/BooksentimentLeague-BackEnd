@@ -1,8 +1,8 @@
 import { config } from '../../config/db.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { signinResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO} from "./../dtos/user.response.dto.js"
-import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword} from "../models/user.dao.js";
+import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, followResponseDTO} from "./../dtos/user.response.dto.js"
+import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, updateUserFollow, existFollow} from "../models/user.dao.js";
 import nodemailer from 'nodemailer';
 import Redis from 'redis';
 
@@ -29,7 +29,7 @@ export const checkingEmail = async (email) => {
     if(!await existEmail(email)){
         throw new BaseError(status.EMAIL_ALREADY_EXIST);
     }
-    return checkNickResponseDTO(); 
+    return checkEmailResponseDTO(); 
 }
 
 export const checkingNick = async (nickname) => {
@@ -120,3 +120,14 @@ const transporter = nodemailer.createTransport({
       pass: config.emailPass,
     },
 });
+
+export const followUser = async (followingId, userId) => {
+    if(!await existFollow(followingId, userId)){
+        throw new BaseError(status.FOLLOW_ALREADY_EXIST);
+    }
+
+    if(!await updateUserFollow(followingId, userId)){
+        throw new BaseError(status.INTERNAL_SERVER_ERROR);
+    }
+    return followResponseDTO(); 
+}
