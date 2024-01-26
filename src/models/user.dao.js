@@ -104,7 +104,6 @@ export const confirmPassword = async (data) => {
         
         const [password] = await pool.query(getUserPassword, data.email);
         conn.release();
-
         if(password[0].password != data.password)
             return false;
         else {

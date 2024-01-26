@@ -1,6 +1,12 @@
 import { StatusCodes } from "http-status-codes";
 import { sendEmail } from '../services/user.service.js';
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser } from './../services/user.service.js';
+import { getUser } from "../models/user.dao.js";
+
+dotenv.config();
+
 
 export const userSignin = async (req, res, next) => {
     const signIn = req.body;
@@ -34,9 +40,43 @@ export const userLogin = async (req, res, next) => {
     console.log("로그인을 요청하였습니다!");
     const loginUserData = await loginUser(logIn);
 
-    console.log("로그인에 성공하였습니다.");
-    return res.status(StatusCodes.OK).json(loginUserData);
-    
+    try {
+        // access token 발급
+        const accessToken = jwt.sign({
+            user_id :  loginUserData.user_id,
+            email : loginUserData.email,
+            nickname : loginUserData.nickname,
+        }, process.env.ACCESS_SECRET, {
+            expiresIn : '1m',
+            issuer : 'book_sentiment_league'
+        })
+
+        // refresh token 발급
+        const refreshToken = jwt.sign({
+            user_id :  loginUserData.user_id,
+            email : loginUserData.email,
+            nickname : loginUserData.nickname
+        }, process.env.REFRESH_SECRET, {
+            expiresIn : '24h',
+            issuer : 'book_sentiment_league'
+        })
+
+        res.cookie("accessToken", accessToken, {
+            secure : false,
+            httpOnly : true,
+        })
+
+        res.cookie("refreshToken", refreshToken, {
+            secure : false,
+            httpOnly : true,
+        })
+
+        console.log("로그인에 성공하였습니다.");
+        return res.status(StatusCodes.OK).json(loginUserData);
+
+    } catch (err){
+        res.status(500).json(err);
+    }
 }
 
 export const sendEmailVerification = async (req, res, next) => {
@@ -73,6 +113,42 @@ export const userChangePass = async (req, res, next) => {
     return res.status(StatusCodes.OK).json(changeUserData);
 }
 
+export const refreshToken = async (req, res, next) => {
+    try {
+        const token = req.cookies.refreshToken;
+        const data = jwt.verify(token, process.env.REFRESH_SECRET);
+
+        const userData = await getUser(data.user_id); // 사용자 정보 반환
+
+        // access token 발급
+        const accessToken = jwt.sign({
+            user_id :  userData[0].user_id,
+            email : userData[0].email,
+            nickname : userData[0].nickname,
+        }, process.env.ACCESS_SECRET, {
+            expiresIn : '1m',
+            issuer : 'book_sentiment_league'
+        });
+
+        res.cookie("accessToken", accessToken, {
+            secure : false,
+            httpOnly : true,
+        })
+
+        res.status(StatusCodes.OK).json("Access Token Recreated");
+    } 
+     catch (err) {
+         res.status(StatusCodes.BAD_GATEWAY).json(err);
+    }
+}
+
+export const userLogout = async (req, res, next) => {
+    try {
+        res.cookie('accessToken', '');
+        res.status(200).json("Logout Success");
+    } catch (err){
+        res.status(500).json(err);
+      
 export const userFollow = async (req, res, next) => {
     try {
         const followingId = req.body.followingId;
