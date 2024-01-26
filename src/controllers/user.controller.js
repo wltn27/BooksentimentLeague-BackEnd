@@ -1,43 +1,32 @@
-import { response } from '../../config/response.js';
-import { status } from '../../config/response.status.js';
 import { StatusCodes } from "http-status-codes";
-import { joinUser, checkingNick, loginUser} from './../services/user.service.js';
+import { sendEmail } from '../services/user.service.js';
+import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser } from './../services/user.service.js';
 
 export const userSignin = async (req, res, next) => {
     const signIn = req.body;
-    console.log("회원가입을 요청하였습니다!");
-    console.log("body:", signIn); // 값이 잘 들어오는지 테스트
-
-    const signInData = await joinUser(req.body);
-    console.log("signIndata: ", signInData);
+    console.log("회원 가입을 요청하였습니다.");
+    const signInMessage = await joinUser(signIn);
     
-    if(signInData == -1){
-        console.log("아이디가 중복 됩니다.");
-        return res.status(StatusCodes.BAD_REQUEST).json({
-            message: "중복된 이메일입니다.",
-          }); 
-    } else {
-        console.log("회원 가입 성공");
-        return res.status(StatusCodes.OK).json({
-            message: "회원가입 성공",
-        });
-    }
+    console.log("회원 가입 성공");
+    return res.status(StatusCodes.OK).json(signInMessage)
+}
+
+export const checkEmail = async (req, res, next) => {
+    const email = req.body.email;
+    console.log("이메일 중복 확인을 요청하였습니다.");
+    const checkingEmailMessage = await checkingEmail(email);
+    
+    console.log("사용 가능한 이메일입니다.");
+    return res.status(StatusCodes.OK).json(checkingEmailMessage);
 }
 
 export const checkNick = async (req, res, next) => {
     const nickname = req.body.nickname;
-
-    const nicknameData = await checkingNick(nickname);
+    console.log("닉네임 중복 확인을 요청하였습니다.");
+    const checkingNickMessage = await checkingNick(nickname);
     
-    if(nicknameData == -1){
-        console.log("닉네임이 중복 됩니다.");
-        return res.status(StatusCodes.BAD_REQUEST).json({
-            message: "중복된 닉네임입니다.",
-          }); 
-    } else {
-        console.log("사용 가능한 닉네임입니다.");
-        return res.status(StatusCodes.OK).send(nicknameData);
-    }
+    console.log("사용 가능한 닉네임입니다.");
+    return res.status(StatusCodes.OK).json(checkingNickMessage);
 }
 
 export const userLogin = async (req, res, next) => {
@@ -45,16 +34,89 @@ export const userLogin = async (req, res, next) => {
     console.log("로그인을 요청하였습니다!");
     const loginUserData = await loginUser(logIn);
 
-    if (loginUserData == -1) {
-        console.log("존재하지 않는 유저입니다");
-        return res.status(StatusCodes.MEMBER_NOT_FOUND).json({ message: "존재하지 않는 유저입니다" });
-    } 
-    else if((loginUserData == -2)){
-        console.log("비밀번호가 틀렸습니다.");
-        return res.status(StatusCodes.PARAMETER_IS_WRONG).json({ message: "비밀번호가 틀렸습니다." });
-    } 
-    else {
-        console.log("로그인에 성공하였습니다.");
-        return res.status(StatusCodes.OK).send(loginUserData);
+    console.log("로그인에 성공하였습니다.");
+    return res.status(StatusCodes.OK).json(loginUserData);
+    
+}
+
+export const sendEmailVerification = async (req, res, next) => {
+    console.log("Received request:", req.body);
+    const { email } = req.body;
+    const verificationCode = Math.floor(100000 + Math.random() * 900000); // 6자리 인증번호 생성
+
+    // redis에 인증번호 저장 service 함수
+    try {
+        await saveVerificationCode(email, verificationCode);      // redis에 코드 저장
+        await sendEmail(email, 'Your Verification Code', `Your code is: ${verificationCode}`);
+        res.status(200).send('Verification email sent');
+    } catch (error) {
+        res.status(500).send('Error sending verification email');
+    }
+};
+
+export const userFindPass = async (req, res, next) => {
+    const { email, verificationCode}= req.body;
+    console.log("비밀 번호 찾기를 요청하였습니다!");
+    const findUserData = await findUser(email, verificationCode);
+
+    console.log("비밀번호 찾기를 성공하였습니다.");
+    return res.status(StatusCodes.OK).json(findUserData);
+}
+
+export const userChangePass = async (req, res, next) => {
+    const password = req.body.password;
+    const userId = req.params.userId;
+    console.log("비밀 번호 변경을 요청하였습니다!");
+    const changeUserData = await changeUser(password, userId);
+
+    console.log("비밀번호 변경을 성공하였습니다.");
+    return res.status(StatusCodes.OK).json(changeUserData);
+}
+
+export const userFollow = async (req, res, next) => {
+    try {
+        const followingId = req.body.followingId;
+        const userId = req.params.userId;
+        const result = await followUser(followingId, userId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userFollow:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
+
+export const userLikeSentiment = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const sentimentId = req.params.sentimentId;
+        const result = await likeSentimentUser(userId, sentimentId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userLikeSentiment:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
+
+export const userLikeCommment = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const commentId = req.params.commentId;
+        const result = await likeCommentUser(userId, commentId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userLikeCommment:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
+
+export const userScrapSentiment = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const sentimentId = req.params.sentimentId;
+        const result = await scrapSentimentUser(userId, sentimentId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userScrapSentiment:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
     }
 }
