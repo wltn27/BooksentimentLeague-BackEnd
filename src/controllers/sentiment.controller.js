@@ -6,7 +6,7 @@ import { status } from "../../config/response.status.js";
 import { insertSentiment } from "../services/sentiment.service.js";
 import { updateSentiment } from "../services/sentiment.service.js";
 import { deleteSentiment } from "../services/sentiment.service.js";
-import { deleteImage } from "../services/sentiment.service.js";
+
 
 // 센티멘트 작성
 export const wrSentiment = async (req, res, next ) => {
@@ -20,13 +20,13 @@ export const wrSentiment = async (req, res, next ) => {
 export const rewrSentiment = async (req, res, next ) => {
     console.log("센티멘트 수정 요청");
     console.log("body", req.body);
-    console.log("files", req.file);
+    console.log("files", req.file); // 멀티파일이면 req.files
     /*
     const currentId = req.params.user-id;
     const postId = await pool.query(getUserId,[req.params.sentiment-id]);
     if ( currentId == postId ) {
         */
-        res.send(response(status.SUCCESS, await updateSentiment(req.params.sentimentId, req.body)));
+        res.send(response(status.SUCCESS, await updateSentiment(req.params.sentimentId, req.body, req.file)));
     /*
     } else {
         console.log("현재 사용자와 작성자가 일치하지 않습니다.");
@@ -38,12 +38,7 @@ export const rewrSentiment = async (req, res, next ) => {
 // 센티멘트 삭제
 export const delSentiment = async (req, res, next ) => {
     console.log("센티멘트 삭제 요청");
-    res.send(response(status.SUCCESS, await deleteSentiment(req.params.sentimentId)));
+    res.send(response(status.SUCCESS, await deleteSentiment(req.params.sentimentId, req.file)));
 }
 
 
-// 이미지 삭제
-export const delImage = async(req, res, next ) => {
-    console.log("이미지 삭제 요청");
-    res.send(response(status.SUCCESS, await deleteImage(req.file)));
-}

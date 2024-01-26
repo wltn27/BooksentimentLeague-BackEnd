@@ -37,7 +37,7 @@
         schema:
           type: string
           example: "~책을 읽고 ~ 했다."
-      - name: image
+      - name: Img_file
         in: formData
         required: true
         type: file
@@ -150,10 +150,15 @@
         schema:
           type: string
           example: "~책을 읽고 ~ 했다."
-      - name: image
+      - name: Img_file
         in: formData
         required: true
         type: file
+      - name: image
+        in: formData
+        required: false
+        type: array 
+        example: "https://booksentimentleague-s3.s3.ap-northeast-2.amazonaws.com/sentiment/1706200827577_IMG_0734.png"
      # - name: book_image
       #  in: formData
       #  required: true
@@ -233,6 +238,12 @@
       - Sentiment
     summary: 센티멘트 삭제
     parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
       - name: sentimentId
         in: path
         required: true

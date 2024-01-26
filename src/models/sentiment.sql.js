@@ -5,28 +5,18 @@ export const confirmSentiment = "SELECT EXISTS(SELECT 1 FROM sentiment WHERE use
 
 // 정보 불러오기
 export const getSentimentInfo = "SELECT * FROM sentiment WHERE sentiment_id = ?;";
-
 export const getImageSql = "SELECT image FROM image WHERE sentiment_id = ?;"
-
 export const getNickname = "SELECT nickname FROM user WHERE user_id = ?;";
-
 export const getUserId = "SELECT user_id from sentiment where sentiment_id =?;";
 
-// 정보 삽입하기
-export const insertImageSql = "INSERT INTO image ( sentiment_id, image ) VALUES ( ?, ?);";
-
+// 센티멘트 삽입/삭제
 export const insertSentimentSql = "INSERT INTO sentiment (user_id, sentiment_title, book_title, score, content, book_image, season, created_at) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? );";
-
-
-// 정보 수정하기
+export const deleteSentimentSql = "DELETE FROM sentiment WHERE sentiment_id = ?;";
 export const updateSentimentSql = "UPDATE sentiment SET sentiment_title= ? ,book_title = ?, score = ?, content = ?, updated_at = ? WHERE sentiment_id = ?;";
 
-export const updateImageSql = "UPDATE image SET image = ? WHERE sentiment_id = ? ";
-
-// 정보 삭제하기
-export const deleteSentimentSql = "DELETE FROM sentiment WHERE sentiment_id = ?;";
-
+// 이미지 삽입/삭제
+export const insertImageSql = "INSERT INTO image ( sentiment_id, image ) VALUES ( ?, ?);";
 export const deleteImageSql = "DELETE FROM image WHERE sentiment_id = ?;";
-
-
-
+export const updateImageSql = "UPDATE image SET image = ? WHERE sentiment_id = ? ";
+export const modifyImageSql = "DELETE FROM image WHERE image = ?;";
+export const theNumberOfImg = "SELECT COUNT(*) FROM image WHERE sentiment_id = ?;";
