@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { sendEmail } from '../services/user.service.js';
-import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser } from './../services/user.service.js';
+import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser } from './../services/user.service.js';
 
 export const userSignin = async (req, res, next) => {
     const signIn = req.body;
@@ -105,6 +105,18 @@ export const userLikeCommment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userLikeCommment:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
+
+export const userScrapSentiment = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const sentimentId = req.params.sentimentId;
+        const result = await scrapSentimentUser(userId, sentimentId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userScrapSentiment:', error);
         return res.status(StatusCodes.OK).json({message: error.data.message});
     }
 }

@@ -34,6 +34,11 @@ export const LikeCommentResponseDTO = (likeStatus) => {
     return { "like_status": likeStatus };
 }
 
+export const ScrapSentimentResponseDTO = (scrapStatus) => {
+    console.log("ScrapSentimentResponseDTO:", scrapStatus);
+    return { "scrap_status": scrapStatus };
+}
+
 // 성공 응답 DTO 
 export const successResponseDTO = (message, data = {}) => {
     return {

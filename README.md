@@ -15,3 +15,8 @@ BooksentimentLeague-BackEnd
 : /users/{user-id}/like/comment/{comment-id}
 - 본인 댓글은 추천할 수 없도록 함
 - 이미 추천된 댓글은 like 값을 0으로 업데이트
+
+4. 스크랩하기 API
+: /users/{user-id}/scrap/{sentiment-id}
+- 본인 센티멘트는 추천할 수 없도록 함
+- 이미 스크랩한 센티멘트는 scrap 값을 0으로 업데이트

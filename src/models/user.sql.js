@@ -57,3 +57,18 @@ export const unlikeCommentQuery = `
 export const checkCommentOwnerQuery = `SELECT user_id FROM comment WHERE comment_id = ?;`;
 
 export const checkUserCommentLikeStatusQuery = `SELECT \`like\` FROM user_comment WHERE user_id = ? AND comment_id = ?;`;
+
+// scrap
+export const scrapSentimentQuery = `
+    INSERT INTO user_sentiment (user_id, sentiment_id, scrap) 
+    VALUES (?, ?, 1)
+    ON DUPLICATE KEY UPDATE scrap = 1;
+`;
+
+export const unscrapSentimentQuery = `
+    UPDATE user_sentiment 
+    SET scrap = 0 
+    WHERE user_id = ? AND sentiment_id = ? AND scrap = 1;
+`;
+
+export const checkUserSentimentScrapStatusQuery = `SELECT scrap FROM user_sentiment WHERE user_id = ? AND sentiment_id = ?;`;

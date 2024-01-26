@@ -1,8 +1,8 @@
 import { config } from '../../config/db.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO} from "./../dtos/user.response.dto.js"
-import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserSentimentLikeStatus, unlikeComment, likeComment, checkCommentOwner, checkUserCommentLikeStatus} from "../models/user.dao.js";
+import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO, ScrapSentimentResponseDTO} from "./../dtos/user.response.dto.js"
+import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserSentimentLikeStatus, unlikeComment, likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus} from "../models/user.dao.js";
 import nodemailer from 'nodemailer';
 import Redis from 'redis';
 
@@ -187,6 +187,31 @@ export const likeCommentUser = async (userId, commentId) => {
         }
     } catch (error) {
         console.error('Error in likeCommentUser:', error);
+        throw error;
+    }
+};
+
+export const scrapSentimentUser = async (userId, sentimentId) => {
+    try {
+        // 사용자가 자신의 센티먼트에 스크랩을 시도하는지 확인
+        const isSentimentOwner = await checkSentimentOwner(sentimentId, userId);
+        if (isSentimentOwner) {
+            throw new Error("본인 센티멘트는 스크랩할 수 없습니다.");  // 임시
+        }
+
+        // 이미 스크랩이 되어 있는지 확인
+        const userSentimentScrapStatus = await checkUserSentimentScrapStatus(userId, sentimentId);
+
+        // 스크랩 취소 또는 스크랩 로직
+        if (userSentimentScrapStatus) {
+            await unscrapSentiment(userId, sentimentId); // 스크랩 취소
+            return ScrapSentimentResponseDTO(false);
+        } else {
+            await scrapSentiment(userId, sentimentId); // 스크랩
+            return ScrapSentimentResponseDTO(true);
+        }
+    } catch (error) {
+        console.error('Error in scrapSentimentUser:', error);
         throw error;
     }
 };

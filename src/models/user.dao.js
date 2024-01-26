@@ -3,7 +3,7 @@
 import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData, changeUserPassword, getUserId, getUserFromEmail, insertFollow, confirmFollow, deleteFollow, likeSentimentQuery, unlikeSentimentQuery, checkSentimentOwnerQuery, checkUserSentimentLikeStatusQuery, likeCommentQuery, unlikeCommentQuery, checkCommentOwnerQuery, checkUserCommentLikeStatusQuery } from "./../models/user.sql.js";
+import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData, changeUserPassword, getUserId, getUserFromEmail, insertFollow, confirmFollow, deleteFollow, likeSentimentQuery, unlikeSentimentQuery, checkSentimentOwnerQuery, checkUserSentimentLikeStatusQuery, likeCommentQuery, unlikeCommentQuery, checkCommentOwnerQuery, checkUserCommentLikeStatusQuery, scrapSentimentQuery, unscrapSentimentQuery, checkUserSentimentScrapStatusQuery } from "./../models/user.sql.js";
 
 // DB에 유저 추가하기
 export const addUser = async (data) => {
@@ -279,6 +279,45 @@ export const checkCommentOwner = async (commentId, userId) => {
         
         conn.release();
         return rows.length > 0 && rows[0].user_id === Number(userId);
+    } catch (err) {
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+};
+
+// 스크랩하기
+export const scrapSentiment = async (userId, sentimentId) => {
+    try {
+        const conn = await pool.getConnection();
+        const [user] = await pool.query(scrapSentimentQuery, [userId, sentimentId]);
+
+        conn.release();
+        return true;
+    } catch (err) {
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+};
+
+// 스크랩 취소하기
+export const unscrapSentiment = async (userId, sentimentId) => {
+    try {
+        const conn = await pool.getConnection();
+        const [user] = await pool.query(unscrapSentimentQuery, [userId, sentimentId]);
+    
+        conn.release();
+        return true;
+    } catch (err) {
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+};
+
+// 이미 스크랩된 센티멘트인지 확인
+export const checkUserSentimentScrapStatus = async (userId, sentimentId) => {
+    try {
+        const conn = await pool.getConnection();
+        const [rows] = await pool.query(checkUserSentimentScrapStatusQuery, [userId, sentimentId]);
+        
+        conn.release();
+        return rows.length > 0 && rows[0].scrap === 1; // 이미 추천된 상태면 true, 아니면 false 반환
     } catch (err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
