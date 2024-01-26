@@ -2,10 +2,11 @@ import { StatusCodes } from "http-status-codes";
 import { sendEmail } from '../services/user.service.js';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode} from './../services/user.service.js';
+import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser } from './../services/user.service.js';
 import { getUser } from "../models/user.dao.js";
 
 dotenv.config();
+
 
 export const userSignin = async (req, res, next) => {
     const signIn = req.body;
@@ -147,5 +148,51 @@ export const userLogout = async (req, res, next) => {
         res.status(200).json("Logout Success");
     } catch (err){
         res.status(500).json(err);
+      
+export const userFollow = async (req, res, next) => {
+    try {
+        const followingId = req.body.followingId;
+        const userId = req.params.userId;
+        const result = await followUser(followingId, userId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userFollow:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
+
+export const userLikeSentiment = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const sentimentId = req.params.sentimentId;
+        const result = await likeSentimentUser(userId, sentimentId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userLikeSentiment:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
+
+export const userLikeCommment = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const commentId = req.params.commentId;
+        const result = await likeCommentUser(userId, commentId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userLikeCommment:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
+
+export const userScrapSentiment = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const sentimentId = req.params.sentimentId;
+        const result = await scrapSentimentUser(userId, sentimentId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userScrapSentiment:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
     }
 }
