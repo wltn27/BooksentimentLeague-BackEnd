@@ -24,7 +24,7 @@ export const confirmFollow = "SELECT EXISTS (SELECT * FROM follow WHERE followin
 
 export const deleteFollow = "DELETE FROM follow WHERE following_id = ? AND follower_id = ?;";
 
-// like
+// like - sentiment
 export const likeSentimentQuery = `
     INSERT INTO user_sentiment (user_id, sentiment_id, \`like\`) 
     VALUES (?, ?, 1)
@@ -37,10 +37,23 @@ export const unlikeSentimentQuery = `
     WHERE user_id = ? AND sentiment_id = ? AND \`like\` = 1;
 `;
 
-export const checkSentimentOwnerQuery = `
-    SELECT user_id FROM sentiment WHERE sentiment_id = ?;
+export const checkSentimentOwnerQuery = `SELECT user_id FROM sentiment WHERE sentiment_id = ?;`;
+
+export const checkUserSentimentLikeStatusQuery = `SELECT \`like\` FROM user_sentiment WHERE user_id = ? AND sentiment_id = ?;`;
+
+// like - comment
+export const likeCommentQuery = `
+    INSERT INTO user_comment (user_id, comment_id, \`like\`) 
+    VALUES (?, ?, 1)
+    ON DUPLICATE KEY UPDATE \`like\` = 1;
 `;
 
-export const checkUserLikeStatusQuery = `
-    SELECT \`like\` FROM user_sentiment WHERE user_id = ? AND sentiment_id = ?;
+export const unlikeCommentQuery = `
+    UPDATE user_comment 
+    SET \`like\` = 0 
+    WHERE user_id = ? AND comment_id = ? AND \`like\` = 1;
 `;
+
+export const checkCommentOwnerQuery = `SELECT user_id FROM comment WHERE comment_id = ?;`;
+
+export const checkUserCommentLikeStatusQuery = `SELECT \`like\` FROM user_comment WHERE user_id = ? AND comment_id = ?;`;
