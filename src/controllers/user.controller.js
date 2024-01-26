@@ -3,8 +3,8 @@ import { sendEmail } from '../services/user.service.js';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode} from './../services/user.service.js';
+import { readMyPage } from './../providers/user.provider.js';
 import { getUser } from "../models/user.dao.js";
-
 dotenv.config();
 
 export const userSignin = async (req, res, next) => {
@@ -175,10 +175,16 @@ export const userLogout = async (req, res, next) => {
 }
 
 export const myPage = async (req, res, next) => {
-    const myPage = req.body;
+    const user_id = req.params.userId;
     console.log("마이페이지 조회를 요청하였습니다.");
-    const myPageMessage = await readMyPage(myPage);
-    
-    console.log("마이페이지 조회에 성공하였습니다.");
-    return res.status(StatusCodes.OK).json(myPageMessage)
+
+    if (req.session[user_id]) {
+        //로그인 되어 있는 상태
+        console.log("로그인 되어 있는 상태");
+        const result = await readMyPage(user_id);
+
+        res.status(200).json(result);
+    } else {
+        res.status(500).json({"message" : "로그인 해와라"})
+    }
 }

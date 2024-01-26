@@ -3,7 +3,8 @@
 import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData, changeUserPassword, getUserId, getUserFromEmail } from "./../models/user.sql.js";
+import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData, changeUserPassword, getUserId, getUserFromEmail, getUserTier,
+    getFollowerCount, getFollowingCount, getSentimentCount, getLikeCount, getScrapCount} from "./../models/user.sql.js";
 
 // DB에 유저 추가하기
 export const addUser = async (data) => {
@@ -116,7 +117,7 @@ export const confirmPassword = async (data) => {
 }
 
 // 이메일로 유저 고유 번호 반환하기
-export const getUserIdFromEmail = async (email) => {
+export const getUserIdFromEmail = async(email) => {
     try{
         const conn = await pool.getConnection();
         
@@ -130,7 +131,28 @@ export const getUserIdFromEmail = async (email) => {
     }
 }
 
-export const getUserByEmail = async (email) => {
+export const getUserByEmail = async(email) => {
     const [user] = await db.query(getUserFromEmail, [email]);
     return user;
 };
+
+export const getMyPage = async(user_id) => {
+    try{
+        const conn = await pool.getConnection();
+        const [userData] = await pool.query(getUserData, user_id);
+
+        Object.assign(userData[0], { tier: (await pool.query(getUserTier, user_id))[0][0].tier});
+        Object.assign(userData[0], { follower_num: (await pool.query(getFollowerCount, user_id))[0][0].follower_num });
+        Object.assign(userData[0], { following_num: (await pool.query(getFollowingCount, user_id))[0][0].following_num });
+        Object.assign(userData[0], { sentiment_num: (await pool.query(getSentimentCount, [user_id, 1]))[0][0].sentiment_num });
+        Object.assign(userData[0], { like_num: (await pool.query(getLikeCount, [user_id, 1]))[0][0].like_num });
+        Object.assign(userData[0], { scrap_num: (await pool.query(getScrapCount, [user_id, 1]))[0][0].scrap_num });
+
+        conn.release();
+
+        return userData[0];    
+
+    }catch (err) {
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
