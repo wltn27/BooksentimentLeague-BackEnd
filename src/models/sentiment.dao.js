@@ -4,10 +4,10 @@ import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
 import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getNickname } from "./sentiment.sql.js";
-import { updateSentimentSql, updateImageSql, deleteSentimentSql } from "./sentiment.sql.js";
+import { updateSentimentSql,  deleteSentimentSql } from "./sentiment.sql.js";
 import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js";
 import { modifyImageSql } from "./sentiment.sql.js";
-import { upload, deleteImageFromS3 } from '../middleware/ImageUploader.js';
+import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
 
 function getCurrentDateTime() {
     const currentDate = new Date();

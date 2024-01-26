@@ -17,6 +17,5 @@ export const updateSentimentSql = "UPDATE sentiment SET sentiment_title= ? ,book
 // 이미지 삽입/삭제
 export const insertImageSql = "INSERT INTO image ( sentiment_id, image ) VALUES ( ?, ?);";
 export const deleteImageSql = "DELETE FROM image WHERE sentiment_id = ?;";
-export const updateImageSql = "UPDATE image SET image = ? WHERE sentiment_id = ? ";
 export const modifyImageSql = "DELETE FROM image WHERE image = ?;";
-export const theNumberOfImg = "SELECT COUNT(*) FROM image WHERE sentiment_id = ?;";
+
