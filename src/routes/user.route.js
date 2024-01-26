@@ -18,6 +18,8 @@ userRouter.post('/changepass', asyncHandler(userChangePass));
 
 userRouter.get('/refreshtoken', asyncHandler(refreshToken));
 userRouter.get('/mypage', asyncHandler(myPage));
+
+userRouter.patch('/mypage', asyncHandler(updateMyPage));
 // userRouter.get('/sentiment', asyncHandler(sentiment));
 // userRouter.get('/scrap', asyncHandler(scrap));
 // userRouter.get('/follower', asyncHandler(follower));

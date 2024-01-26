@@ -1,9 +1,8 @@
-import { config } from '../../config/db.config.js';
+import { transporter, config } from '../../config/mail.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 import { signinResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO} from "./../dtos/user.response.dto.js"
 import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword} from "../models/user.dao.js";
-import nodemailer from 'nodemailer';
 import Redis from 'redis';
 
 export const joinUser = async (body) => {
@@ -110,13 +109,3 @@ export const sendEmail = async (to, subject, text) => {
       return errorResponseDTO('Error sending email', error);
     }
 };
-
-const transporter = nodemailer.createTransport({
-    host: config.emailHost,
-    port: config.emailPort,
-    secure: false, // 추후 보안 설정 필요
-    auth: {
-      user: config.emailUser,
-      pass: config.emailPass,
-    },
-});
