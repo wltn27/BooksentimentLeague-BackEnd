@@ -3,7 +3,7 @@
 import express from "express";
 import asyncHandler from 'express-async-handler';
 
-import { userSignin, checkEmail, checkNick, userLogin, sendEmailVerification, userFindPass, userChangePass, userFollow} from "../controllers/user.controller.js";
+import { userSignin, checkEmail, checkNick, userLogin, sendEmailVerification, userFindPass, userChangePass, userFollow, userLikeSentiment } from "../controllers/user.controller.js";
 
 export const userRouter = express.Router({mergeParams: true});
 
@@ -15,3 +15,4 @@ userRouter.post('/auth', asyncHandler(sendEmailVerification));
 userRouter.post('/findpass', asyncHandler(userFindPass));
 userRouter.post('/changepass', asyncHandler(userChangePass));
 userRouter.post('/follow', asyncHandler(userFollow));
+userRouter.post('/like/sentiment/:sentimentId', asyncHandler(userLikeSentiment));

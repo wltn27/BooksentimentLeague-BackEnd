@@ -1,8 +1,8 @@
 import { config } from '../../config/db.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, followResponseDTO} from "./../dtos/user.response.dto.js"
-import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, updateUserFollow, existFollow, updateUserUnFollow} from "../models/user.dao.js";
+import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, followResponseDTO, LikeSentimentResponseDTO} from "./../dtos/user.response.dto.js"
+import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserLikeStatus} from "../models/user.dao.js";
 import nodemailer from 'nodemailer';
 import Redis from 'redis';
 
@@ -142,3 +142,29 @@ export const followUser = async (followingId, userId) => {
         throw error;
     }
 }
+
+export const likeSentimentUser = async (userId, sentimentId) => {
+    try {
+        // 사용자가 자신의 센티먼트에 추천을 시도하는지 확인
+        const isOwner = await checkSentimentOwner(sentimentId, userId);
+        if (isOwner) {
+            throw new Error("본인 센티멘트는 추천할 수 없습니다.");  // 임시
+        }
+
+        // 이미 추천이 되어 있는지 확인
+        const userLikeStatus = await checkUserLikeStatus(userId, sentimentId);
+        console.log(userLikeStatus);
+
+        // 추천 취소 또는 추천 로직
+        if (userLikeStatus) {
+            await unlikeSentiment(userId, sentimentId); // 추천 취소
+            return LikeSentimentResponseDTO(false);
+        } else {
+            await likeSentiment(userId, sentimentId); // 추천
+            return LikeSentimentResponseDTO(true);
+        }
+    } catch (error) {
+        console.error('Error in likeSentimentUser:', error);
+        throw error;
+    }
+};

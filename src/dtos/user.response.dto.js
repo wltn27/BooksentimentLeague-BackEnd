@@ -22,8 +22,12 @@ export const loginResponseDTO = (user) => {
 export const followResponseDTO = (followStatus) => {
     console.log("followResponseDTO:", followStatus);
     return { "follow_status": followStatus };
-    
 };
+
+export const LikeSentimentResponseDTO = (likeStatus) => {
+    console.log("LikeSentimentResponseDTO:", likeStatus);
+    return { "like_status": likeStatus };
+}
 
 // 성공 응답 DTO 
 export const successResponseDTO = (message, data = {}) => {

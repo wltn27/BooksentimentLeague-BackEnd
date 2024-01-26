@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { sendEmail } from '../services/user.service.js';
-import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser} from './../services/user.service.js';
+import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser } from './../services/user.service.js';
 
 export const userSignin = async (req, res, next) => {
     const signIn = req.body;
@@ -77,15 +77,22 @@ export const userFollow = async (req, res, next) => {
     try {
         const followingId = req.body.followingId;
         const userId = req.params.userId;
-        // console.log("팔로우를 요청하였습니다!");
-        // const followUserData = await followUser(followingId, userId);
-
-        // console.log("팔로우를 성공하였습니다.");
-        // return res.status(StatusCodes.OK).json(followUserData);
         const result = await followUser(followingId, userId);
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userFollow:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
+
+export const userLikeSentiment = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const sentimentId = req.params.sentimentId;
+        const result = await likeSentimentUser(userId, sentimentId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userLikeSentiment:', error);
         return res.status(StatusCodes.OK).json({message: error.data.message});
     }
 }

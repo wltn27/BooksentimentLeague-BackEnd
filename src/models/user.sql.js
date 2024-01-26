@@ -23,3 +23,24 @@ export const insertFollow = "INSERT INTO follow (following_id, follower_id) VALU
 export const confirmFollow = "SELECT EXISTS (SELECT * FROM follow WHERE following_id = ? AND follower_id = ?) as isExistFollow;"
 
 export const deleteFollow = "DELETE FROM follow WHERE following_id = ? AND follower_id = ?;";
+
+// like
+export const likeSentimentQuery = `
+    INSERT INTO user_sentiment (user_id, sentiment_id, \`like\`) 
+    VALUES (?, ?, 1)
+    ON DUPLICATE KEY UPDATE \`like\` = 1;
+`;
+
+export const unlikeSentimentQuery = `
+    UPDATE user_sentiment 
+    SET \`like\` = 0 
+    WHERE user_id = ? AND sentiment_id = ? AND \`like\` = 1;
+`;
+
+export const checkSentimentOwnerQuery = `
+    SELECT user_id FROM sentiment WHERE sentiment_id = ?;
+`;
+
+export const checkUserLikeStatusQuery = `
+    SELECT \`like\` FROM user_sentiment WHERE user_id = ? AND sentiment_id = ?;
+`;
