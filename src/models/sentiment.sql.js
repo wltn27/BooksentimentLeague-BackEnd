@@ -13,3 +13,7 @@ export const selectInsertedCommentQuery = `
     LEFT JOIN tier t ON ut.tier_id = t.tier_id
     WHERE c.comment_id = LAST_INSERT_ID();
 `;
+
+export const findCommentByIdQuery = "SELECT * FROM comment WHERE comment_id = ?;";
+
+export const deleteCommentQuery = "DELETE FROM comment WHERE comment_id = ?;";
