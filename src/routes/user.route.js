@@ -2,7 +2,8 @@
 
 import express from "express";
 import asyncHandler from 'express-async-handler';
-import { userSignin, checkEmail, checkNick, userLogin, sendEmailVerification, userFindPass, userChangePass, userFollow, userLikeSentiment, userLikeCommment, userScrapSentiment } from "../controllers/user.controller.js";
+import { userSignin, checkEmail, checkNick, userLogin, userLogout, sendEmailVerification, userFindPass, userChangePass, userFollow, userLikeSentiment, userLikeCommment, userScrapSentiment } from "../controllers/user.controller.js";
+import { refreshToken } from "../controllers/user.controller.js";
 
 export const userRouter = express.Router({mergeParams: true});
 

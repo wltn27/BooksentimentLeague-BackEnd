@@ -148,7 +148,9 @@ export const userLogout = async (req, res, next) => {
         res.status(200).json("Logout Success");
     } catch (err){
         res.status(500).json(err);
-      
+    }
+}
+
 export const userFollow = async (req, res, next) => {
     try {
         const followingId = req.body.followingId;
@@ -157,7 +159,7 @@ export const userFollow = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userFollow:', error);
-        return res.status(StatusCodes.OK).json({message: error.data.message});
+        return res.status(500).json({message: error.data.message});
     }
 }
 
@@ -169,7 +171,7 @@ export const userLikeSentiment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userLikeSentiment:', error);
-        return res.status(StatusCodes.OK).json({message: error.data.message});
+        return res.status(500).json({message: error.data.message});
     }
 }
 
@@ -181,7 +183,7 @@ export const userLikeCommment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userLikeCommment:', error);
-        return res.status(StatusCodes.OK).json({message: error.data.message});
+        return res.status(500).json({message: error.data.message});
     }
 }
 
@@ -193,6 +195,6 @@ export const userScrapSentiment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userScrapSentiment:', error);
-        return res.status(StatusCodes.OK).json({message: error.data.message});
+        return res.status(500).json({message: error.data.message});
     }
 }
