@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer';
 
 dotenv.config();
 
-const config = {
+export const config = {
     emailHost: process.env.EMAIL_HOST,
     emailPort: process.env.EMAIL_PORT,
     emailUser: process.env.EMAIL_USER,

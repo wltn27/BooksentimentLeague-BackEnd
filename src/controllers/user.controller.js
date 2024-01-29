@@ -3,7 +3,7 @@ import { sendEmail } from '../services/user.service.js';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode} from './../services/user.service.js';
-import { readMyPage } from './../providers/user.provider.js';
+import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList} from './../providers/user.provider.js';
 import { getUser } from "../models/user.dao.js";
 dotenv.config();
 
@@ -38,8 +38,9 @@ export const userLogin = async (req, res, next) => {
     const logIn = req.body;
     console.log("로그인을 요청하였습니다!");
     const loginUserData = await loginUser(logIn);
-
+    
     try {
+        console.log(loginUserData);
         // access token 발급
         const accessToken = jwt.sign({
             user_id :  loginUserData.user_id,
@@ -49,7 +50,7 @@ export const userLogin = async (req, res, next) => {
             expiresIn : '1m',
             issuer : 'book_sentiment_league'
         })
-
+        console.log("accessToken");
         // refresh token 발급
         const refreshToken = jwt.sign({
             user_id :  loginUserData.user_id,
@@ -59,7 +60,7 @@ export const userLogin = async (req, res, next) => {
             expiresIn : '24h',
             issuer : 'book_sentiment_league'
         })
-
+        console.log("refreshToken");
         res.cookie("accessToken", accessToken, {
             secure : false,
             httpOnly : true,
@@ -69,7 +70,7 @@ export const userLogin = async (req, res, next) => {
             secure : false,
             httpOnly : true,
         })
-
+        console.log("res");
         if (!req.session[loginUserData.user_id]) {
             // 세션 저장
             req.session[loginUserData.user_id] = {
@@ -178,13 +179,61 @@ export const myPage = async (req, res, next) => {
     const user_id = req.params.userId;
     console.log("마이페이지 조회를 요청하였습니다.");
 
-    if (req.session[user_id]) {
+    //if (req.session[user_id]) {
         //로그인 되어 있는 상태
         console.log("로그인 되어 있는 상태");
         const result = await readMyPage(user_id);
 
         res.status(200).json(result);
-    } else {
-        res.status(500).json({"message" : "로그인 해와라"})
-    }
+    // } else {
+    //     res.status(500).json({"message" : "로그인 해와라"})
+    // }
+}
+
+export const updateMyPage = async (req, res, next) => {
+    const user_id = req.params.userId;
+    const userData = req.body;
+    console.log("마이페이지 수정을 요청하였습니다.");
+
+    //if (req.session[user_id] || true) {
+        //로그인 되어 있는 상태
+        console.log("로그인 되어 있는 상태");
+        const result = await updateUserData(user_id, userData);
+
+        res.status(200).json(result);
+    // } else {
+    //     res.status(500).json({"message" : "로그인 해와라"})
+    // }
+}
+
+export const follower = async (req, res, next) => {
+    const user_id = req.params.userId;
+
+    const result = await readFollowerList(user_id);
+    
+    res.status(200).json({"nicknames" : result});
+}
+
+export const following = async (req, res, next) => {
+    const user_id = req.params.userId;
+
+    const result = await readFollowingList(user_id);
+    
+    res.status(200).json({"nicknames" : result});
+}
+
+export const sentiment = async (req, res, next) => {
+    const user_id = req.params.userId;
+
+    const sentimentListDTO = await readSentimentList(user_id);
+    
+    res.status(200).json(sentimentListDTO);
+}
+
+export const scrap = async(req, res, next) => {
+    const user_id = req.params.userId;
+
+    const scrapListDTO = await readScrapList(user_id);
+    
+    res.status(200).json(scrapListDTO);
 }

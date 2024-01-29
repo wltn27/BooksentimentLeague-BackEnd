@@ -3,7 +3,7 @@
 import express from "express";
 import asyncHandler from 'express-async-handler';
 
-import { userSignin, checkEmail, checkNick, userLogin, sendEmailVerification, userFindPass, userChangePass, refreshToken, userLogout, myPage} from "../controllers/user.controller.js";
+import { userSignin, checkEmail, checkNick, userLogin, sendEmailVerification, userFindPass, userChangePass, refreshToken, userLogout, myPage, updateMyPage, sentiment, scrap, follower, following} from "../controllers/user.controller.js";
 
 export const userRouter = express.Router({mergeParams: true});
 
@@ -17,11 +17,12 @@ userRouter.post('/findpass', asyncHandler(userFindPass));
 userRouter.post('/changepass', asyncHandler(userChangePass));
 
 userRouter.get('/refreshtoken', asyncHandler(refreshToken));
+
 userRouter.get('/mypage', asyncHandler(myPage));
 
 userRouter.patch('/mypage', asyncHandler(updateMyPage));
-// userRouter.get('/sentiment', asyncHandler(sentiment));
-// userRouter.get('/scrap', asyncHandler(scrap));
-// userRouter.get('/follower', asyncHandler(follower));
-// userRouter.get('/following', asyncHandler(following));
+userRouter.get('/sentiment', asyncHandler(sentiment));
+userRouter.get('/scrap', asyncHandler(scrap));
+userRouter.get('/follower', asyncHandler(follower));
+userRouter.get('/following', asyncHandler(following));
 
