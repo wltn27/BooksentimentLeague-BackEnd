@@ -26,6 +26,8 @@ export const sentimentDTO = (data) => {
         "content": data.content,
         "image_path": data.image_path,
         "book_image": data.book_image,
+        "author" : data.author,
+        "publisher" : data.publisher,
         "created_at": data.created_at,
         "updated_at": data.updated_at
     };

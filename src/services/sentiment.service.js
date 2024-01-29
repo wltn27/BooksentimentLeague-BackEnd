@@ -16,8 +16,8 @@ import { getUserId } from "../models/sentiment.sql.js";
 
 
 // 센티멘트 작성
-export const insertSentiment = async (userId, body, file) => {
-  //console.log(body);
+export const insertSentiment = async (userId, body, files) => {
+  const img_array = files.map(file=>file.location);
   const insertSentimnetData = await addSentiment(userId, {
     //'sentiment_id' : body.sentiment_id,
     'user_id': userId,
@@ -25,8 +25,10 @@ export const insertSentiment = async (userId, body, file) => {
     'book_title': body.book_title,
     'score': body.score,
     'content': body.content,
-    "image": file.location,
+    "image": img_array,
     'book_image': body.book_image,
+    //'author' : body.author,
+    //'publisher' : body.publisher,
     'season': 1 // body에 season 없음 -> req에 시즌이 없음 -> 1로 정해놓음 
   });
 
@@ -53,11 +55,10 @@ export const updateSentiment = async (sentimentId, body, files) => {
 
     // 이미지 삭제 로직
     console.log('update Sentiment body: ', body);
-    const image_path = body.image;
-    console.log(image_path);
+    
       
     //이미지 레코드 삭제
-    await modifyImage(sentimentId, image_path, files);
+    await modifyImage(sentimentId, body, files);
 
     // 이후 실행하여 변경된 image 테이블에 저장된 데이터를 포함하여 전체적으로 업데이트
     const modifiedData = await modifySentiment(sentimentId, {

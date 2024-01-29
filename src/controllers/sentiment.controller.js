@@ -12,21 +12,21 @@ import { deleteSentiment } from "../services/sentiment.service.js";
 export const wrSentiment = async (req, res, next ) => {
     console.log("센티멘트 작성 요청");
     console.log("body", req.body);
-    console.log("files", req.file);
-    res.send(response(status.SUCCESS, await insertSentiment(req.params.userId, req.body, req.file)));
+    console.log("files", req.files);
+    res.send(response(status.SUCCESS, await insertSentiment(req.params.userId, req.body, req.files)));
 }
 
 // 센티멘트 수정
 export const rewrSentiment = async (req, res, next ) => {
     console.log("센티멘트 수정 요청");
     console.log("body", req.body);
-    console.log("files", req.file); // 멀티파일이면 req.files
+    console.log("files", req.files); 
     /*
     const currentId = req.params.user-id;
     const postId = await pool.query(getUserId,[req.params.sentiment-id]);
     if ( currentId == postId ) {
         */
-        res.send(response(status.SUCCESS, await updateSentiment(req.params.sentimentId, req.body, req.file)));
+    res.send(response(status.SUCCESS, await updateSentiment(req.params.sentimentId, req.body, req.files)));
     /*
     } else {
         console.log("현재 사용자와 작성자가 일치하지 않습니다.");
