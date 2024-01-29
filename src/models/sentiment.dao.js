@@ -122,9 +122,12 @@ export const getSentiment = async (sentimentID) => {
         const nickname = nicknameResult[0].nickname;
         const [imageResult] = await pool.query(getImageSql, [sentimentID]);
         console.log('imageResult : ', imageResult);
-        if (imageResult.length > 0) {
+        if (imageResult.length > 0  && imageResult[0].image !== '' ) {
             const imagePaths = imageResult.map(result => result.image);
             sentiment[0].image_path = imagePaths;
+        } else {
+            // 이미지가 없는 경우 image_path를 null로 설정
+            sentiment[0].image_path = null;
         }
 
         sentiment[0].nickname = nickname;
@@ -270,17 +273,21 @@ export const modifyImage = async (sentimentId, body, files) => {
         if (body.image !== undefined && body.image !== null) {
             const newImages = Array.isArray(body.image) ? body.image : [body.image]; // body.image가 배열이 아니라면 배열로 변환
             for (const newImg of newImages) {
-                console.log('body.image: ', newImg);
-                await pool.query(insertImageSql, [sentimentId, newImg]); // DB에 삽입
+                if (newImg !== '') { // 빈 문자열 체크
+                    console.log('body.image: ', newImg);
+                    await pool.query(insertImageSql, [sentimentId, newImg]); // DB에 삽입
+                }
             }
         }
 
         // 새로운 파일로 업로드된 이미지 삽입
-        if (files.length > 0) {
+        if (files && files.length > 0) {
             for (const file of files) {
                 const newImage = file.location;
-                console.log('files.location: ', newImage);
-                await pool.query(insertImageSql, [sentimentId, newImage]); // DB에 삽입
+                if (newImage !== '') { // 빈 문자열 체크
+                    console.log('files.location: ', newImage);
+                    await pool.query(insertImageSql, [sentimentId, newImage]); // DB에 삽입
+                }
             }
         }
 
