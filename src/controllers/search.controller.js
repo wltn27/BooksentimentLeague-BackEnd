@@ -1,7 +1,7 @@
 // search.controller.js
 import { response } from "../../config/response.js";
 import { status } from "../../config/response.status.js";
-import { bookSearch, sentimentSearch, userSearch } from "../services/sentiment.service.js";
+import { bookSearch, sentimentSearch, userSearch } from "../services/search.service.js";
 
 
 // 전체 검색
@@ -16,7 +16,7 @@ export const searchAllController = async (req, res, next) => {
 //관련서적 검색
 export const searchBookController = async (req, res, next) => {
     console.log("관련서적 검색 요청");
-
+    document.write('hi');
     res.send(response(status.SUCCESS, await bookSearch(req.params.book-id, req.body)));
 }
 

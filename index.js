@@ -1,7 +1,11 @@
 import { userRouter } from './src/routes/user.route.js';
-/** import { sentimentRouter } from './src/routes/sentiment.route.js';
-import { rankRouter } from './src/routes/rank.route.js';
-*/
+import { sentimentRouter } from './src/routes/sentiment.route.js';
+//import { rankRouter } from './src/routes/ranks.route.js';
+
+import { sentimentListRouter } from './src/routes/sentimentList.route.js';
+import { sentimentPostRouter } from './src/routes/sentimentList.route.js';
+import { searchRouter } from './src/routes/search.route.js';
+import { bookSearchRouter } from './src/routes/bookSearch.route.js';
 import { specs } from './config/swagger.config.js';
 import { status } from './config/response.status.js';
 import { response } from './config/response.js';
@@ -30,10 +34,13 @@ app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 app.use('/users', userRouter);
 app.use('/users/:userId', userRouter);
 app.use('/search', searchRouter);
-/**app.use('/sentiments', sentimentRouter);
- app.use('/sentiments/:sentimentId', sentimentRouter);
- app.use('/ranks/', rankRouter);
- */
+app.use('/bookSearch', bookSearchRouter);
+app.use('/sentimentList', sentimentListRouter);
+app.use('/sentimentPost', sentimentPostouter);
+// app.use('/sentiments', sentimentRouter);
+// app.use('/sentiments/:sentimentId', sentimentRouter);
+//app.use('/ranks/', rankRouter);
+
 
 app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));

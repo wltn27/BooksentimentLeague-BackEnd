@@ -1,8 +1,8 @@
 import express from 'express';
-import bookSearchController from './bookSearch.controller';
+import bookSearchController from '../controllers/bookSearch.controller';
 
-const router = express.Router();
+const bookSearchRouter = express.Router();
 
-router.get('/search/book', bookSearchController.searchBooks);
+bookSearchRouter.get('/bookSearch/book', bookSearchController.searchBooks);
 
 export default router;

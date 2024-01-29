@@ -4,14 +4,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',  // mysqlÀÇ hostname
-    user: process.env.DB_USER || 'root',  // user ÀÌ¸§
-    port: process.env.DB_PORT || 3306,  // Æ÷Æ® ¹øÈ£
-    database: process.env.DB_TABLE || 'umc_wb',  // µ¥ÀÌÅÍº£ÀÌ½º ÀÌ¸§
-    password: process.env.DB_PASSWORD || 'password',  // ºñ¹Ð¹øÈ£
+    host: process.env.DB_HOST || 'localhost',  // mysqlï¿½ï¿½ hostname
+    user: process.env.DB_USER || 'root',  // user ï¿½Ì¸ï¿½
+    port: process.env.DB_PORT || 3306,  // ï¿½ï¿½Æ® ï¿½ï¿½È£
+    database: process.env.DB_TABLE || 'umc_wb',  // ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½Ì½ï¿½ ï¿½Ì¸ï¿½
+    password: process.env.DB_PASSWORD || 'password',  // ï¿½ï¿½Ð¹ï¿½È£
     waitForConnections: true,
-		// Pool¿¡ È¹µæÇÒ ¼ö ÀÖ´Â connectionÀÌ ¾øÀ» ¶§,
-		// true¸é ¿äÃ»À» queue¿¡ ³Ö°í connectionÀ» »ç¿ëÇÒ ¼ö ÀÖ°Ô µÇ¸é ¿äÃ»À» ½ÇÇàÇÏ¸ç, falseÀÌ¸é Áï½Ã ¿À·ù¸¦ ³»º¸³»°í ´Ù½Ã ¿äÃ»
-    connectionLimit: 10,        // ¸î °³ÀÇ Ä¿³Ø¼ÇÀ» °¡Áö°Ô²û ÇÒ °ÍÀÎÁö
-    queueLimit: 0,              // getConnection¿¡¼­ ¿À·ù°¡ ¹ß»ýÇÏ±â Àü¿¡ Pool¿¡ ´ë±âÇÒ ¿äÃ»ÀÇ °³¼ö ÇÑµµ
+		// Poolï¿½ï¿½ È¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ connectionï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½,
+		// trueï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ queueï¿½ï¿½ ï¿½Ö°ï¿½ connectionï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½Ç¸ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½, falseï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½Ã»
+    connectionLimit: 10,        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½Ø¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    queueLimit: 0,              // getConnectionï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ Poolï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ñµï¿½
 });
