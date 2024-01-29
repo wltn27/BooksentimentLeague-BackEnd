@@ -18,7 +18,7 @@ import { getUserId } from "../models/sentiment.sql.js";
 // 센티멘트 작성
 export const insertSentiment = async (userId, body, files) => {
   const img_array = files.map(file=>file.location);
-  const insertSentimnetData = await addSentiment(userId, {
+  const insertSentimentData = await addSentiment(userId, {
     //'sentiment_id' : body.sentiment_id,
     'user_id': userId,
     'sentiment_title': body.sentiment_title,
@@ -27,15 +27,16 @@ export const insertSentiment = async (userId, body, files) => {
     'content': body.content,
     "image": img_array,
     'book_image': body.book_image,
-    //'author' : body.author,
-    //'publisher' : body.publisher,
+    'author' : body.author,
+    'publisher' : body.publisher,
     'season': 1 // body에 season 없음 -> req에 시즌이 없음 -> 1로 정해놓음 
   });
-
-  if (insertSentimnetData == -1) { // 추후 이미지 삽입 dao를 따로 짜서 로직을 변경해야함
+  console.log('insertSentimentData : ', insertSentimentData);
+  if (insertSentimentData == -1) { 
     throw new BaseError(status.SENTIMENT_ALREADY_EXIST);
   } else {
-    return sentimentDTO(await getSentiment(insertSentimnetData));
+    console.log('sentimentDTO: ', sentimentDTO(await getSentiment(insertSentimentData)))
+    return sentimentDTO(await getSentiment(insertSentimentData));
   }
 }
 

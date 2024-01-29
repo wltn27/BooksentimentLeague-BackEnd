@@ -19,17 +19,17 @@
 // sentiment DTO
 export const sentimentDTO = (data) => {
     return {
-        "nickname": data.nickname,
-        "sentiment_title": data.sentiment_title,
-        "book_title": data.book_title,
-        "score": data.score,
-        "content": data.content,
-        "image_path": data.image_path,
-        "book_image": data.book_image,
-        "author" : data.author,
-        "publisher" : data.publisher,
-        "created_at": data.created_at,
-        "updated_at": data.updated_at
+        "nickname": data[0].nickname,
+        "sentiment_title": data[0].sentiment_title,
+        "book_title": data[0].book_title,
+        "score": data[0].score,
+        "content": data[0].content,
+        "image_path": data[0].image_path,
+        "book_image": data[0].book_image,
+        "author" : data[0].author,
+        "publisher" : data[0].publisher,
+        "created_at": data[0].created_at,
+        "updated_at": data[0].updated_at
     };
 };
 

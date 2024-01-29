@@ -78,12 +78,14 @@ export const addSentiment = async (userId, data) => {
             parseFloat(data.score),
             data.content,
             data.book_image,
+            data.author,
+            data.publisher,
             data.season,
             newDate
         ]);
         //const result = await pool.query(insertSentimentSql,[data.sentiment_title, data.book_title, parseFloat(data.score), data.content, data.book_image, data.season, currentDate]);
         //console.log("Result of Insert Query:", result); // 추가한 로그
-
+        
 
         // If image data is available, insert it into the image table
         if (data.image) {
@@ -97,6 +99,7 @@ export const addSentiment = async (userId, data) => {
 
         conn.release();
         console.log("return : ", result);
+        console.log('result[0].id : ', result[0].insertid);
         return result[0].insertId; // sentimnet_id 반환
 
     } catch (err) {
@@ -132,6 +135,7 @@ export const getSentiment = async (sentimentID) => {
         }
 
         conn.release();
+        console.log('sentiment: ', sentiment);
         return sentiment;
 
     } catch (err) {

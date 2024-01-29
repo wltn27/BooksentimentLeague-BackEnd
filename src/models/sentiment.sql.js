@@ -10,7 +10,7 @@ export const getNickname = "SELECT nickname FROM user WHERE user_id = ?;";
 export const getUserId = "SELECT user_id from sentiment where sentiment_id =?;";
 
 // 센티멘트 삽입/삭제
-export const insertSentimentSql = "INSERT INTO sentiment (user_id, sentiment_title, book_title, score, content, book_image, season, created_at) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? );";
+export const insertSentimentSql = "INSERT INTO sentiment (user_id, sentiment_title, book_title, score, content, book_image, author, publisher, season, created_at) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );";
 export const deleteSentimentSql = "DELETE FROM sentiment WHERE sentiment_id = ?;";
 export const updateSentimentSql = "UPDATE sentiment SET sentiment_title= ? ,book_title = ?, score = ?, content = ?, updated_at = ? WHERE sentiment_id = ?;";
 
