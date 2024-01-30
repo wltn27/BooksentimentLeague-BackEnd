@@ -14,7 +14,7 @@ export const insertComment = async (sentimentId, userId, parent_id, content) => 
     }
 }
 
-export const deleteComment = async (commentId) => {
+export const deleteComment = async (commentId, userData) => {
     try {
         // 삭제하려는 댓글이 존재하는지 확인
         const comment = await findCommentById(commentId);
@@ -22,14 +22,12 @@ export const deleteComment = async (commentId) => {
             throw new Error('Comment not found');
         }
 
-        // // 삭제하려는 댓글 작성자와 현재 사용자가 같은지 확인
-        // console.log("comment.user_id:", comment.user_id);
-        // console.log("userId:", userId);
-        // if (comment.user_id !== userId) {
-        //     throw new Error('본인 댓글 외에는 삭제할 수 없습니다.');
-        // }
+        // 삭제하려는 댓글 작성자와 현재 사용자가 같은지 확인
+        if (comment.user_id !== userData[0].user_id) {
+            throw new BaseError(status.COMMENT_NOT_DELETE);
+        }
 
-        await removeComment(commentId); // 나중에 DTO 부분 수정;
+        await removeComment(commentId);
     } catch (error) {
         console.error('Error in deleteComment:', error);
         throw error;

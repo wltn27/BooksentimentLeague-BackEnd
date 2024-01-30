@@ -18,6 +18,7 @@ export const createComment = async (sentimentId, userId, parent_id, content) => 
 
 // 댓글 존재 확인
 export const findCommentById = async (commentId) => {
+    const conn = await pool.getConnection();
     const [rows] = await pool.query(findCommentByIdQuery, [commentId]);
     conn.release();
     return rows[0];

@@ -146,7 +146,7 @@ export const likeSentimentUser = async (userId, sentimentId) => {
         // 사용자가 자신의 센티먼트에 추천을 시도하는지 확인
         const isSentimentOwner = await checkSentimentOwner(sentimentId, userId);
         if (isSentimentOwner) {
-            throw new Error("본인 센티멘트는 추천할 수 없습니다.");  // 임시
+            throw new BaseError(status.SENTIMENT_NOT_SELF);
         }
 
         // 이미 추천이 되어 있는지 확인
@@ -171,7 +171,7 @@ export const likeCommentUser = async (userId, commentId) => {
         // 사용자가 자신의 댓글에 추천을 시도하는지 확인
         const isCommentOwner = await checkCommentOwner(commentId, userId);
         if (isCommentOwner) {
-            throw new Error("본인 댓글은 추천할 수 없습니다.");  // 임시
+            throw new BaseError(status.COMMENT_NOT_SELF);
         }
 
         // 이미 추천이 되어 있는지 확인
@@ -196,7 +196,7 @@ export const scrapSentimentUser = async (userId, sentimentId) => {
         // 사용자가 자신의 센티먼트에 스크랩을 시도하는지 확인
         const isSentimentOwner = await checkSentimentOwner(sentimentId, userId);
         if (isSentimentOwner) {
-            throw new Error("본인 센티멘트는 스크랩할 수 없습니다.");  // 임시
+            throw new BaseError(status.SCRAP_NOT_SELF);
         }
 
         // 이미 스크랩이 되어 있는지 확인

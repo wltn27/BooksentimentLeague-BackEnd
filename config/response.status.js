@@ -23,6 +23,10 @@ export const status = {
     EMAIL_NOT_EXIST: {status: StatusCodes.CONFLICT, "isSuccess": false, "code": "MEMBER4006", "message": "이메일이 등록되어 있지 않습니다."},
     AUTH_NOT_EQUAL: {status: StatusCodes.CONFLICT, "isSuccess": false, "code": "MEMBER4007", "message": "인증번호가 같지 않습니다."},
     FOLLOW_ALREADY_EXIST: {status: StatusCodes.CONFLICT, "isSuccess": false, "code": "MEMBER4009", "message": "이미 팔로우 중입니다."},
+    SENTIMENT_NOT_SELF: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4010", "message": "본인 센티멘트는 추천할 수 없습니다."},
+    COMMENT_NOT_SELF: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4011", "message": "본인 댓글은 추천할 수 없습니다."},
+    SCRAP_NOT_SELF: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4012", "message": "본인 센티멘트는 스크랩할 수 없습니다."},
+    COMMENT_NOT_DELETE: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4013", "message": "본인 댓글 외에는 삭제할 수 없습니다."},
     
     // article err
     ARTICLE_NOT_FOUND: {status: StatusCodes.NOT_FOUND, "isSuccess": false, "code": "ARTICLE4001", "message": "게시글이 없습니다."}

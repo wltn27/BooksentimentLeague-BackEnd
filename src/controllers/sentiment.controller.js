@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { insertComment, deleteComment } from './../services/sentiment.service.js';
+import { getUser } from "../models/user.dao.js";
 
 dotenv.config();
 
@@ -23,8 +24,12 @@ export const delComment = async (req, res, next) => {
     try {
         console.log("댓글 삭제 요청!");
         const { commentId } = req.params;
-        // const userId = req.body;
-        const comment = await deleteComment(commentId);
+        
+        const token = req.cookies.refreshToken;
+        const data = jwt.verify(token, process.env.REFRESH_SECRET);
+        const userData = await getUser(data.user_id); // 사용자 정보 반환
+
+        const comment = await deleteComment(commentId, userData);
         console.log("댓글 삭제 성공!");
         res.status(StatusCodes.OK).json(comment);
     } catch (error) {
