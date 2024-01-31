@@ -2,9 +2,12 @@ import { StatusCodes } from "http-status-codes";
 import { sendEmail } from '../services/user.service.js';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser } from './../services/user.service.js';
-import { getUser } from "../models/user.dao.js";
 
+import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser, 
+        updateUserData} from './../services/user.service.js';
+import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList} from './../providers/user.provider.js';
+
+import { getUser } from "../models/user.dao.js";
 dotenv.config();
 
 
@@ -39,8 +42,9 @@ export const userLogin = async (req, res, next) => {
     const logIn = req.body;
     console.log("로그인을 요청하였습니다!");
     const loginUserData = await loginUser(logIn);
-
+    
     try {
+        console.log(loginUserData);
         // access token 발급
         const accessToken = jwt.sign({
             user_id :  loginUserData.user_id,
@@ -50,7 +54,7 @@ export const userLogin = async (req, res, next) => {
             expiresIn : '1m',
             issuer : 'book_sentiment_league'
         })
-
+        console.log("accessToken");
         // refresh token 발급
         const refreshToken = jwt.sign({
             user_id :  loginUserData.user_id,
@@ -60,7 +64,7 @@ export const userLogin = async (req, res, next) => {
             expiresIn : '24h',
             issuer : 'book_sentiment_league'
         })
-
+        console.log("refreshToken");
         res.cookie("accessToken", accessToken, {
             secure : false,
             httpOnly : true,
@@ -70,6 +74,16 @@ export const userLogin = async (req, res, next) => {
             secure : false,
             httpOnly : true,
         })
+        console.log("res");
+        if (!req.session[loginUserData.user_id]) {
+            // 세션 저장
+            req.session[loginUserData.user_id] = {
+                email: logIn.email,
+                isAuthenticated: true
+            };
+        }
+
+        console.log(req.session[loginUserData.user_id]);
 
         console.log("로그인에 성공하였습니다.");
         return res.status(StatusCodes.OK).json(loginUserData);
@@ -144,10 +158,26 @@ export const refreshToken = async (req, res, next) => {
 
 export const userLogout = async (req, res, next) => {
     try {
+        const token = req.cookies.accessToken;
+        const data = jwt.verify(token, process.env.ACCESS_SECRET);
+
+        if (req.session[data.user_id]) {
+            // 로그인된 상태
+            console.log('로그아웃합니다.');
+            
+            req.session.destroy(function(err) {
+                if (err) {throw err;}
+                
+                console.log('세션을 삭제하고 로그아웃되었습니다.');
+            });
+        }
+
         res.cookie('accessToken', '');
         res.status(200).json("Logout Success");
     } catch (err){
         res.status(500).json(err);
+    }
+}
       
 export const userFollow = async (req, res, next) => {
     try {
@@ -159,6 +189,69 @@ export const userFollow = async (req, res, next) => {
         console.error('Error in userFollow:', error);
         return res.status(StatusCodes.OK).json({message: error.data.message});
     }
+}
+
+export const myPage = async (req, res, next) => {
+    const user_id = req.params.userId;
+    console.log("마이페이지 조회를 요청하였습니다.");
+
+    if (req.session[user_id]) {
+        //로그인 되어 있는 상태
+        console.log("로그인 되어 있는 상태");
+        const result = await readMyPage(user_id, req.file);
+
+        res.status(200).json(result);
+    } else {
+        res.status(500).json({"message" : "로그인 해와라"})
+    }
+}
+
+export const updateMyPage = async (req, res, next) => {
+    const user_id = req.params.userId;
+    const userData = req.body;
+    console.log("마이페이지 수정을 요청하였습니다.");
+ 
+    if (req.session[user_id] || true) {
+        //로그인 되어 있는 상태
+        console.log("로그인 되어 있는 상태");
+        const result = await updateUserData(user_id, userData, req.file);
+
+        res.status(200).json(result);
+    } else {
+        res.status(500).json({"message" : "로그인 해와라"})
+    }
+}
+
+export const follower = async (req, res, next) => {
+    const user_id = req.params.userId;
+
+    const result = await readFollowerList(user_id);
+    
+    res.status(200).json({"nicknames" : result});
+}
+
+export const following = async (req, res, next) => {
+    const user_id = req.params.userId;
+
+    const result = await readFollowingList(user_id);
+    
+    res.status(200).json({"nicknames" : result});
+}
+
+export const sentiment = async (req, res, next) => {
+    const user_id = req.params.userId;
+
+    const sentimentListDTO = await readSentimentList(user_id);
+    
+    res.status(200).json(sentimentListDTO);
+}
+
+export const scrap = async(req, res, next) => {
+    const user_id = req.params.userId;
+
+    const scrapListDTO = await readScrapList(user_id);
+    
+    res.status(200).json(scrapListDTO);
 }
 
 export const userLikeSentiment = async (req, res, next) => {
