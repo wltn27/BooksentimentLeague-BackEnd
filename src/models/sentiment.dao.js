@@ -9,7 +9,7 @@ import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js"
 import { modifyImageSql } from "./sentiment.sql.js";
 import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
 
-function getCurrentDateTime() {
+export const getCurrentDateTime = () => {
     const currentDate = new Date();
 
     const year = currentDate.getFullYear();
@@ -51,25 +51,6 @@ export const addSentiment = async (userId, data) => {
             conn.release();
             throw new BaseError(status.SENTIMENT_ALREADY_EXIST);
         }
-
-        /*
-        try {
-            const result = await pool.query(insertSentimentSql, [
-                userId,
-                data.sentiment_title,
-                data.book_title,
-                parseFloat(data.score),
-                data.content,
-                data.book_image,
-                data.season,
-                currentDate
-            ]);
-        
-            console.log('Query Result:', result);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-        */
 
         const result = await pool.query(insertSentimentSql, [
             userId,

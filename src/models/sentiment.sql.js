@@ -18,4 +18,3 @@ export const updateSentimentSql = "UPDATE sentiment SET sentiment_title= ? ,book
 export const insertImageSql = "INSERT INTO image ( sentiment_id, image ) VALUES ( ?, ?);";
 export const deleteImageSql = "DELETE FROM image WHERE sentiment_id = ?;";
 export const modifyImageSql = "DELETE FROM image WHERE image = ?;";
-
