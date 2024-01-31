@@ -159,13 +159,7 @@
         required: false
         type: array 
         example: "https://booksentimentleague-s3.s3.ap-northeast-2.amazonaws.com/sentiment/1706200827577_IMG_0734.png"
-     # - name: book_image
-      #  in: formData
-      #  required: true
-      #  schema:
-      #    type: string
-       #   example: "https://shopping-phinf.pstatic.net/main_3250586/32505863065.20220521142511.jpg"
-
+  
     responses:
       '200':
         description: 센티멘트 수정 성공!

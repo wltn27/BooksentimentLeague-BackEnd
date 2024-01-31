@@ -1,5 +1,5 @@
 // sentiment.service.js
-
+import { config } from '../../config/db.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 import { pool } from "../../config/db.config.js";
@@ -7,13 +7,14 @@ import { pool } from "../../config/db.config.js";
 //import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
 // import DTOs
 import { sentimentDTO } from "../dtos/sentiment.dto.js";
+import { WriteCommentResponseDTO } from "./../dtos/sentiment.response.dto.js"
 
 // import DAOs
 import { addSentiment, getSentiment, modifyImage } from "../models/sentiment.dao.js";
 import { modifySentiment } from "../models/sentiment.dao.js";
 import { eliminateSentiment } from "../models/sentiment.dao.js";
 import { getUserId } from "../models/sentiment.sql.js";
-
+import { createComment, findCommentById, removeComment } from "../models/sentiment.dao.js";
 
 // 센티멘트 작성
 export const insertSentiment = async (userId, body, files) => {
@@ -77,7 +78,6 @@ export const updateSentiment = async (sentimentId, body, files) => {
     console.error('Error:', err);
     throw new BaseError(status.PARAMETER_IS_WRONG);
   }
-
 }
 
 // 센티멘트 삭제 
@@ -99,5 +99,36 @@ export const deleteSentiment = async (sentimentId) => {
     console.error(err);
     throw new BaseError(status.PARAMETER_IS_WRONG);
   }
-
 }
+
+// 댓글 작성
+export const insertComment = async (sentimentId, userId, parent_id, content) => {
+    try {
+        const newComment = await createComment(sentimentId, userId, parent_id, content);
+        return WriteCommentResponseDTO(newComment);
+    } catch (error) {
+        console.error('Error in insertComment:', error);
+        throw error;
+    }
+}
+
+// 댓글 삭제
+export const deleteComment = async (commentId, userData) => {
+    try {
+        // 삭제하려는 댓글이 존재하는지 확인
+        const comment = await findCommentById(commentId);
+        if (!comment) {
+            throw new Error('Comment not found');
+        }
+
+        // 삭제하려는 댓글 작성자와 현재 사용자가 같은지 확인
+        if (comment.user_id !== userData[0].user_id) {
+            throw new BaseError(status.COMMENT_NOT_DELETE);
+        }
+
+        await removeComment(commentId);
+    } catch (error) {
+        console.error('Error in deleteComment:', error);
+        throw error;
+    }
+};

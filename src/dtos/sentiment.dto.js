@@ -1,21 +1,5 @@
 // sentiment.dto.js
 
-
-// 센티멘트 작성 DTO
-/* export const wrSentimentDTO = (data) => {
-    return { 
-        "nickname" : data.nickname,
-        "created_at" : data.created_at,
-        "sentiment_title" : data.sentiment_title,
-        "book_title" : data.book_image,
-        "score" : data.score,
-        "content" : data.content,
-        "image_path": data.image_path,
-        "book_image": data.book_image
-    };
-}
-*/
-
 // sentiment DTO
 export const sentimentDTO = (data) => {
     return {
