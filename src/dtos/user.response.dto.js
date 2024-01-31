@@ -19,6 +19,26 @@ export const loginResponseDTO = (user) => {
     return {"email": user[0].email, "nickname": user[0].nickname};
 }
 
+export const followResponseDTO = (followStatus) => {
+    console.log("followResponseDTO:", followStatus);
+    return { "follow_status": followStatus };
+};
+
+export const LikeSentimentResponseDTO = (likeStatus) => {
+    console.log("LikeSentimentResponseDTO:", likeStatus);
+    return { "like_status": likeStatus };
+}
+
+export const LikeCommentResponseDTO = (likeStatus) => {
+    console.log("LikeCommentResponseDTO:", likeStatus);
+    return { "like_status": likeStatus };
+}
+
+export const ScrapSentimentResponseDTO = (scrapStatus) => {
+    console.log("ScrapSentimentResponseDTO:", scrapStatus);
+    return { "scrap_status": scrapStatus };
+}
+
 // 성공 응답 DTO 
 export const successResponseDTO = (message, data = {}) => {
     return {

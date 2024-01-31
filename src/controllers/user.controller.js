@@ -2,10 +2,14 @@ import { StatusCodes } from "http-status-codes";
 import { sendEmail } from '../services/user.service.js';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, updateUserData} from './../services/user.service.js';
+
+import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser, 
+        updateUserData} from './../services/user.service.js';
 import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList} from './../providers/user.provider.js';
+
 import { getUser } from "../models/user.dao.js";
 dotenv.config();
+
 
 export const userSignin = async (req, res, next) => {
     const signIn = req.body;
@@ -174,38 +178,48 @@ export const userLogout = async (req, res, next) => {
         res.status(500).json(err);
     }
 }
+      
+export const userFollow = async (req, res, next) => {
+    try {
+        const followingId = req.body.followingId;
+        const userId = req.params.userId;
+        const result = await followUser(followingId, userId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userFollow:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
 
 export const myPage = async (req, res, next) => {
     const user_id = req.params.userId;
     console.log("마이페이지 조회를 요청하였습니다.");
 
-    //if (req.session[user_id]) {
+    if (req.session[user_id]) {
         //로그인 되어 있는 상태
         console.log("로그인 되어 있는 상태");
         const result = await readMyPage(user_id, req.file);
 
         res.status(200).json(result);
-    // } else {
-    //     res.status(500).json({"message" : "로그인 해와라"})
-    // }
+    } else {
+        res.status(500).json({"message" : "로그인 해와라"})
+    }
 }
 
 export const updateMyPage = async (req, res, next) => {
     const user_id = req.params.userId;
     const userData = req.body;
     console.log("마이페이지 수정을 요청하였습니다.");
-
-    console.log("req.file", req.file);
-
-    //if (req.session[user_id] || true) {
+ 
+    if (req.session[user_id] || true) {
         //로그인 되어 있는 상태
         console.log("로그인 되어 있는 상태");
         const result = await updateUserData(user_id, userData, req.file);
 
         res.status(200).json(result);
-    // } else {
-    //     res.status(500).json({"message" : "로그인 해와라"})
-    // }
+    } else {
+        res.status(500).json({"message" : "로그인 해와라"})
+    }
 }
 
 export const follower = async (req, res, next) => {
@@ -239,3 +253,40 @@ export const scrap = async(req, res, next) => {
     
     res.status(200).json(scrapListDTO);
 }
+
+export const userLikeSentiment = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const sentimentId = req.params.sentimentId;
+        const result = await likeSentimentUser(userId, sentimentId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userLikeSentiment:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
+
+export const userLikeCommment = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const commentId = req.params.commentId;
+        const result = await likeCommentUser(userId, commentId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userLikeCommment:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
+
+export const userScrapSentiment = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const sentimentId = req.params.sentimentId;
+        const result = await scrapSentimentUser(userId, sentimentId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in userScrapSentiment:', error);
+        return res.status(StatusCodes.OK).json({message: error.data.message});
+    }
+}
+

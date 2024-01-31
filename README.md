@@ -1,15 +1,22 @@
 # BooksentimentLeague-BackEnd
 BooksentimentLeague-BackEnd
 
-<인증번호 관련 기능 구현>
-1. 회원가입, 비밀번호 찾기, 비밀번호 변경 경로 통일 (/users/auth)
-- 인증번호 전송 (O)
-- 인증번호 수신 (O)
-- 인증번호 같은지 확인 (~ing)
+1. 팔로우하기 API
+: /users/{user-id}/follow
+- 팔로우되지 않은 상태라면 -> "팔로우" 수행 -> follow_status : "follow" 반환
+- 이미 팔로우 된 상태라면 -> "언팔로우" 수행 -> follow_status : "following" 반환
 
-redis 구현 어려움 -> 일단 그냥 DB로 구현
+2. 추천하기(센티멘트) API
+: /users/{user-id}/like/sentiment/{sentiment-id}
+- 본인 센티멘트는 추천할 수 없도록 함
+- 이미 추천된 센티멘트는 like 값을 0으로 업데이트
 
-<코드 수정 필요>
-1. DB 확인
-2. 경로 수정
-3. 다른 이메일 가능하게 수정
+3. 추천하기(댓글) API
+: /users/{user-id}/like/comment/{comment-id}
+- 본인 댓글은 추천할 수 없도록 함
+- 이미 추천된 댓글은 like 값을 0으로 업데이트
+
+4. 스크랩하기 API
+: /users/{user-id}/scrap/{sentiment-id}
+- 본인 센티멘트는 추천할 수 없도록 함
+- 이미 스크랩한 센티멘트는 scrap 값을 0으로 업데이트
