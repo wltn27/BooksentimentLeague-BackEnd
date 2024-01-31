@@ -31,7 +31,7 @@ export const getLikeCount = "SELECT COUNT(*) as like_num FROM user_sentiment WHE
 export const getScrapCount = "SELECT COUNT(*) as scrap_num FROM user_sentiment WHERE sentiment_id IN (select sentiment_id from sentiment where user_id = ? AND season = ?) AND scrap = 1;"
 
 // 마이페이지 프로필 사진, 상태 메시지 변경
-export const updateUserData = "UPDATE user set status_message = ?, profile_image = ? WHERE user_id = ?;"
+export const updateUserData = "UPDATE user set ?, ? WHERE user_id = ?;"
 
 // 팔로워 리스트 조회, 최대 10명 제한
 export const getFollower = "SELECT user_id, profile_image, status_message, nickname FROM user WHERE user_id IN (select follower_id from follow where following_id = ?) limit 10;"

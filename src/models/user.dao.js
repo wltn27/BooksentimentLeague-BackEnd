@@ -3,7 +3,7 @@
 import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData, changeUserPassword, getUserId, getUserFromEmail, getUserTier,
+import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData, changeUserPassword, getUserId, getUserFromEmail, getUserTier, updateUserData,
     getFollowerCount, getFollowingCount, getSentimentCount, getLikeCount, getScrapCount, getFollower, getFollowingStatus, getFollowing, getFollowerStatus, getSentiment,
     getScrap, getSentimentCommentCount, getSentimentLikeCount, getSentimentScrapCount } from "./../models/user.sql.js";
 
@@ -161,12 +161,13 @@ export const getMyPage = async(user_id) => {
 }
 
 // 마이 페이지 정보 수정하기
-export const changeUserInfo = async(user_id, userData) => {
+export const changeUserInfo = async(user_id, userData, image_path) => {
     try{
         const conn = await pool.getConnection();
-        await pool.query(updateUserData, [userData.status_message, userData.profile_image, user_id]);
         
-        const [user] = await pool.query(updateUserData, [userData.status_message, userData.profile_image, user_id]);
+        const [user] = await pool.query(updateUserData, [{'status_message': userData.status_message}, {'profile_image': image_path}, user_id]);
+
+        console.log(user);
 
         if(user.changedRows != 1){              // 마이페이지 유저 정보가 바뀌지 않았다면
             return false;

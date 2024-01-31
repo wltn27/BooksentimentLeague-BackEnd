@@ -110,9 +110,10 @@ export const sendEmail = async (to, subject, text) => {
     }
 };
 
-export const updateUserData = async (user_id, userData) => {
-    if(! await changeUserInfo(user_id, userData)){
+export const updateUserData = async (user_id, userData, file) => {
+    console.log(file);
+    if(! await changeUserInfo(user_id, userData, file.location)){
         throw new BaseError(status.INTERNAL_SERVER_ERROR);
     }
-    return // 성공했다는 json 반환
+    return {}
 };

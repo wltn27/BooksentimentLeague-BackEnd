@@ -2,6 +2,7 @@
 
 import express from "express";
 import asyncHandler from 'express-async-handler';
+import { upload } from '../middleware/imageUploader.js';
 
 import { userSignin, checkEmail, checkNick, userLogin, sendEmailVerification, userFindPass, userChangePass, refreshToken, userLogout, myPage, updateMyPage, sentiment, scrap, follower, following} from "../controllers/user.controller.js";
 
@@ -17,10 +18,9 @@ userRouter.post('/findpass', asyncHandler(userFindPass));
 userRouter.post('/changepass', asyncHandler(userChangePass));
 
 userRouter.get('/refreshtoken', asyncHandler(refreshToken));
-
 userRouter.get('/mypage', asyncHandler(myPage));
 
-userRouter.patch('/mypage', asyncHandler(updateMyPage));
+userRouter.patch('/mypage', upload.single('Img_file'), asyncHandler(updateMyPage));
 userRouter.get('/sentiment', asyncHandler(sentiment));
 userRouter.get('/scrap', asyncHandler(scrap));
 userRouter.get('/follower', asyncHandler(follower));
