@@ -148,7 +148,8 @@ export const userLogout = async (req, res, next) => {
         res.status(200).json("Logout Success");
     } catch (err){
         res.status(500).json(err);
-      
+    }
+}
 export const userFollow = async (req, res, next) => {
     try {
         const followingId = req.body.followingId;
