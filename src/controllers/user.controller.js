@@ -196,3 +196,4 @@ export const userScrapSentiment = async (req, res, next) => {
         return res.status(StatusCodes.OK).json({message: error.data.message});
     }
 }
+
