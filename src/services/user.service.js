@@ -1,8 +1,12 @@
-import { config } from '../../config/db.config.js';
+import { transporter, config } from '../../config/mail.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO, ScrapSentimentResponseDTO} from "./../dtos/user.response.dto.js"
-import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserSentimentLikeStatus, unlikeComment, likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus} from "../models/user.dao.js";
+import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, changeUserInfo} from "../models/user.dao.js";
+import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, 
+    followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO, ScrapSentimentResponseDTO} from "./../dtos/user.response.dto.js"
+import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, 
+    updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserSentimentLikeStatus, unlikeComment, 
+    likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus} from "../models/user.dao.js";
 import nodemailer from 'nodemailer';
 import Redis from 'redis';
 
@@ -69,7 +73,7 @@ export const findUser = async (email, verificationCode) => {
 }
 
 export const changeUser = async (password, userId) => {
-    if(await updateUserPassword(password, userId)){
+    if(!await updateUserPassword(password, userId)){
         throw new BaseError(status.INTERNAL_SERVER_ERROR);
     }
     return // 성공했다는 json 반환
@@ -111,6 +115,13 @@ export const sendEmail = async (to, subject, text) => {
     }
 };
 
+export const updateUserData = async (user_id, userData, file) => {
+    console.log(file);
+    if(! await changeUserInfo(user_id, userData, file.location)){
+        throw new BaseError(status.INTERNAL_SERVER_ERROR);
+    }
+    return {}
+};
 const transporter = nodemailer.createTransport({
     host: config.emailHost,
     port: config.emailPort,

@@ -1,0 +1,308 @@
+# sentiment.swagger.yaml
+/sentiments/{userId}/write:
+  post:
+    tags: 
+      - Sentiment
+    summary: 센티멘트 작성
+    consumes:
+        - multipart/form-data  # 문서 타입 지정
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+      - name: sentiment_title
+        in: formData  # 또는 in: query, in: formData 등 요청의 위치에 따라 지정
+        required: true
+        schema:
+          type: string
+          example: "플러터 프로그래밍 책 후기"
+      - name: book_title
+        in: formData
+        required: true
+        schema:
+          type: string
+          example: "Must Have 코드팩토리의 플러터 프로그래밍"
+      - name: score
+        in: formData
+        required: true
+        schema:
+          type: number
+          example: 3.5
+      - name: content
+        in: formData
+        required: true
+        schema:
+          type: string
+          example: "~책을 읽고 ~ 했다."
+      - name: Img_file
+        in: formData
+        required: true
+        type: file
+         
+      - name: book_image
+        in: formData
+        required: true
+        schema:
+          type: string
+          example: "https://shopping-phinf.pstatic.net/main_3250586/32505863065.20220521142511.jpg"
+
+    responses:
+      '200':
+        description: 센티멘트 작성 성공!
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            isSuccess:
+              type: boolean
+              example: true
+            code:
+              type: integer
+              example: 2000
+            message:
+              type: string
+              example: "success!"
+            data:
+              type: object
+              example: 
+                nickname: "string"
+                created_at: "2023-12-18 12:34"
+                sentiment_title: "플러터 프로그래밍 책 후기"
+                book_title: "Must Have 코드팩토리의 플러터 프로그래밍"
+                score: 3.5
+                content: "본문 내용"
+                image_path: "url~~"
+                book_image: "https://shopping-phinf.pstatic.net/main_3250586/32505863065.20220521142511.jpg"
+      '400':
+        description: 잘못된 요청
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 400
+            isSuccess:
+              type: boolean
+              example: false
+            code:
+              type: integer
+              example: COMMON001
+            message:
+              type: string
+              example: 잘못된 요청입니다
+      '500':
+        description: 서버 에러
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 500
+            isSuccess:
+              type: boolean
+              example: false
+            code:
+              type: integer
+              example: COMMON000
+            message:
+              type: string
+              example: 서버 에러, 관리자에게 문의 바랍니다.
+
+
+/sentiments/{userId}/rewrite/{sentimentId}:
+  patch:
+    tags: 
+      - Sentiment
+    summary: 센티멘트 수정
+    parameters:
+      - name: sentimentId
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+      - name: sentiment_title
+        in: formData  # 또는 in: query, in: formData 등 요청의 위치에 따라 지정
+        required: true
+        schema:
+          type: string
+          example: "플러터 프로그래밍 책 후기"
+      - name: book_title
+        in: formData
+        required: true
+        schema:
+          type: string
+          example: "Must Have 코드팩토리의 플러터 프로그래밍"
+      - name: score
+        in: formData
+        required: true
+        schema:
+          type: number
+          example: 3.5
+      - name: content
+        in: formData
+        required: true
+        schema:
+          type: string
+          example: "~책을 읽고 ~ 했다."
+      - name: Img_file
+        in: formData
+        required: true
+        type: file
+      - name: image
+        in: formData
+        required: false
+        type: array 
+        example: "https://booksentimentleague-s3.s3.ap-northeast-2.amazonaws.com/sentiment/1706200827577_IMG_0734.png"
+  
+    responses:
+      '200':
+        description: 센티멘트 수정 성공!
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            isSuccess:
+              type: boolean
+              example: true
+            code:
+              type: integer
+              example: 2000
+            message:
+              type: string
+              example: "success!"
+            data:
+              type: object
+              example: 
+                nickname: "string"
+                created_at: "2023-12-18 12:34"
+                sentiment_title: "플러터 프로그래밍 책 후기"
+                book_title: "Must Have 코드팩토리의 플러터 프로그래밍"
+                score: 3.5
+                content: "본문 내용"
+                image_path: "url~~"
+                book_image: "https://shopping-phinf.pstatic.net/main_3250586/32505863065.20220521142511.jpg"
+                
+      '400':
+        description: 잘못된 요청
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 400
+            isSuccess:
+              type: boolean
+              example: false
+            code:
+              type: integer
+              example: COMMON001
+            message:
+              type: string
+              example: 잘못된 요청입니다
+
+      '500':
+        description: 서버 에러
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 500
+            isSuccess:
+              type: boolean
+              example: false
+            code:
+              type: integer
+              example: COMMON000
+            message:
+              type: string
+              example: 서버 에러, 관리자에게 문의 바랍니다.
+
+/sentiments/{userId}/delete/{sentimentId}:
+  delete:
+    tags: 
+      - Sentiment
+    summary: 센티멘트 삭제
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+      - name: sentimentId
+        in: path
+        required: true
+        schema:
+          properties:
+            sentimentId:
+              type: integer
+              example: 1
+
+    responses:
+      '200':
+        description: 센티멘트 삭제 성공!
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            isSuccess:
+              type: boolean
+              example: true
+            code:
+              type: integer
+              example: 2000
+            message:
+              type: string
+              example: "success!"
+            data:
+              type: object
+              example: 
+                sentiment_id: "1"
+                message: "성공적으로 삭제하였습니다,"
+                
+      '400':
+        description: 잘못된 요청
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 400
+            isSuccess:
+              type: boolean
+              example: false
+            code:
+              type: integer
+              example: COMMON001
+            message:
+              type: string
+              example: 잘못된 요청입니다
+
+      '500':
+        description: 서버 에러
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 500
+            isSuccess:
+              type: boolean
+              example: false
+            code:
+              type: integer
+              example: COMMON000
+            message:
+              type: string
+              example: 서버 에러, 관리자에게 문의 바랍니다.
