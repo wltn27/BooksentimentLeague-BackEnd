@@ -1,7 +1,7 @@
 import { transporter, config } from '../../config/mail.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, changeUserInfo} from "../models/user.dao.js";
+import { changeUserInfo } from "../models/user.dao.js";
 import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, 
     followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO, ScrapSentimentResponseDTO} from "./../dtos/user.response.dto.js"
 import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, 
@@ -122,15 +122,6 @@ export const updateUserData = async (user_id, userData, file) => {
     }
     return {}
 };
-const transporter = nodemailer.createTransport({
-    host: config.emailHost,
-    port: config.emailPort,
-    secure: false, // 추후 보안 설정 필요
-    auth: {
-      user: config.emailUser,
-      pass: config.emailPass,
-    },
-});
 
 export const followUser = async (followingId, userId) => {
     try {

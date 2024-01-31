@@ -1,8 +1,8 @@
 import { userRouter } from './src/routes/user.route.js';
 import { sentimentRouter } from './src/routes/sentiment.route.js';
-import { searchRouter } from './src/routes/search.route.js';
+/* import { searchRouter } from './src/routes/search.route.js';
 import { rankRouter } from './src/routes/rank.route.js';
-
+*/
 
 import { specs } from './config/swagger.config.js';
 import { status } from './config/response.status.js';
