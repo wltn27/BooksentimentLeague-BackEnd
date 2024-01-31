@@ -12,4 +12,4 @@ JOIN user_follow uf ON s.user_id = uf.following_user_id
 JOIN user u ON s.user_id = u.user_id
 WHERE uf.user_id = ?
 ORDER BY s.created_at DESC;
-`;
+`;//해당 유저가 팔로우 하는 사람의 센티멘트를 생성순으로 정렬
