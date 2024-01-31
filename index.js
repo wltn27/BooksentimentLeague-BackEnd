@@ -1,11 +1,10 @@
 import { userRouter } from './src/routes/user.route.js';
-import { sentimentRouter } from './src/routes/sentiment.route.js';
-//import { rankRouter } from './src/routes/ranks.route.js';
-
+import { rankRouter, rankSearchRouter } from './src/routes/rank.route.js';
+import { followSentimentRouter } from './src/routes/followSentiment.route.js';
 import { sentimentListRouter } from './src/routes/sentimentList.route.js';
 import { sentimentPostRouter } from './src/routes/sentimentList.route.js';
 import { searchRouter } from './src/routes/search.route.js';
-import { bookSearchRouter } from './src/routes/bookSearch.route.js';
+//import { bookSearchRouter } from './src/routes/bookSearch.route.js';
 import { specs } from './config/swagger.config.js';
 import { status } from './config/response.status.js';
 import { response } from './config/response.js';
@@ -16,7 +15,7 @@ import express from 'express';
 import cors from 'cors';
 
 dotenv.config();    // .env 파일 사용 (환경 변수 관리)
-
+   
 const app = express();
 
 // server setting - veiw, static, body-parser etc..
@@ -34,12 +33,15 @@ app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 app.use('/users', userRouter);
 app.use('/users/:userId', userRouter);
 app.use('/search', searchRouter);
-app.use('/bookSearch', bookSearchRouter);
+//app.use('/bookSearch', bookSearchRouter);
 app.use('/sentimentList', sentimentListRouter);
-app.use('/sentimentPost', sentimentPostouter);
+app.use('/sentimentPost', sentimentPostRouter);
+app.use('/followSentiment', followSentimentRouter);
+app.use('/rank', rankRouter);
+app.use('/rankSearch', rankSearchRouter);
 // app.use('/sentiments', sentimentRouter);
 // app.use('/sentiments/:sentimentId', sentimentRouter);
-//app.use('/ranks/', rankRouter);
+app.use('/ranks/', rankRouter);
 
 
 app.get('/', (req, res, next) => {

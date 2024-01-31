@@ -2,21 +2,21 @@ import { pool } from "../../config/db.config.js";
 
 
 
-
-export const getSentimentsBySentimentIdSortedByRecommend = async (SentimentId, page) => {
+// 센티멘트 조회
+export const getSentimentsBySentimentIdSortedByRecommend = async (sentimentId, page) => {
     const offset = (page - 1) * pageSize;
     const query = `
       SELECT *
       FROM user_sentiments
       WHERE SentimentId = ?
-      ORDER BY like DESC
+      ORDER BY created_at like DESC
       LIMIT ? 10;
     `;
   
-    const [rows] = await pool.query(query, [SentimentId, offset, pageSize]);
+    const [rows] = await pool.query(query, [sentimentId, offset, pageSize]);
     return rows;
   };
-
+// 해당 센티멘트 게시글 조회
   export const getSentimentsBySentimentId = async (sentimentId) => {
     const query = `
       SELECT *
@@ -24,6 +24,6 @@ export const getSentimentsBySentimentIdSortedByRecommend = async (SentimentId, p
       WHERE sentimentId = 1?;
     `;
 
-    const [rows] = await pool.query(query, [SentimentId]);
+    const [rows] = await pool.query(query, [sentimentId]);
     return rows;
 };

@@ -7,8 +7,8 @@ export const pool = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',  // mysql�� hostname
     user: process.env.DB_USER || 'root',  // user �̸�
     port: process.env.DB_PORT || 3306,  // ��Ʈ ��ȣ
-    database: process.env.DB_TABLE || 'umc_wb',  // �����ͺ��̽� �̸�
-    password: process.env.DB_PASSWORD || 'password',  // ��й�ȣ
+    database: process.env.DB_TABLE || 'test_db',  // �����ͺ��̽� �̸�
+    password: process.env.DB_PASSWORD || '',  // ��й�ȣ
     waitForConnections: true,
 		// Pool�� ȹ���� �� �ִ� connection�� ���� ��,
 		// true�� ��û�� queue�� �ְ� connection�� ����� �� �ְ� �Ǹ� ��û�� �����ϸ�, false�̸� ��� ������ �������� �ٽ� ��û
