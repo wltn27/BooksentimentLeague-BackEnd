@@ -18,3 +18,27 @@ export const updateSentimentSql = "UPDATE sentiment SET sentiment_title= ? ,book
 export const insertImageSql = "INSERT INTO image ( sentiment_id, image ) VALUES ( ?, ?);";
 export const deleteImageSql = "DELETE FROM image WHERE sentiment_id = ?;";
 export const modifyImageSql = "DELETE FROM image WHERE image = ?;";
+
+// 작성한 댓글을 DB에 삽입
+export const insertCommentQuery = `
+    INSERT INTO comment (user_id, sentiment_id, parent_id, content, created_at, updated_at)
+    VALUES (?, ?, ?, ?, NOW(), NOW());
+`;
+
+// 방금 작성한 댓글에 대한 정보 검색
+export const selectInsertedCommentQuery = `
+    SELECT u.nickname, t.tier, c.created_at, u.profile_image, c.content,
+           (SELECT COUNT(*) FROM user_comment WHERE comment_id = LAST_INSERT_ID() AND \`like\` = 1) as like_num,
+           c.parent_id, c.comment_id
+    FROM comment c
+    JOIN user u ON c.user_id = u.user_id
+    LEFT JOIN user_tier ut ON u.user_id = ut.user_id
+    LEFT JOIN tier t ON ut.tier_id = t.tier_id
+    WHERE c.comment_id = LAST_INSERT_ID();
+`;
+
+// 댓글 존재 확인
+export const findCommentByIdQuery = "SELECT * FROM comment WHERE comment_id = ?;";
+
+// 댓글 삭제
+export const deleteCommentQuery = "DELETE FROM comment WHERE comment_id = ?;";
