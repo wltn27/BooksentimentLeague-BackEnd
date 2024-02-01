@@ -8,7 +8,10 @@ import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFro
     updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserSentimentLikeStatus, unlikeComment, 
     likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus} from "../models/user.dao.js";
 import nodemailer from 'nodemailer';
-import Redis from 'redis';
+import { createClient } from 'redis';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const joinUser = async (body) => {
    
@@ -23,7 +26,7 @@ export const joinUser = async (body) => {
         'email' : body.email,
         'password' : body.password,
         'nickname' : body.nickname
-     })
+    })
 
     return signinResponseDTO(await getUser(joinUserId));
 }
@@ -61,7 +64,14 @@ export const findUser = async (email, verificationCode) => {
     if(await existEmail(email))
         throw new BaseError(status.EMAIL_NOT_EXIST);
 
-    const client = Redis.createClient();
+        const client = createClient({
+            password: process.env.REDIS_PASSWORD,
+            socket: {
+                host: process.env.REDIS_HOST,
+                port: process.env.REDIS_PORT
+            }
+        });    
+
     await client.connect();
 
     if(verificationCode != await client.get(email)){
@@ -81,7 +91,13 @@ export const changeUser = async (password, userId) => {
 
 export const saveVerificationCode = async (email, verificationCode) => {
     try{
-        const client = Redis.createClient();
+        const client = createClient({
+            password: process.env.REDIS_PASSWORD,
+            socket: {
+                host: process.env.REDIS_HOST,
+                port: process.env.REDIS_PORT
+            }
+        });   
         console.log(`email: ${email}, verificationCode: ${verificationCode}`);
         await client.connect();
         await client.setEx(`${email}`, 300, `${verificationCode}`, (err, result) => {
