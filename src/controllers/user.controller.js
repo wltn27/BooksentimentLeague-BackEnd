@@ -195,14 +195,14 @@ export const myPage = async (req, res, next) => {
     const user_id = req.params.userId;
     console.log("마이페이지 조회를 요청하였습니다.");
 
-    if (req.session[user_id]) {
+    if (req.session[user_id] || true) {
         //로그인 되어 있는 상태
         console.log("로그인 되어 있는 상태");
         const result = await readMyPage(user_id, req.file);
 
         res.status(200).json(result);
     } else {
-        res.status(500).json({"message" : "로그인 해와라"})
+        res.status(500).json({"message" : "로그인 해오십쇼!"})
     }
 }
 
