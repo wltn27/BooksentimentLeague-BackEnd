@@ -1,21 +1,5 @@
 // sentiment.dto.js
 
-
-// 센티멘트 작성 DTO
-/* export const wrSentimentDTO = (data) => {
-    return { 
-        "nickname" : data.nickname,
-        "created_at" : data.created_at,
-        "sentiment_title" : data.sentiment_title,
-        "book_title" : data.book_image,
-        "score" : data.score,
-        "content" : data.content,
-        "image_path": data.image_path,
-        "book_image": data.book_image
-    };
-}
-*/
-
 // sentiment DTO
 export const sentimentDTO = (data) => {
     return {
@@ -33,7 +17,6 @@ export const sentimentDTO = (data) => {
     };
 };
 
-
 // 댓글 DTO
 export const commentDTO = (data) => {
     return {
@@ -46,10 +29,10 @@ export const commentDTO = (data) => {
 
 // alarm DTO
 export const alarmDTO = (data) => {
-    return {
-        "title": data[0].title,
-        "content": data[0].content,
-        "read_at" : data[0].read_at,
-        "created_at": data[0].created_at,
-    };
+    return data.map(item => ({
+        "title": item.title,
+        "content": item.content,
+        "read_at": item.read_at,
+        "created_at": item.created_at,
+    }));
 };

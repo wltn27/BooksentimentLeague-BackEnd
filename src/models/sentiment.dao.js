@@ -3,8 +3,9 @@ import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
-import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getNickname } from "./sentiment.sql.js";
-import { updateSentimentSql, deleteSentimentSql } from "./sentiment.sql.js";
+import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getNickname, insertUserSentiment } from "./sentiment.sql.js";
+import { getSentimentId } from "./sentiment.sql.js";
+import { updateSentimentSql, deleteSentimentSql, deleteUserSentimentSql } from "./sentiment.sql.js";
 import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js";
 import { modifyImageSql } from "./sentiment.sql.js";
 import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
@@ -38,25 +39,6 @@ export const addSentiment = async (userId, data) => {
             throw new BaseError(status.SENTIMENT_ALREADY_EXIST);
         }
 
-        /*
-        try {
-            const result = await pool.query(insertSentimentSql, [
-                userId,
-                data.sentiment_title,
-                data.book_title,
-                parseFloat(data.score),
-                data.content,
-                data.book_image,
-                data.season,
-                currentDate
-            ]);
-        
-            console.log('Query Result:', result);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-        */
-
         const result = await pool.query(insertSentimentSql, [
             userId,
             data.sentiment_title,
@@ -69,11 +51,17 @@ export const addSentiment = async (userId, data) => {
             data.season,
             newDate
         ]);
-        //const result = await pool.query(insertSentimentSql,[data.sentiment_title, data.book_title, parseFloat(data.score), data.content, data.book_image, data.season, currentDate]);
-        //console.log("Result of Insert Query:", result); // 추가한 로그
-        
 
-        // If image data is available, insert it into the image table
+        // user_sentiment 테이블 동기화
+        const [sentimentIdResult] = await pool.query(getSentimentId);
+        //console.log('sentimentIdResult: ', sentimentIdResult);
+        const sentimentId = sentimentIdResult[0].lastId;
+        //console.log('sentimentId: ',sentimentId);
+        const [insertResult] = await pool.query(insertUserSentiment, [userId, sentimentId]);
+        //console.log('insertResult: ',insertResult);        
+
+
+        // 이미지가 있다면 DB에 삽입
         if (data.image) {
             console.log('data.image : ', data.image);
             // 각 이미지 URL에 대해 반복
@@ -81,6 +69,69 @@ export const addSentiment = async (userId, data) => {
                 const imageResult = await pool.query(insertImageSql, [result[0].insertId, imageUrl]);
                 console.log("Result of Image Insert Query:", imageResult);
             }
+        }
+
+        // 티어 체크
+        const [sentimentResult] = await pool.query(totalSentiment, userId);
+        console.log('sentimentResult: ', sentimentResult);
+        const sentimentCount = sentimentResult.length;
+        console.log('sentimentCount: ', sentimentCount);
+
+        const [recommendResult] = await pool.query(totalRecommend, [userId]);
+        console.log('recommendResult: ', recommendResult);
+        const recommendCount = recommendResult[0].totalLikes;
+        console.log('recommendCount: ', recommendCount);
+
+        if (recommendCount < 30) { // 추천수 0~29개
+            if (sentimentCount === 0) { // 루키
+                // 사용자-티어 테이블 데이터 삽입
+                const [tierResult] = await pool.query(makeTier, [userId, 1]);
+                console.log('tierResult: ', tierResult);
+                return tierResult[0].inserId;
+
+            } else if (sentimentCount < 5) { // 실버
+                // 사용자-티어 테이블 데이터 업데이트
+                const [tierResult] = await pool.query(updateTier, [2, userId]);
+                console.log('tierResult: ', tierResult);
+                return tierResult[0].inserId;
+            }
+
+        } else if (recommendCount < 100) { // 추천수 30~99개
+            if (sentimentCount <10 ) { // 골드
+
+            } else if ( sentimentCount < 30) { // 다이아
+
+            }
+            
+
+        } else if (recommendCount < 300 ) { // 추천수 100~299개
+            // 사용자-티어 테이블 데이터 업데이트
+            const [tierResult] = await pool.query(getTier, [userId]); // 티어 정보 가져오기
+            const [upgradeTier] = await pool.query(updateTier, [3, userId]);
+            const tier = tierResult[0].tier; // 티어 데이터
+            const createdAt = new Date(); // 생성날짜
+            console.log('tierResult: ', tierResult);
+            // DB에 알람 데이터 삽입
+            const [alarmResult] = await pool.query(tierAlarm, [userId, '제목', '내용', createdAt]);
+            return tierResult[0].inserId;
+
+        } else if (sentimentCount < 30 && recommendCount >= 100) {// 추천수 300~499개
+            // 사용자-티어 테이블 데이터 업데이트
+            const [tierResult] = await pool.query(updateTier, [4, userId]);
+            console.log('tierResult: ', tierResult);
+            return tierResult[0].inserId;
+
+        } else if (sentimentCount < 50 && recommendCount >= 300) {// 마스터
+            // 사용자-티어 테이블 데이터 업데이트
+            const [tierResult] = await pool.query(updateTier, [5, userId]);
+            console.log('tierResult: ', tierResult);
+            return tierResult[0].inserId;
+
+        } else if (sentimentCount >= 50 && recommendCount >= 500) {// 그랜드 마스터
+            // 사용자-티어 테이블 데이터 업데이트
+            const [tierResult] = await pool.query(updateTier, [6, userId]);
+            console.log('tierResult: ', tierResult);
+            return tierResult[0].inserId;
         }
 
         conn.release();
@@ -108,7 +159,7 @@ export const getSentiment = async (sentimentID) => {
         const nickname = nicknameResult[0].nickname;
         const [imageResult] = await pool.query(getImageSql, [sentimentID]);
         console.log('imageResult : ', imageResult);
-        if (imageResult.length > 0  && imageResult[0].image !== '' ) {
+        if (imageResult.length > 0 && imageResult[0].image !== '') {
             const imagePaths = imageResult.map(result => result.image);
             sentiment[0].image_path = imagePaths;
         } else {
@@ -177,9 +228,9 @@ export const eliminateSentiment = async (sentimentID) => {
                 const s3Url = imageInfo.image;
                 console.log("s3Url: ", s3Url);
 
-                if (!s3Url|| !isValidUrl(s3Url)) {
+                if (!s3Url || !isValidUrl(s3Url)) {
                     console.error('s3ObjectUrl is undefined or empty.');
-                    continue; 
+                    continue;
                 } else {
                     // URL에서 객체 키 추출
                     const key = new URL(s3Url).pathname.slice(1);
@@ -201,9 +252,11 @@ export const eliminateSentiment = async (sentimentID) => {
             }
         }
         // 삭제 SQL 실행
-        const [result] = await conn.query(deleteSentimentSql, [sentimentID]);
-
-        console.log('result:', result);
+        const [result2] = await pool.query(deleteUserSentimentSql, [sentimentID]);
+        const [result] = await pool.query(deleteSentimentSql, [sentimentID]);
+        
+        //console.log('result:', result);
+        //console.log('result2:', result2);
 
         // 삭제된 행이 없는 경우 에러 처리
         if (result.affectedRows === 0) {
@@ -286,60 +339,52 @@ export const modifyImage = async (sentimentId, body, files) => {
     }
 }
 
-import { totalSentiment, totalRecommend } from "./alarm.sql.js";
-import { makeTier, updateTier } from "./alarm.sql.js";
-import { tierAlarm } from "./alarm.sql.js";
+// -----------------------------------------
+import { totalSentiment, totalRecommend } from "./sentiment.sql.js";
+import { makeTier, updateTier } from "./sentiment.sql.js";
+import { tierAlarm } from "./sentiment.sql.js";
+import { getAlarmInfo, alarmStatus, getAlarmStatus } from "./sentiment.sql.js";
 
 
-// 티어 체크 
-export const checkTier = async (userId) => {
-    try {
-        const conn = await pool.getConnection();
-        const [sentimentResult] = await pool.query(totalSentiment, userId);
-        const sentimentCount = sentimentResult.length;
-
-        const [recommendResult] = await pool.query(totalRecommend, [userId]);
-        const recommendCount = recommendResult[0].totalLikes;
-
-        conn.release();
-
-        if (sentimentCount === 0 ) { // 0일 경우
-            // 사용자-티어 테이블 데이터 삽입
-            const [tierResult] = await pool.query(makeTier, [userId, 1]);
-            return tierResult[0].inserId;
-        } else if (sentimentCount === 1) {// 1일 경우
-            // 사용자-티어 테이블 데이터 업데이트
-            const [tierResult] = await pool.query(updateTier, [2, userId]);
-            return tierResult[0].inserId;
-        } else if (sentimentCount === 5 && recommendCount >= 30 ) {// 5일 경우
-            // 사용자-티어 테이블 데이터 업데이트
-            const [tierResult] = await pool.query(updateTier, [3, userId]);
-            return tierResult[0].inserId;
-        } else if (sentimentCount === 10 && recommendCount >= 100 ) {// 10일 경우
-            // 사용자-티어 테이블 데이터 업데이트
-            const [tierResult] = await pool.query(updateTier, [4, userId]);
-            return tierResult[0].inserId;
-        } else if (sentimentCount === 30 && recommendCount >= 300 ) {// 30일 경우
-            // 사용자-티어 테이블 데이터 업데이트
-            const [tierResult] = await pool.query(updateTier, [5, userId]);
-            return tierResult[0].inserId;
-        } else if (sentimentCount === 50 && recommendCount >= 500 ) {// 50일 경우
-            // 사용자-티어 테이블 데이터 업데이트
-            const [tierResult] = await pool.query(updateTier, [6, userId]);
-            return tierResult[0].inserId;
-        } 
-    } catch (err) {
-        console.log(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
-    }
-}
-
-// 티어 알람 생성
+// 티어 알람 생성 -> 티어가 상승하면 바로 
 export const makeTierAlarm = async (userId) => {
+    const conn = await pool.getConnection();
     const [tierResult] = await pool.query(getTier, [userId]); // 티어 정보 가져오기
     const tier = tierResult[0].tier; // 티어 데이터
     const createdAt = new Date(); // 생성날짜
 
     // DB에 알람 데이터 삽입
     const [alarmResult] = await pool.query(tierAlarm, [userId, '제목', '내용', createdAt]);
+}
+
+// 알람 조회
+export const getAlarmDao = async (userId) => {
+    try {
+        const conn = await pool.getConnection();
+        const [alarm] = await pool.query(getAlarmInfo, [userId]);
+
+        if (alarm.length == 0) {
+            return -1;
+        }
+
+        conn.release();
+        return alarm;
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
+// 알람 업데이트
+export const updateAlarmDao = async (alarmId) => {
+    try {
+        const conn = await pool.getConnection();
+        await pool.query(alarmStatus, [alarmId]);
+        const [readResult] = await pool.query(getAlarmStatus, [alarmId]);
+        conn.release();
+        return readResult[0].read_at;
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
 }

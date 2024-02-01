@@ -41,23 +41,20 @@ export const delSentiment = async (req, res, next ) => {
     res.send(response(status.SUCCESS, await deleteSentiment(req.params.sentimentId, req.file)));
 }
 
-
-import { getAlarmService } from "../services/alarm.service.js";
-import { updateAlarmService } from "../services/alarm.service.js";
-
+// -------------------------------------
+import { getAlarmService } from "../services/sentiment.service.js";
+import { updateAlarmService } from "../services/sentiment.service.js";
 
 // 알림 조회
 export const getAlarm = async (req, res, next ) => {
     console.log("알림 조회 요청");
-    console.log("body", req.body);
-    res.send(response(status.SUCCESS, await getAlarmService(req.params.userId, req.body)));
+    res.send(response(status.SUCCESS, await getAlarmService(req.params.userId)));
 }
 
 // 알림 상태 업데이트
 export const updateAlarm = async (req, res, next ) => {
     console.log("알림 상태 업데이트 요청");
-    console.log("body", req.body);
-    res.send(response(status.SUCCESS, await updateAlarmService(req.params.sentimentId, req.body)));
+    res.send(response(status.SUCCESS, await updateAlarmService(req.params.userId, req.params.alarmId)));
    
 }
 

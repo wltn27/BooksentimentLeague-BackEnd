@@ -16,12 +16,14 @@ sentimentRouter.patch('/:userId/rewrite/:sentimentId',upload.array('Img_file', 5
 // 센티멘트 삭제
 sentimentRouter.delete('/:userId/delete/:sentimentId', asyncHandler(delSentiment));
 
-import { getAlarm, updateAlarm } from "../controllers/alarm.controller.js";
+
+// ----------------
+import { getAlarm, updateAlarm } from "../controllers/sentiment.controller.js";
 
 export const alarmtRouter = express.Router({mergeParams: true});
 
 // 알림 조회
-alarmtRouter.get('/:userId/notifications', asyncHandler(getAlarm));
+alarmtRouter.get('/', asyncHandler(getAlarm));
 
 // 알림 상태 업데이트
-alarmtRouter.patch('/users/:userId/notifications/:alarmId', asyncHandler(updateAlarm));
+alarmtRouter.patch('/', asyncHandler(updateAlarm));
