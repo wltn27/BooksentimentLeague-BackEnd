@@ -41,7 +41,6 @@ export const userLogin = async (req, res, next) => {
     const loginUserData = await loginUser(logIn);
     
     try {
-        console.log(loginUserData);
         // access token 발급
         const accessToken = jwt.sign({
             user_id :  loginUserData.user_id,
@@ -51,7 +50,7 @@ export const userLogin = async (req, res, next) => {
             expiresIn : '1m',
             issuer : 'book_sentiment_league'
         })
-        console.log("accessToken");
+        
         // refresh token 발급
         const refreshToken = jwt.sign({
             user_id :  loginUserData.user_id,
@@ -61,7 +60,7 @@ export const userLogin = async (req, res, next) => {
             expiresIn : '24h',
             issuer : 'book_sentiment_league'
         })
-        console.log("refreshToken");
+        
         res.cookie("accessToken", accessToken, {
             secure : false,
             httpOnly : true,
@@ -71,7 +70,7 @@ export const userLogin = async (req, res, next) => {
             secure : false,
             httpOnly : true,
         })
-        console.log("res");
+    
         if (!req.session[loginUserData.user_id]) {
             // 세션 저장
             req.session[loginUserData.user_id] = {
@@ -79,8 +78,6 @@ export const userLogin = async (req, res, next) => {
                 isAuthenticated: true
             };
         }
-
-        console.log(req.session[loginUserData.user_id]);
 
         console.log("로그인에 성공하였습니다.");
         return res.status(StatusCodes.OK).json(loginUserData);
@@ -99,9 +96,9 @@ export const sendEmailVerification = async (req, res, next) => {
     try {
         await saveVerificationCode(email, verificationCode);      // redis에 코드 저장
         await sendEmail(email, 'Your Verification Code', `Your code is: ${verificationCode}`);
-        res.status(200).send('Verification email sent');
+        res.status(200).send({"messgae" : "메일로 인증번호를 전송하였습니다."});
     } catch (error) {
-        res.status(500).send('Error sending verification email');
+        res.status(500).send({"messgae" : "인증번호 전송에 실패하였습니다."});
     }
 };
 
@@ -146,10 +143,10 @@ export const refreshToken = async (req, res, next) => {
             httpOnly : true,
         })
 
-        res.status(StatusCodes.OK).json("Access Token Recreated");
+        res.status(StatusCodes.OK).json({"message" : "access token을 재 발행햇습니다."});
     } 
      catch (err) {
-         res.status(StatusCodes.BAD_GATEWAY).json(err);
+        res.status(StatusCodes.BAD_GATEWAY).json({"message" : "access token을 발행하지 못 했습니다."});
     }
 }
 
@@ -164,15 +161,14 @@ export const userLogout = async (req, res, next) => {
             
             req.session.destroy(function(err) {
                 if (err) {throw err;}
-                
                 console.log('세션을 삭제하고 로그아웃되었습니다.');
             });
         }
 
         res.cookie('accessToken', '');
-        res.status(200).json("Logout Success");
+        res.status(200).json({"message" : "로그아웃에 성공하였습니다."});
     } catch (err){
-        res.status(500).json(err);
+        res.status(500).json({"message" : "로그아웃에 실패하였습니다."});
     }
 }
 
@@ -195,9 +191,10 @@ export const myPage = async (req, res, next) => {
     if (req.session[user_id] || true) {
         //로그인 되어 있는 상태
         console.log("로그인 되어 있는 상태");
-        const result = await readMyPage(user_id, req.file);
+        const userData = await readMyPage(user_id);
+        const sentimentData = await readSentimentList(user_id, 3);
 
-        res.status(200).json(result);
+        res.status(200).json([userData, sentimentData]);
     } else {
         res.status(500).json({"message" : "로그인 해오십쇼!"})
     }
@@ -237,8 +234,9 @@ export const following = async (req, res, next) => {
 
 export const sentiment = async (req, res, next) => {
     const user_id = req.params.userId;
+    const cursorId = req.body.cursorId;
 
-    const sentimentListDTO = await readSentimentList(user_id);
+    const sentimentListDTO = await readSentimentList(user_id, 10, cursorId);
     
     res.status(200).json(sentimentListDTO);
 }

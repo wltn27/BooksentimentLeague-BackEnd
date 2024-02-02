@@ -32,6 +32,8 @@ export const getScrapCount = "SELECT COUNT(*) as scrap_num FROM user_sentiment W
 
 // 마이페이지 프로필 사진, 상태 메시지 변경
 export const updateUserData = "UPDATE user set ?, ? WHERE user_id = ?;"
+export const getImageSql  = "SELECT profile_image FROM user WHERE user_id = ?;"
+export const deleteImageSql = "DELETE FROM user WHERE user_id = ?;";
 
 // 팔로워 리스트 조회, 최대 10명 제한
 export const getFollower = "SELECT user_id, profile_image, status_message, nickname FROM user WHERE user_id IN (select follower_id from follow where following_id = ?) limit 10;"
@@ -71,7 +73,7 @@ WHERE follower_id IN (SELECT following_id FROM follow WHERE follower_id = ?)`
 
 // 유저 센티멘트 리스트 조회, 최대 10개 제한
 export const getSentiment = 
-`SELECT sentiment_id, book_image, sentiment_title, book_title, score, created_at FROM sentiment WHERE user_id = ? order by sentiment_id, created_at desc limit 10;`
+`SELECT sentiment_id, book_image, sentiment_title, book_title, score, created_at FROM sentiment WHERE user_id = ? order by sentiment_id, created_at desc limit ? offset ?;`
 
 // 유저 스크랩 리스트 조회, 최대 10개 제한
 export const getScrap = 

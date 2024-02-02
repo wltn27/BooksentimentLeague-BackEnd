@@ -339,6 +339,7 @@ export const createComment = async (sentimentId, userId, parent_id, content) => 
         
         return rows[0];
      } catch (err) {
+        console.log(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
      }
 };
