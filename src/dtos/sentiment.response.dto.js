@@ -10,3 +10,8 @@ export const WriteCommentResponseDTO = (nickname, tier, created_at, profile_imag
         "comment_id" : comment_id
     }
 }
+
+export const DeleteCommentResponseDTO = () => {
+    console.log("DeleteCommentResponseDTO clear");
+    return {"message" : "댓글이 삭제되었습니다"};
+}

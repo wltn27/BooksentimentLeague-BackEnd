@@ -17,3 +17,9 @@ export const selectInsertedCommentQuery = `
 export const findCommentByIdQuery = "SELECT * FROM comment WHERE comment_id = ?;";
 
 export const deleteCommentQuery = "DELETE FROM comment WHERE comment_id = ?;";
+
+// 댓글/대댓글 작성 알림
+export const insertAlarmQuery = `
+    INSERT INTO alarm (user_id, title, content, read_at, created_at)
+    VALUES (?, ?, ?, 0, NOW());
+`;

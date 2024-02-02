@@ -215,3 +215,18 @@ export const scrapSentimentUser = async (userId, sentimentId) => {
         throw error;
     }
 };
+
+import { updateAlarmDao } from "../models/user.dao.js";
+
+// 알림 상태 업데이트
+export const updateAlarmService = async (userId, alarmId) => {
+    try {
+      const readStatus = await updateAlarmDao(alarmId);
+      console.log('readStatus: ', readStatus);
+      return readStatus;
+  
+    } catch (err) {
+      console.error('Error:', err);
+      throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+  }

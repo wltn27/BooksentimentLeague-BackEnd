@@ -39,6 +39,16 @@ export const ScrapSentimentResponseDTO = (scrapStatus) => {
     return { "scrap_status": scrapStatus };
 }
 
+// alarm DTO
+export const alarmDTO = (data) => {
+    return data.map(item => ({
+        "title": item.title,
+        "content": item.content,
+        "read_at": item.read_at,
+        "created_at": item.created_at,
+    }));
+};
+
 // 성공 응답 DTO 
 export const successResponseDTO = (message, data = {}) => {
     return {
