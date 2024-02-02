@@ -2,7 +2,7 @@
 
 import express from "express";
 import asyncHandler from 'express-async-handler';
-import { upload } from '../middleware/imageUploader.js';
+import { profile_upload } from '../middleware/imageUploader.js';
 import { userSignin, checkEmail, checkNick, userLogin, sendEmailVerification, userFindPass, userChangePass, refreshToken, userLogout, myPage, 
         userFollow, userLikeSentiment, userLikeCommment, userScrapSentiment, updateMyPage, sentiment, scrap, follower, following,
         getAlarm, updateAlarm } from "../controllers/user.controller.js";
@@ -31,4 +31,4 @@ userRouter.get('/following', asyncHandler(following));
 userRouter.get('/notifications', asyncHandler(getAlarm));
 
 userRouter.patch('/notifications/:alarmId', asyncHandler(updateAlarm));
-userRouter.patch('/mypage', upload.single('Img_file'), asyncHandler(updateMyPage));
+userRouter.patch('/mypage', profile_upload.single('Img_file'), asyncHandler(updateMyPage));

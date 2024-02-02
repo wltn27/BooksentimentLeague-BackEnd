@@ -7,7 +7,9 @@ import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData,
     getFollowerCount, getFollowingCount, getSentimentCount, getLikeCount, getScrapCount, getFollower, getFollowingStatus, getFollowing, getFollowerStatus, getSentiment,
     getScrap, getSentimentCommentCount, getSentimentLikeCount, getSentimentScrapCount, insertFollow, confirmFollow, deleteFollow, likeSentimentQuery, unlikeSentimentQuery, 
     checkSentimentOwnerQuery, checkUserSentimentLikeStatusQuery, likeCommentQuery, unlikeCommentQuery, checkCommentOwnerQuery, checkUserCommentLikeStatusQuery, scrapSentimentQuery, 
-    unscrapSentimentQuery, checkUserSentimentScrapStatusQuery, getUserAlarmQuery } from "./../models/user.sql.js";
+    unscrapSentimentQuery, checkUserSentimentScrapStatusQuery, getAlarmInfo, alarmStatus, getAlarmStatus } from "./../models/user.sql.js";
+
+
 
 // DB에 유저 추가하기
 export const addUser = async (data) => {
@@ -431,43 +433,6 @@ export const checkUserSentimentScrapStatus = async (userId, sentimentId) => {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
-
-// // 알림 조회
-// export const getUserAlarm = async (userId) => {
-//     try {
-//         const conn = await pool.getConnection();
-//         const [alarmData] = await pool.query(getUserAlarmQuery, userId);
-//         console.log(alarmData);
-//         Object.assign(alarmData[0], { title: (await pool.query(getUserTier, user_id))[0][0].tier});
-//         Object.assign(alarmData[0], { content: (await pool.query(getFollowerCount, user_id))[0][0].follower_num });
-//         Object.assign(alarmData[0], { read_at: (await pool.query(getFollowingCount, user_id))[0][0].following_num });
-//         Object.assign(alarmData[0], { created_at: (await pool.query(getSentimentCount, [user_id, 1]))[0][0].sentiment_num });
-
-//         conn.release();
-//         return alarmData[0];
-//     } catch (err) {
-//         throw new BaseError(status.PARAMETER_IS_WRONG);
-//     }
-// }
-
-import { makeTier, updateTier } from "./user.sql.js";
-
-import { totalSentiment, totalRecommend } from "./user.sql.js";
-import { tierAlarm } from "./user.sql.js";
-import { getAlarmInfo, alarmStatus, getAlarmStatus } from "./user.sql.js";
-
-
-// 티어 알람 생성 -> 티어가 상승하면 바로 
-// export const makeTierAlarm = async (userId) => {
-//     const conn = await pool.getConnection();
-//     const [tierResult] = await pool.query(getTier, [userId]); // 티어 정보 가져오기
-//     const tier = tierResult[0].tier; // 티어 데이터
-//     const createdAt = new Date(); // 생성날짜
-
-//     // DB에 알람 데이터 삽입
-//     const [alarmResult] = await pool.query(tierAlarm, [userId, '제목', '내용', createdAt]);
-// }
-
 
 // 알람 조회
 export const getAlarmDao = async (userId) => {

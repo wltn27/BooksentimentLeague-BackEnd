@@ -1,20 +1,14 @@
 // sentiment.service.js
-import { config } from '../../config/db.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
-import { pool } from "../../config/db.config.js";
-//import session from 'express-session';
-//import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
 // import DTOs
-import { sentimentDTO } from "../dtos/sentiment.dto.js";
-import { WriteCommentResponseDTO, DeleteCommentResponseDTO } from "./../dtos/sentiment.response.dto.js"
+import { sentimentDTO, WriteCommentResponseDTO, DeleteCommentResponseDTO, commentDTO } from "./../dtos/sentiment.response.dto.js"
 
 // import DAOs
 import { addSentiment, getSentiment, modifyImage } from "../models/sentiment.dao.js";
 import { modifySentiment } from "../models/sentiment.dao.js";
 import { eliminateSentiment } from "../models/sentiment.dao.js";
-import { getUserId } from "../models/sentiment.sql.js";
 import { createComment, findCommentById, removeComment } from "../models/sentiment.dao.js";
 
 // 센티멘트 작성

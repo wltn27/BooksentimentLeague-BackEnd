@@ -1,17 +1,11 @@
 import { StatusCodes } from "http-status-codes";
-import { sendEmail } from '../services/user.service.js';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser } from './../services/user.service.js';
-import { getAlarmService } from "../providers/user.provider.js";
-import { updateAlarmService } from "../services/user.service.js";
-import { getUser } from "../models/user.dao.js";
-
 import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser, 
-        updateUserData} from './../services/user.service.js';
-import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList} from './../providers/user.provider.js';
-
+        updateUserData, sendEmail, updateAlarmService} from './../services/user.service.js';
+import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList, getAlarmService} from './../providers/user.provider.js';
 import { getUser } from "../models/user.dao.js";
+
 dotenv.config();
 
 export const userSignin = async (req, res, next) => {

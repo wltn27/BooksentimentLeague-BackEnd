@@ -45,6 +45,35 @@ const upload = multer({
     },
 });
 
+const profile_upload = multer({
+  storage: multerS3({
+      s3: new S3Client({
+        region: process.env.AWS_S3_REGION,
+        credentials: {
+            accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+            secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+        }
+      }),
+      bucket: process.env.AWS_S3_BUCKET_NAME,
+      acl: 'public-read-write',
+      key: function (req, file, cb) {
+        // 파일 이름 생성
+        const folderPath = 'profile/'; // 여기에 원하는 폴더 경로를 추가
+        //const fileName = `${folderPath}${Date.now()}_${file.originalname}`;
+        const fileName = `${folderPath}${uuid()}_${file.originalname}`;
+        cb(null, fileName);
+      },
+  }),
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB 제한
+  fileFilter: (req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase();
+      if (!allowedExtensions.includes(ext)) {
+          return cb(new Error('Invalid file type'));
+      }
+      cb(null, true);
+  },
+});
+
 /**
  * S3에서 이미지 삭제하는 함수
  * @param {string} key - 삭제할 이미지의 S3 키
@@ -79,4 +108,4 @@ const deleteImageFromS3 = async (key) => {
 };
 
 
-export { upload, deleteImageFromS3 };
+export { upload, profile_upload, deleteImageFromS3 };

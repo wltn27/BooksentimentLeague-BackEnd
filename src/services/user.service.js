@@ -7,7 +7,6 @@ import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginRe
 import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, 
     updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserSentimentLikeStatus, unlikeComment, 
     likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus} from "../models/user.dao.js";
-import nodemailer from 'nodemailer';
 import { createClient } from 'redis';
 import dotenv from 'dotenv';
 

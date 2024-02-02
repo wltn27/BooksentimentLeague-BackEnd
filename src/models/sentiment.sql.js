@@ -47,3 +47,14 @@ export const insertAlarmQuery = `
     INSERT INTO alarm (user_id, title, content, read_at, created_at)
     VALUES (?, ?, ?, 0, NOW());
 `;
+
+// 티어 상승 조건 조회
+export const totalSentiment = "SELECT * FROM sentiment WHERE user_id = ?;";
+export const totalRecommend = "SELECT SUM(`like`) as totalLikes FROM user_sentiment WHERE user_id = ?;";
+
+// 티어 생성 및 업데이트, 조회
+export const updateTier = "UPDATE user_tier SET tier_id = ? WHERE user_id = ?";
+export const getTierId = "SELECT tier_id AS currentTier FROM user_tier WHERE user_id='1';";
+
+// 티어 상승 알람 생성
+export const tierAlarm = "INSERT INTO alarm (user_id, title, content, read_at, created_at) VALUES (?, ?, ?, 0, ?);";
