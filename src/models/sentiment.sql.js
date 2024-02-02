@@ -1,6 +1,5 @@
 // sentiment.sql.js
 // 필요한 데이터를 쿼리(가공)하여 모듈 변수로 추출
-
 export const confirmSentiment = "SELECT EXISTS(SELECT 1 FROM sentiment WHERE user_id = ? AND book_title = ?) as isExistSentiment;";
 
 // 정보 불러오기
@@ -42,3 +41,9 @@ export const findCommentByIdQuery = "SELECT * FROM comment WHERE comment_id = ?;
 
 // 댓글 삭제
 export const deleteCommentQuery = "DELETE FROM comment WHERE comment_id = ?;";
+
+// 댓글/대댓글 작성 알림
+export const insertAlarmQuery = `
+    INSERT INTO alarm (user_id, title, content, read_at, created_at)
+    VALUES (?, ?, ?, 0, NOW());
+`;

@@ -4,7 +4,8 @@ import express from "express";
 import asyncHandler from 'express-async-handler';
 import { upload } from '../middleware/imageUploader.js';
 import { userSignin, checkEmail, checkNick, userLogin, sendEmailVerification, userFindPass, userChangePass, refreshToken, userLogout, myPage, 
-        userFollow, userLikeSentiment, userLikeCommment, userScrapSentiment, updateMyPage, sentiment, scrap, follower, following} from "../controllers/user.controller.js";
+        userFollow, userLikeSentiment, userLikeCommment, userScrapSentiment, updateMyPage, sentiment, scrap, follower, following,
+        getAlarm, updateAlarm } from "../controllers/user.controller.js";
 
 export const userRouter = express.Router({mergeParams: true});
 
@@ -23,9 +24,11 @@ userRouter.post('/scrap/:sentimentId', asyncHandler(userScrapSentiment));
 
 userRouter.get('/refreshtoken', asyncHandler(refreshToken));
 userRouter.get('/mypage', asyncHandler(myPage));
-
-userRouter.patch('/mypage', upload.single('Img_file'), asyncHandler(updateMyPage));
 userRouter.get('/sentiment', asyncHandler(sentiment));
 userRouter.get('/scrap', asyncHandler(scrap));
 userRouter.get('/follower', asyncHandler(follower));
 userRouter.get('/following', asyncHandler(following));
+userRouter.get('/notifications', asyncHandler(getAlarm));
+
+userRouter.patch('/notifications/:alarmId', asyncHandler(updateAlarm));
+userRouter.patch('/mypage', upload.single('Img_file'), asyncHandler(updateMyPage));

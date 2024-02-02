@@ -2,12 +2,13 @@
 import { config } from '../../config/db.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
+
 import { pool } from "../../config/db.config.js";
 //import session from 'express-session';
 //import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
 // import DTOs
 import { sentimentDTO } from "../dtos/sentiment.dto.js";
-import { WriteCommentResponseDTO } from "./../dtos/sentiment.response.dto.js"
+import { WriteCommentResponseDTO, DeleteCommentResponseDTO } from "./../dtos/sentiment.response.dto.js"
 
 // import DAOs
 import { addSentiment, getSentiment, modifyImage } from "../models/sentiment.dao.js";
@@ -127,6 +128,7 @@ export const deleteComment = async (commentId, userData) => {
         }
 
         await removeComment(commentId);
+        return DeleteCommentResponseDTO();
     } catch (error) {
         console.error('Error in deleteComment:', error);
         throw error;
