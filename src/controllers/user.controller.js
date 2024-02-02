@@ -1,15 +1,12 @@
 import { StatusCodes } from "http-status-codes";
-import { sendEmail } from '../services/user.service.js';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-
 import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser, 
-        updateUserData} from './../services/user.service.js';
-import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList} from './../providers/user.provider.js';
-
+        updateUserData, sendEmail, updateAlarmService} from './../services/user.service.js';
+import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList, getAlarmService} from './../providers/user.provider.js';
 import { getUser } from "../models/user.dao.js";
-dotenv.config();
 
+dotenv.config();
 
 export const userSignin = async (req, res, next) => {
     const signIn = req.body;
@@ -290,3 +287,27 @@ export const userScrapSentiment = async (req, res, next) => {
     }
 }
 
+export const getAlarm = async (req, res, next) => {
+    try {
+        console.log("알림 조회 요청");
+        const userId = req.params.userId;
+        const result = await getAlarmService(userId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in getAlarm:', error);
+        return res.status(500).json({message: error.data.message});
+    }
+}
+
+export const updateAlarm = async (req, res, next) => {
+    try {
+        console.log("알림 상태 업데이트 요청");
+        const userId = req.params.userId;
+        const alarmId = req.params.alarmId;
+        const result = await updateAlarmService(userId, alarmId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        console.error('Error in updateAlarmService:', error);
+        return res.status(500).json({message: error.data.message});
+    }
+}

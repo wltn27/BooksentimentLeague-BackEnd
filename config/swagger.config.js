@@ -9,7 +9,7 @@ const options = {
             version: '1.0.0',
             description: 'BookSentimentLeaue API test'
         },
-        host: 'localhost:3000',
+        host: '3.37.54.220:3000',
         basepath: '../'
     },
     apis: ['./src/routes/*.js', './swagger/*']

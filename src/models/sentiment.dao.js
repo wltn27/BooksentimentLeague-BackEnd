@@ -6,23 +6,9 @@ import { status } from "../../config/response.status.js";
 import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getNickname } from "./sentiment.sql.js";
 import { updateSentimentSql, deleteSentimentSql } from "./sentiment.sql.js";
 import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js";
-import { modifyImageSql } from "./sentiment.sql.js";
-import { insertCommentQuery, selectInsertedCommentQuery, findCommentByIdQuery, deleteCommentQuery } from "./../models/sentiment.sql.js";
+import { insertCommentQuery, selectInsertedCommentQuery, findCommentByIdQuery, deleteCommentQuery, insertAlarmQuery,
+        totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm } from "./../models/sentiment.sql.js";
 import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
-
-export const getCurrentDateTime = () => {
-    const currentDate = new Date();
-
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-    const day = String(currentDate.getDate()).padStart(2, '0');
-    const hours = String(currentDate.getHours()).padStart(2, '0');
-    const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-    const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-    const milliseconds = String(currentDate.getMilliseconds()).padStart(3, '0');
-
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
-}
 
 function isValidUrl(string) {
     try {
@@ -36,7 +22,6 @@ function isValidUrl(string) {
 // Sentiment 데이터 삽입
 export const addSentiment = async (userId, data) => {
     try {
-        console.log(userId);
         const conn = await pool.getConnection();
         // userId에 해당하는 닉네임 가져오기
         const [nicknameResult] = await pool.query(getNickname, userId);
@@ -65,11 +50,17 @@ export const addSentiment = async (userId, data) => {
             data.season,
             newDate
         ]);
-        //const result = await pool.query(insertSentimentSql,[data.sentiment_title, data.book_title, parseFloat(data.score), data.content, data.book_image, data.season, currentDate]);
-        //console.log("Result of Insert Query:", result); // 추가한 로그
-        
 
-        // If image data is available, insert it into the image table
+        // user_sentiment 테이블 동기화
+        const [sentimentIdResult] = await pool.query(getSentimentId);
+        //console.log('sentimentIdResult: ', sentimentIdResult);
+        const sentimentId = sentimentIdResult[0].lastId;
+        //console.log('sentimentId: ',sentimentId);
+        const [insertResult] = await pool.query(insertUserSentiment, [userId, sentimentId]);
+        //console.log('insertResult: ',insertResult);        
+
+
+        // 이미지가 있다면 DB에 삽입
         if (data.image) {
             console.log('data.image : ', data.image);
             // 각 이미지 URL에 대해 반복
@@ -79,9 +70,55 @@ export const addSentiment = async (userId, data) => {
             }
         }
 
+        // 티어 체크
+        const [sentimentResult] = await pool.query(totalSentiment, userId);
+        //console.log('sentimentResult: ', sentimentResult);
+        const sentimentCount = sentimentResult.length;
+        console.log('sentimentCount: ', sentimentCount);
+
+        const [recommendResult] = await pool.query(totalRecommend, [userId]);
+        //console.log('recommendResult: ', recommendResult);
+        const recommendCount = recommendResult[0].totalLikes;
+        console.log('recommendCount: ', recommendCount);
+
+        let checkTier; // 체크한 티어 
+        
+        if (sentimentCount >= 50 && recommendCount >= 500) {
+            // 그랜드 마스터
+            checkTier = 6;
+        } else if (sentimentCount >= 30 && recommendCount >= 300) {
+            // 마스터
+            checkTier = 5;
+        } else if (sentimentCount >= 10 && recommendCount >= 100) {
+            // 다이아
+            checkTier = 4;
+        } else if (sentimentCount >= 5 && recommendCount >= 30) {
+            // 골드
+            checkTier = 3;
+        } else if (sentimentCount >= 1) {
+            // 실버
+            checkTier = 2;
+        } else {
+            // 루키
+            checkTier = 1;
+        }
+        
+        const [currentTierResult] = await pool.query(getTierId, [userId]);
+        let currentTier = currentTierResult[0].currentTier;
+        if(checkTier != currentTier) {
+            const [tier] = await pool.query(updateTier, [checkTier, userId]);
+            console.log('tier: ', tier);
+            console.log('사용자 티어 상승');
+            // 알람생성 해야함
+            const title = '티어 상승 알림';
+            const content = '마이페이지에서 티어를 확인하세요!';
+            const createdAt = new Date(); // 생성날짜
+            // DB에 알람 데이터 삽입
+            const [alarmResult] = await pool.query(tierAlarm, [userId, title , content, createdAt]);
+            //console.log('alarmResult: ', alarmResult);
+        } 
         conn.release();
-        console.log("return : ", result);
-        console.log('result[0].id : ', result[0].insertid);
+        //console.log("return : ", result);
         return result[0].insertId; // sentimnet_id 반환
 
     } catch (err) {
@@ -288,7 +325,18 @@ export const createComment = async (sentimentId, userId, parent_id, content) => 
         const conn = await pool.getConnection();
         await conn.query(insertCommentQuery, [userId, sentimentId, parent_id, content]);
         const [rows] = await conn.query(selectInsertedCommentQuery);
+        
+        // sentiment 작성자 ID 조회 (sentimentId를 사용하여 조회)
+        const [sentimentUser] = await conn.query(`SELECT user_id FROM sentiment WHERE sentiment_id = ?`, [sentimentId]);
+        const sentimentUserId = sentimentUser[0].user_id;
+        
+        // 알림 제목 설정(댓글/대댓글 구분)
+        const title = parent_id ? "새로운 대댓글이 달렸습니다: " : "새로운 댓글이 달렸습니다: ";
+        
+        // 알림 추가
+        await conn.query(insertAlarmQuery, [sentimentUserId, title, content]);
         conn.release();
+        
         return rows[0];
      } catch (err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);

@@ -1,6 +1,5 @@
 // sentiment.sql.js
 // 필요한 데이터를 쿼리(가공)하여 모듈 변수로 추출
-
 export const confirmSentiment = "SELECT EXISTS(SELECT 1 FROM sentiment WHERE user_id = ? AND book_title = ?) as isExistSentiment;";
 
 // 정보 불러오기
@@ -42,3 +41,20 @@ export const findCommentByIdQuery = "SELECT * FROM comment WHERE comment_id = ?;
 
 // 댓글 삭제
 export const deleteCommentQuery = "DELETE FROM comment WHERE comment_id = ?;";
+
+// 댓글/대댓글 작성 알림
+export const insertAlarmQuery = `
+    INSERT INTO alarm (user_id, title, content, read_at, created_at)
+    VALUES (?, ?, ?, 0, NOW());
+`;
+
+// 티어 상승 조건 조회
+export const totalSentiment = "SELECT * FROM sentiment WHERE user_id = ?;";
+export const totalRecommend = "SELECT SUM(`like`) as totalLikes FROM user_sentiment WHERE user_id = ?;";
+
+// 티어 생성 및 업데이트, 조회
+export const updateTier = "UPDATE user_tier SET tier_id = ? WHERE user_id = ?";
+export const getTierId = "SELECT tier_id AS currentTier FROM user_tier WHERE user_id='1';";
+
+// 티어 상승 알람 생성
+export const tierAlarm = "INSERT INTO alarm (user_id, title, content, read_at, created_at) VALUES (?, ?, ?, 0, ?);";

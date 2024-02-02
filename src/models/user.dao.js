@@ -7,7 +7,8 @@ import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData,
     getFollowerCount, getFollowingCount, getSentimentCount, getLikeCount, getScrapCount, getFollower, getFollowingStatus, getFollowing, getFollowerStatus, getSentiment,
     getScrap, getSentimentCommentCount, getSentimentLikeCount, getSentimentScrapCount, insertFollow, confirmFollow, deleteFollow, likeSentimentQuery, unlikeSentimentQuery, 
     checkSentimentOwnerQuery, checkUserSentimentLikeStatusQuery, likeCommentQuery, unlikeCommentQuery, checkCommentOwnerQuery, checkUserCommentLikeStatusQuery, scrapSentimentQuery, 
-    unscrapSentimentQuery, checkUserSentimentScrapStatusQuery } from "./../models/user.sql.js";
+    unscrapSentimentQuery, checkUserSentimentScrapStatusQuery, getAlarmInfo, alarmStatus, getAlarmStatus } from "./../models/user.sql.js";
+
 
 
 // DB에 유저 추가하기
@@ -432,3 +433,35 @@ export const checkUserSentimentScrapStatus = async (userId, sentimentId) => {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
+
+// 알람 조회
+export const getAlarmDao = async (userId) => {
+    try {
+        const conn = await pool.getConnection();
+        const [alarm] = await pool.query(getAlarmInfo, [userId]);
+
+        if (alarm.length == 0) {
+            return -1;
+        }
+
+        conn.release();
+        return alarm;
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
+// 알람 업데이트
+export const updateAlarmDao = async (alarmId) => {
+    try {
+        const conn = await pool.getConnection();
+        await pool.query(alarmStatus, [alarmId]);
+        const [readResult] = await pool.query(getAlarmStatus, [alarmId]);
+        conn.release();
+        return readResult[0].read_at;
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
