@@ -147,3 +147,9 @@ export const unscrapSentimentQuery = `
 `;
 
 export const checkUserSentimentScrapStatusQuery = `SELECT scrap FROM user_sentiment WHERE user_id = ? AND sentiment_id = ?;`;
+
+// 알람 상태 업데이트
+export const alarmStatus = "UPDATE alarm SET read_at = 1 WHERE alarm_id=?;";
+export const getAlarmStatus = "SELECT read_at FROM alarm WHERE alarm_id=?";
+export const getAlarmInfo = "SELECT title, content, read_at, created_at FROM alarm WHERE user_id= ? ORDER BY created_at DESC;";
+
