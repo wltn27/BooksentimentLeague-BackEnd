@@ -3,12 +3,13 @@ import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
-import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getNickname } from "./sentiment.sql.js";
-import { updateSentimentSql, deleteSentimentSql } from "./sentiment.sql.js";
+import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getNickname, insertUserSentiment, getSentimentId } from "./sentiment.sql.js";
+import { updateSentimentSql, deleteSentimentSql, deleteUserSentimentSql } from "./sentiment.sql.js";
 import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js";
 import { insertCommentQuery, selectInsertedCommentQuery, findCommentByIdQuery, deleteCommentQuery, insertAlarmQuery,
         totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm, getCommentList } from "./../models/sentiment.sql.js";
-import { deleteImageFromS3 } from '../middleware/imageUploader.js';
+import { getAlarmInfo, alarmStatus, getAlarmStatus } from "./sentiment.sql.js";
+import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
 
 function isValidUrl(string) {
     try {
@@ -58,8 +59,7 @@ export const addSentiment = async (userId, data) => {
         //console.log('sentimentId: ',sentimentId);
         const [insertResult] = await pool.query(insertUserSentiment, [userId, sentimentId]);
         //console.log('insertResult: ',insertResult);        
-
-
+     
         // 이미지가 있다면 DB에 삽입
         if (data.image) {
             console.log('data.image : ', data.image);
@@ -116,8 +116,10 @@ export const addSentiment = async (userId, data) => {
             // DB에 알람 데이터 삽입
             const [alarmResult] = await pool.query(tierAlarm, [userId, title , content, createdAt]);
             //console.log('alarmResult: ', alarmResult);
-        } 
+        };
+        
         conn.release();
+        //console.log("return : ", result);
         //console.log("return : ", result);
         return result[0].insertId; // sentimnet_id 반환
 
@@ -213,9 +215,9 @@ export const eliminateSentiment = async (sentimentID) => {
                 const s3Url = imageInfo.image;
                 console.log("s3Url: ", s3Url);
 
-                if (!s3Url|| !isValidUrl(s3Url)) {
+                if (!s3Url || !isValidUrl(s3Url)) {
                     console.error('s3ObjectUrl is undefined or empty.');
-                    continue; 
+                    continue;
                 } else {
                     // URL에서 객체 키 추출
                     const key = new URL(s3Url).pathname.slice(1);
@@ -237,9 +239,11 @@ export const eliminateSentiment = async (sentimentID) => {
             }
         }
         // 삭제 SQL 실행
-        const [result] = await conn.query(deleteSentimentSql, [sentimentID]);
-
-        console.log('result:', result);
+        const [result2] = await pool.query(deleteUserSentimentSql, [sentimentID]);
+        const [result] = await pool.query(deleteSentimentSql, [sentimentID]);
+        
+        //console.log('result:', result);
+        //console.log('result2:', result2);
 
         // 삭제된 행이 없는 경우 에러 처리
         if (result.affectedRows === 0) {
@@ -321,6 +325,39 @@ export const modifyImage = async (sentimentId, body, files) => {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
+
+// 알람 조회
+export const getAlarmDao = async (userId) => {
+    try {
+        const conn = await pool.getConnection();
+        const [alarm] = await pool.query(getAlarmInfo, [userId]);
+
+        if (alarm.length == 0) {
+            return -1;
+        }
+
+        conn.release();
+        return alarm;
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
+// 알람 업데이트
+export const updateAlarmDao = async (alarmId) => {
+    try {
+        const conn = await pool.getConnection();
+        await pool.query(alarmStatus, [alarmId]);
+        const [readResult] = await pool.query(getAlarmStatus, [alarmId]);
+        conn.release();
+        return readResult[0].read_at;
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
 // 댓글 조회하기
 export const getComment = async (sentimentId) => {
     const conn = await pool.getConnection();

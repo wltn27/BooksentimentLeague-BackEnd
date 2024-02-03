@@ -7,10 +7,12 @@ export const getSentimentInfo = "SELECT * FROM sentiment WHERE sentiment_id = ?;
 export const getImageSql = "SELECT image FROM image WHERE sentiment_id = ?;"
 export const getNickname = "SELECT nickname FROM user WHERE user_id = ?;";
 export const getUserId = "SELECT user_id from sentiment where sentiment_id =?;";
-
+export const getSentimentId = "SELECT LAST_INSERT_ID() AS lastId;";
 // 센티멘트 삽입/삭제
 export const insertSentimentSql = "INSERT INTO sentiment (user_id, sentiment_title, book_title, score, content, book_image, author, publisher, season, created_at) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );";
+export const insertUserSentiment = "INSERT INTO user_sentiment (user_id, sentiment_id, `like`, `scrap`) VALUES (?,?,0,0);"; 
 export const deleteSentimentSql = "DELETE FROM sentiment WHERE sentiment_id = ?;";
+export const deleteUserSentimentSql = "DELETE FROM user_sentiment WHERE sentiment_id = ?;";
 export const updateSentimentSql = "UPDATE sentiment SET sentiment_title= ? ,book_title = ?, score = ?, content = ?, updated_at = ? WHERE sentiment_id = ?;";
 
 // 이미지 삽입/삭제
@@ -60,3 +62,8 @@ export const getTierId = "SELECT tier_id AS currentTier FROM user_tier WHERE use
 
 // 티어 상승 알람 생성
 export const tierAlarm = "INSERT INTO alarm (user_id, title, content, read_at, created_at) VALUES (?, ?, ?, 0, ?);";
+
+// 알람 상태 업데이트
+export const alarmStatus = "UPDATE alarm SET read_at = 1 WHERE alarm_id=?;";
+export const getAlarmStatus = "SELECT read_at FROM alarm WHERE alarm_id=?";
+export const getAlarmInfo = "SELECT title, content, read_at, created_at FROM alarm WHERE user_id= ?;";

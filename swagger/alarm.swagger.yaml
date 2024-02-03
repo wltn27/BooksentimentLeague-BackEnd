@@ -1,0 +1,151 @@
+/{userId}/notifications:
+  get:
+    tags: 
+      - Alarm
+    summary: 알림 조회
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+    responses:
+      '200':
+        description: 알림 조회 성공!
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            isSuccess:
+              type: boolean
+              example: true
+            code:
+              type: integer
+              example: 2000
+            message:
+              type: string
+              example: "success!"
+            data:
+              type: object
+              example: 
+                sentiment_id: "1"
+                message: "성공적으로 삭제하였습니다,"
+                
+      '400':
+        description: 잘못된 요청
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 400
+            isSuccess:
+              type: boolean
+              example: false
+            code:
+              type: integer
+              example: COMMON001
+            message:
+              type: string
+              example: 잘못된 요청입니다
+
+      '500':
+        description: 서버 에러
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 500
+            isSuccess:
+              type: boolean
+              example: false
+            code:
+              type: integer
+              example: COMMON000
+            message:
+              type: string
+              example: 서버 에러, 관리자에게 문의 바랍니다.
+
+
+/users/{userId}/notifications/{alarmId}:
+  patch:
+    tags: 
+      - Alarm
+    summary: 알림 상태 업데이트
+    parameters:
+      - name: alarmId
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          example: 1
+
+    responses:
+      '200':
+        description: 센티멘트 삭제 성공!
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            isSuccess:
+              type: boolean
+              example: true
+            code:
+              type: integer
+              example: 2000
+            message:
+              type: string
+              example: "success!"
+            data:
+              type: object
+              example: 
+                sentiment_id: "1"
+                message: "성공적으로 삭제하였습니다,"
+                
+      '400':
+        description: 잘못된 요청
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 400
+            isSuccess:
+              type: boolean
+              example: false
+            code:
+              type: integer
+              example: COMMON001
+            message:
+              type: string
+              example: 잘못된 요청입니다
+
+      '500':
+        description: 서버 에러
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 500
+            isSuccess:
+              type: boolean
+              example: false
+            code:
+              type: integer
+              example: COMMON000
+            message:
+              type: string
+              example: 서버 에러, 관리자에게 문의 바랍니다.

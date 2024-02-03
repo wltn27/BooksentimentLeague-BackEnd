@@ -44,6 +44,16 @@ export const WriteCommentResponseDTO = (nickname, tier, created_at, profile_imag
     }
 }
 
+// alarm DTO
+export const alarmDTO = (data) => {
+    return data.map(item => ({
+        "title": item.title,
+        "content": item.content,
+        "read_at": item.read_at,
+        "created_at": item.created_at,
+    }));
+};
+
 export const DeleteCommentResponseDTO = () => {
     console.log("DeleteCommentResponseDTO clear");
     return {"message" : "댓글이 삭제되었습니다"};

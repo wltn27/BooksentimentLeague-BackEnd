@@ -3,10 +3,11 @@ import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
 // import DAOs
-import { addSentiment, getSentiment, modifyImage, modifySentiment, eliminateSentiment, createComment, findCommentById, removeComment } from "../models/sentiment.dao.js";
+import { addSentiment, getSentiment, modifyImage, modifySentiment, eliminateSentiment, createComment, findCommentById, removeComment,
+        getAlarmDao, updateAlarmDao} from "../models/sentiment.dao.js";
 
 // import DTOs
-import { sentimentResponseDTO, WriteCommentResponseDTO, DeleteCommentResponseDTO, commentResponseDTO } from "./../dtos/sentiment.response.dto.js"
+import { sentimentResponseDTO, WriteCommentResponseDTO, DeleteCommentResponseDTO, commentResponseDTO, alarmDTO } from "./../dtos/sentiment.response.dto.js"
 
 // 센티멘트 작성
 export const insertSentiment = async (userId, body, files) => {
@@ -106,22 +107,42 @@ export const insertComment = async (sentimentId, userId, parent_id, content) => 
 
 // 댓글 삭제
 export const deleteComment = async (commentId, userData) => {
-    try {
-        // 삭제하려는 댓글이 존재하는지 확인
-        const comment = await findCommentById(commentId);
-        if (!comment) {
-            throw new Error('Comment not found');
-        }
+  try {
+      // 삭제하려는 댓글이 존재하는지 확인
+      const comment = await findCommentById(commentId);
+      if (!comment) {
+          throw new Error('Comment not found');
+      }
 
-        // 삭제하려는 댓글 작성자와 현재 사용자가 같은지 확인
-        if (comment.user_id !== userData[0].user_id) {
-            throw new BaseError(status.COMMENT_NOT_DELETE);
-        }
+      // 삭제하려는 댓글 작성자와 현재 사용자가 같은지 확인
+      if (comment.user_id !== userData[0].user_id) {
+          throw new BaseError(status.COMMENT_NOT_DELETE);
+      }
 
-        await removeComment(commentId);
-        return DeleteCommentResponseDTO();
-    } catch (error) {
-        console.error('Error in deleteComment:', error);
-        throw error;
-    }
+      await removeComment(commentId);
+      return DeleteCommentResponseDTO();
+  } catch (error) {
+      console.error('Error in deleteComment:', error);
+      throw error;
+  }
 };
+
+// 알림 조회
+export const getAlarmService = async (userId) => {
+  const alarmData = await getAlarmDao(userId);
+  console.log('alarmDTO: ', alarmDTO(alarmData));
+  return alarmDTO(alarmData);
+}
+
+// 알림 상태 업데이트
+export const updateAlarmService = async (userId, alarmId) => {
+  try {
+    const readStatus = await updateAlarmDao(alarmId);
+    console.log('readStatus: ', readStatus);
+    return readStatus;
+
+  } catch (err) {
+    console.error('Error:', err);
+    throw new BaseError(status.PARAMETER_IS_WRONG);
+  }
+}

@@ -83,8 +83,8 @@ export const delComment = async (req, res, next) => {
         const token = req.cookies.refreshToken;
         const data = jwt.verify(token, process.env.REFRESH_SECRET);
         const userData = await getUser(data.user_id); // 사용자 정보 반환
-
         const comment = await deleteComment(commentId, userData);
+        
         console.log("댓글 삭제 성공!");
         res.status(StatusCodes.OK).json(comment);
     } catch (error) {
@@ -92,3 +92,16 @@ export const delComment = async (req, res, next) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+// 알림 조회
+export const getAlarm = async (req, res, next ) => {
+    console.log("알림 조회 요청");
+    res.send(response(status.SUCCESS, await getAlarmService(req.params.userId)));
+}
+
+// 알림 상태 업데이트
+export const updateAlarm = async (req, res, next ) => {
+    console.log("알림 상태 업데이트 요청");
+    res.send(response(status.SUCCESS, await updateAlarmService(req.params.userId, req.params.alarmId)));
+   
+}
