@@ -1,12 +1,11 @@
 import { transporter, config } from '../../config/mail.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { changeUserInfo } from "../models/user.dao.js";
-import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, 
-    followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO, ScrapSentimentResponseDTO} from "./../dtos/user.response.dto.js"
 import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, 
     updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserSentimentLikeStatus, unlikeComment, 
-    likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus} from "../models/user.dao.js";
+    likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus, changeUserInfo} from "../models/user.dao.js";
+import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, 
+        followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO, ScrapSentimentResponseDTO} from "./../dtos/user.response.dto.js"   
 import { createClient } from 'redis';
 import dotenv from 'dotenv';
 
@@ -32,17 +31,17 @@ export const joinUser = async (body) => {
 export const checkingEmail = async (email) => {
 
     if(!await existEmail(email)){
-        return new BaseError(status.EMAIL_ALREADY_EXIST);
+        return false;
     }
-    return checkEmailResponseDTO(); 
+    return true; 
 }
 
 export const checkingNick = async (nickname) => {
 
     if(!await existNick(nickname)){
-        return new BaseError(status.NICKNAME_ALREADY_EXIST);
+        return false;
     }
-    return checkNickResponseDTO(); 
+    return true; 
 }
 
 export const loginUser = async (body) => {
@@ -51,7 +50,7 @@ export const loginUser = async (body) => {
         return new BaseError(status.EMAIL_NOT_EXIST);
 
     if(!await confirmPassword(body))
-        return new BaseError(status.EMAIL_ALREADY_EXIST);
+        return new BaseError(status.PASSWORD_NOT_EQUAL);
 
     const user_id = await getUserIdFromEmail(body.email);
     const userData = await getUser(user_id);

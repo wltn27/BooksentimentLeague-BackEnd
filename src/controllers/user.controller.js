@@ -1,3 +1,5 @@
+import { BaseError } from "../../config/error.js";
+import { status } from "../../config/response.status.js";
 import { StatusCodes } from "http-status-codes";
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
@@ -5,6 +7,7 @@ import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser,
         updateUserData, sendEmail, updateAlarmService} from './../services/user.service.js';
 import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList, getAlarmService} from './../providers/user.provider.js';
 import { getUser } from "../models/user.dao.js";
+import { checkEmailResponseDTO, checkNickResponseDTO} from "./../dtos/user.response.dto.js"
 
 dotenv.config();
 
@@ -22,8 +25,10 @@ export const checkEmail = async (req, res, next) => {
     console.log("이메일 중복 확인을 요청하였습니다.");
     const checkingEmailMessage = await checkingEmail(email);
     
-    console.log("사용 가능한 이메일입니다.");
-    return res.status(StatusCodes.OK).json(checkingEmailMessage);
+    if(checkingEmailMessage)
+        return res.status(StatusCodes.OK).json(checkEmailResponseDTO());
+    else
+        return res.status(StatusCodes.BAD_REQUEST).json(new BaseError(status.EMAIL_ALREADY_EXIST));
 }
 
 export const checkNick = async (req, res, next) => {
@@ -31,8 +36,10 @@ export const checkNick = async (req, res, next) => {
     console.log("닉네임 중복 확인을 요청하였습니다.");
     const checkingNickMessage = await checkingNick(nickname);
     
-    console.log("사용 가능한 닉네임입니다.");
-    return res.status(StatusCodes.OK).json(checkingNickMessage);
+    if(checkingNickMessage)
+        return res.status(StatusCodes.OK).json(checkNickResponseDTO());
+    else
+        return res.status(StatusCodes.BAD_REQUEST).json(new BaseError(status.NICKNAME_ALREADY_EXIST));
 }
 
 export const userLogin = async (req, res, next) => {
