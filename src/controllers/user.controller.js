@@ -199,7 +199,7 @@ export const myPage = async (req, res, next) => {
         //로그인 되어 있는 상태
         console.log("로그인 되어 있는 상태");
         const userData = await readMyPage(user_id);
-        const sentimentData = await readSentimentList(user_id, 3);
+        const sentimentData = await readSentimentList(user_id, 3, 0);
 
         res.status(200).json([userData, sentimentData]);
     } else {

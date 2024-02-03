@@ -268,7 +268,7 @@ export const existFollow = async (followingId, userId) => {
     }
 }
 
-export const getSentimentList = async(user_id, num) => {
+export const getSentimentList = async(user_id, num, cursorId) => {
     try{
         const conn = await pool.getConnection();
         

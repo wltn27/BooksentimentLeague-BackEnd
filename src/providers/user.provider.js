@@ -23,7 +23,7 @@ export const readFollowingList = async(user_id) => {
     return followingListDTO(followObject);
 }
 
-export const readSentimentList = async(user_id, num) => {
+export const readSentimentList = async(user_id, num, cursorId) => {
     const sentimentObject = await getSentimentList(user_id, num, cursorId);
 
     return sentimentResponseDTO(sentimentObject);
