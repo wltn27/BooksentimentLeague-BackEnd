@@ -7,7 +7,8 @@ import { sentimentResponseDTO, commentResponseDTO } from "./../dtos/sentiment.re
 // 센티멘트 조회
 export const readSentiment = async (sentimentId) => {
     const sentiment = await getSentiment(sentimentId);
-
+    if(!sentiment)
+        return false;
     return sentimentResponseDTO(sentiment);
 }
 

@@ -133,6 +133,10 @@ export const getSentiment = async (sentimentID) => {
         const conn = await pool.getConnection();
         const [sentiment] = await pool.query(getSentimentInfo, [sentimentID]); // 여기 안에 닉네임이 없음
 
+        if(sentiment == ''){            // 센티멘트가 없을 때
+            return false;
+        }
+
         const [userIdResult] = await pool.query(getUserId, [sentimentID]);
         const userId = userIdResult[0].user_id;
 
