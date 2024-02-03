@@ -50,6 +50,7 @@ app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 app.use('/users', userRouter);
 app.use('/users/:userId', userRouter);
 app.use('/sentiments', sentimentRouter);
+app.use('/sentiments/:sentimentId', sentimentRouter);
 
 app.use('/sentiments/:sentimentId', sentimentRouter);
 /**app.use('/search', searchRouter);

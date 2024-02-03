@@ -7,7 +7,7 @@ import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getN
 import { updateSentimentSql, deleteSentimentSql } from "./sentiment.sql.js";
 import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js";
 import { insertCommentQuery, selectInsertedCommentQuery, findCommentByIdQuery, deleteCommentQuery, insertAlarmQuery,
-        totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm } from "./../models/sentiment.sql.js";
+        totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm, getCommentList } from "./../models/sentiment.sql.js";
 import { deleteImageFromS3 } from '../middleware/imageUploader.js';
 
 function isValidUrl(string) {
@@ -130,7 +130,6 @@ export const addSentiment = async (userId, data) => {
 // Sentiment 정보 얻기 
 export const getSentiment = async (sentimentID) => {
     try {
-        console.log(sentimentID);
         const conn = await pool.getConnection();
         const [sentiment] = await pool.query(getSentimentInfo, [sentimentID]); // 여기 안에 닉네임이 없음
 
@@ -140,7 +139,7 @@ export const getSentiment = async (sentimentID) => {
         const [nicknameResult] = await pool.query(getNickname, userId);
         const nickname = nicknameResult[0].nickname;
         const [imageResult] = await pool.query(getImageSql, [sentimentID]);
-        console.log('imageResult : ', imageResult);
+        
         if (imageResult.length > 0  && imageResult[0].image !== '' ) {
             const imagePaths = imageResult.map(result => result.image);
             sentiment[0].image_path = imagePaths;
@@ -151,13 +150,13 @@ export const getSentiment = async (sentimentID) => {
 
         sentiment[0].nickname = nickname;
 
-        console.log(sentiment);
+        
         if (sentiment.length == 0) {
             return -1;
         }
 
         conn.release();
-        console.log('sentiment: ', sentiment);
+        
         return sentiment;
 
     } catch (err) {
@@ -318,6 +317,18 @@ export const modifyImage = async (sentimentId, body, files) => {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
+// 댓글 조회하기
+export const getComment = async (sentimentId) => {
+    const conn = await pool.getConnection();
+    const [commentList] = await pool.query(getCommentList, sentimentId);
+
+    for(let i =0; i < commentList.length; i++){
+        Object.assign(commentList[i], { nickname: (await pool.query(getNickname, commentList[i].user_id))[0][0].nickname });
+    }
+
+    conn.release();
+    return commentList;
+};
 
 // 댓글 작성하기
 export const createComment = async (sentimentId, userId, parent_id, content) => {
