@@ -161,7 +161,6 @@ export const getMyPage = async(user_id) => {
         return userData[0];    
 
     }catch (err) {
-        console.err(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
