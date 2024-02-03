@@ -22,7 +22,7 @@ const app = express();
 // server setting - veiw, static, body-parser etc..
 app.set('port', process.env.PORT || 3000)   // 서버 포트 지정
 app.use((req, res, next) => {                             // cors 방식 허용
-    res.setHeader("Access-Control-Allow-Origin", "http://192.168.0.219:3000");
+    res.setHeader("Access-Control-Allow-Origin", "http://43.203.124.12:3000");
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
