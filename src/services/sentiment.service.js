@@ -1,18 +1,15 @@
 // sentiment.service.js
-
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { pool } from "../../config/db.config.js";
-//import session from 'express-session';
-//import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
+
 // import DTOs
-import { sentimentDTO } from "../dtos/sentiment.dto.js";
+import { sentimentDTO, WriteCommentResponseDTO, DeleteCommentResponseDTO, commentDTO } from "./../dtos/sentiment.response.dto.js"
 
 // import DAOs
-import { addSentiment, getSentiment, modifyImage } from "../models/sentiment.dao.js";
+import { addSentiment, getComments, getSentiment, modifyImage } from "../models/sentiment.dao.js";
 import { modifySentiment } from "../models/sentiment.dao.js";
 import { eliminateSentiment } from "../models/sentiment.dao.js";
-
+import { createComment, findCommentById, removeComment } from "../models/sentiment.dao.js";
 
 // 센티멘트 작성
 export const insertSentiment = async (userId, body, files) => {
@@ -68,15 +65,23 @@ export const updateSentiment = async (sentimentId, body, files) => {
       "score": body.score,
       "content": body.content,
     });
+    const sentimentData = await getSentiment(modifiedData);
+    
+    const sentiment = sentimentDTO(sentimentData);
+    //console.log("sentiment : ", sentiment);
+    // 해당 게시글의 댓글 가져오기
+    const getCommentData = await getComments(sentimentId);
+    //console.log("getCommentData : ", getCommentData);
+    const comments = commentDTO(getCommentData);
+    //console.log("comment : ", comments);
 
     // 수정된 센티멘트 정보 반환
-    return sentimentDTO(await getSentiment(modifiedData));
+    return { sentiment, comments };
 
   } catch (err) {
     console.error('Error:', err);
     throw new BaseError(status.PARAMETER_IS_WRONG);
   }
-
 }
 
 // 센티멘트 삭제 
@@ -98,32 +103,37 @@ export const deleteSentiment = async (sentimentId) => {
     console.error(err);
     throw new BaseError(status.PARAMETER_IS_WRONG);
   }
-
 }
 
-
-// ----------------------------------
-import { alarmDTO } from "../dtos/sentiment.dto.js";
-
-// import DAOs
-import { getAlarmDao, updateAlarmDao } from "../models/sentiment.dao.js";
-
-// 알림 조회
-export const getAlarmService = async (userId) => {
-  const alarmData = await getAlarmDao(userId);
-  console.log('alarmDTO: ', alarmDTO(alarmData));
-  return alarmDTO(alarmData);
+// 댓글 작성
+export const insertComment = async (sentimentId, userId, parent_id, content) => {
+    try {
+        const newComment = await createComment(sentimentId, userId, parent_id, content);
+        return WriteCommentResponseDTO(newComment);
+    } catch (error) {
+        console.error('Error in insertComment:', error);
+        throw error;
+    }
 }
 
-// 알림 상태 업데이트
-export const updateAlarmService = async (userId, alarmId) => {
-  try {
-    const readStatus = await updateAlarmDao(alarmId);
-    console.log('readStatus: ', readStatus);
-    return readStatus;
+// 댓글 삭제
+export const deleteComment = async (commentId, userData) => {
+    try {
+        // 삭제하려는 댓글이 존재하는지 확인
+        const comment = await findCommentById(commentId);
+        if (!comment) {
+            throw new Error('Comment not found');
+        }
 
-  } catch (err) {
-    console.error('Error:', err);
-    throw new BaseError(status.PARAMETER_IS_WRONG);
-  }
-}
+        // 삭제하려는 댓글 작성자와 현재 사용자가 같은지 확인
+        if (comment.user_id !== userData[0].user_id) {
+            throw new BaseError(status.COMMENT_NOT_DELETE);
+        }
+
+        await removeComment(commentId);
+        return DeleteCommentResponseDTO();
+    } catch (error) {
+        console.error('Error in deleteComment:', error);
+        throw error;
+    }
+};

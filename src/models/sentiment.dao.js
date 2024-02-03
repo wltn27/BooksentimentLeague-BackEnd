@@ -3,13 +3,13 @@ import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
-import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getNickname, insertUserSentiment } from "./sentiment.sql.js";
-import { getSentimentId, getTierId } from "./sentiment.sql.js";
-import { updateSentimentSql, deleteSentimentSql, deleteUserSentimentSql } from "./sentiment.sql.js";
-import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js";
-import { modifyImageSql } from "./sentiment.sql.js";
+import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getSentimentId, getNickname, getComment} from "./sentiment.sql.js";
+import { updateSentimentSql, deleteSentimentSql, insertUserSentiment } from "./sentiment.sql.js";
+import { getImageSql, insertImageSql, deleteImageSql, modifyImageSql } from "./sentiment.sql.js";
+import { insertCommentQuery, selectInsertedCommentQuery, findCommentByIdQuery, deleteCommentQuery, insertAlarmQuery,
+        totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm } from "./../models/sentiment.sql.js";
 import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
-import { makeTier, updateTier } from "./sentiment.sql.js";
+
 function isValidUrl(string) {
     try {
         new URL(string);
@@ -34,6 +34,15 @@ export const addSentiment = async (userId, data) => {
         console.log("Confirm Result:", confirm);
 
         if (confirm[0].isExistSentiment) {
+            if (data.image) {
+                // 각 이미지 URL에 대해 반복 
+                console.log('data.image : ', data.image);
+                for (const imageUrl of data.image) {
+                    const imgUrl = new URL(imageUrl);
+                    const key = imgUrl.pathname.substring(1);
+                    await deleteImageFromS3(key); // S3에서 삭제
+                }
+            }
             conn.release();
             throw new BaseError(status.SENTIMENT_ALREADY_EXIST);
         }
@@ -135,13 +144,14 @@ export const getSentiment = async (sentimentID) => {
         const [sentiment] = await pool.query(getSentimentInfo, [sentimentID]); // 여기 안에 닉네임이 없음
 
         const [userIdResult] = await pool.query(getUserId, [sentimentID]);
+        console.log("user_id", userIdResult);
         const userId = userIdResult[0].user_id;
 
         const [nicknameResult] = await pool.query(getNickname, userId);
         const nickname = nicknameResult[0].nickname;
         const [imageResult] = await pool.query(getImageSql, [sentimentID]);
         console.log('imageResult : ', imageResult);
-        if (imageResult.length > 0 && imageResult[0].image !== '') {
+        if (imageResult.length > 0  && imageResult[0].image !== '' ) {
             const imagePaths = imageResult.map(result => result.image);
             sentiment[0].image_path = imagePaths;
         } else {
@@ -210,9 +220,9 @@ export const eliminateSentiment = async (sentimentID) => {
                 const s3Url = imageInfo.image;
                 console.log("s3Url: ", s3Url);
 
-                if (!s3Url || !isValidUrl(s3Url)) {
-                    console.error('s3ObjectUrl is undefined or empty.');
-                    continue;
+                if (!s3Url|| !isValidUrl(s3Url)) {
+                    console.error('s3 URL 값이 정의되지 않았습니다.');
+                    continue; 
                 } else {
                     // URL에서 객체 키 추출
                     const key = new URL(s3Url).pathname.slice(1);
@@ -228,22 +238,20 @@ export const eliminateSentiment = async (sentimentID) => {
                     // 삭제된 행이 없는 경우 에러 처리
                     if (deleteImageResult.affectedRows === 0) {
                         conn.release();
-                        throw new BaseError(status.RESOURCE_NOT_FOUND, 'Image not found');
+                        throw new BaseError(status.NOT_DELETE_IMAGE);
                     }
                 }
             }
         }
         // 삭제 SQL 실행
-        const [result2] = await pool.query(deleteUserSentimentSql, [sentimentID]);
-        const [result] = await pool.query(deleteSentimentSql, [sentimentID]);
-        
+        const [result] = await conn.query(deleteSentimentSql, [sentimentID]);
+
         //console.log('result:', result);
-        //console.log('result2:', result2);
 
         // 삭제된 행이 없는 경우 에러 처리
         if (result.affectedRows === 0) {
             conn.release();
-            throw new BaseError(status.RESOURCE_NOT_FOUND, 'Sentiment not found');
+            throw new BaseError(status.NOT_DELETE_SENTIMENT);
         }
 
 
@@ -282,15 +290,17 @@ export const modifyImage = async (sentimentId, body, files) => {
         console.log('imagesToDelete: ', imagesToDelete);
 
         // imagesToDelete 배열에 있는 이미지 삭제
-        for (const deleteImg of imagesToDelete) {
-            console.log('deleteImg: ', deleteImg);
-            const imgUrl = new URL(deleteImg);
-            const key = imgUrl.pathname.substring(1);
-            await deleteImageFromS3(key); // S3에서 삭제
-            await pool.query(deleteImageSql, [sentimentId, deleteImg]); // DB에서 삭제
+        if (imagesToDelete && imagesToDelete.length > 0) {
+            for (const deleteImg of imagesToDelete) {
+                console.log('deleteImg: ', deleteImg);
+                const imgUrl = new URL(deleteImg);
+                const key = imgUrl.pathname.substring(1);
+                await deleteImageFromS3(key); // S3에서 삭제
+                await pool.query(modifyImageSql, [deleteImg]); // DB에서 삭제
+            }
         }
-
         // body.image에 있는 이미지 삽입
+        /*
         if (body.image !== undefined && body.image !== null) {
             const newImages = Array.isArray(body.image) ? body.image : [body.image]; // body.image가 배열이 아니라면 배열로 변환
             for (const newImg of newImages) {
@@ -299,7 +309,7 @@ export const modifyImage = async (sentimentId, body, files) => {
                     await pool.query(insertImageSql, [sentimentId, newImg]); // DB에 삽입
                 }
             }
-        }
+        } */
 
         // 새로운 파일로 업로드된 이미지 삽입
         if (files && files.length > 0) {
@@ -321,40 +331,60 @@ export const modifyImage = async (sentimentId, body, files) => {
     }
 }
 
-// -----------------------------------------
-import { totalSentiment, totalRecommend } from "./sentiment.sql.js";
-
-import { tierAlarm } from "./sentiment.sql.js";
-import { getAlarmInfo, alarmStatus, getAlarmStatus } from "./sentiment.sql.js";
-
-// 알람 조회
-export const getAlarmDao = async (userId) => {
+// 댓글 작성하기
+export const createComment = async (sentimentId, userId, parent_id, content) => {
     try {
         const conn = await pool.getConnection();
-        const [alarm] = await pool.query(getAlarmInfo, [userId]);
-
-        if (alarm.length == 0) {
-            return -1;
-        }
-
+        await conn.query(insertCommentQuery, [userId, sentimentId, parent_id, content]);
+        const [rows] = await conn.query(selectInsertedCommentQuery);
+        
+        // sentiment 작성자 ID 조회 (sentimentId를 사용하여 조회)
+        const [sentimentUser] = await conn.query(`SELECT user_id FROM sentiment WHERE sentiment_id = ?`, [sentimentId]);
+        const sentimentUserId = sentimentUser[0].user_id;
+        
+        // 알림 제목 설정(댓글/대댓글 구분)
+        const title = parent_id ? "새로운 대댓글이 달렸습니다: " : "새로운 댓글이 달렸습니다: ";
+        
+        // 알림 추가
+        await conn.query(insertAlarmQuery, [sentimentUserId, title, content]);
         conn.release();
-        return alarm;
-    } catch (err) {
-        console.error(err);
+        
+        return rows[0];
+     } catch (err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
-    }
-}
+     }
+};
 
-// 알람 업데이트
-export const updateAlarmDao = async (alarmId) => {
+// 댓글 존재 확인
+export const findCommentById = async (commentId) => {
+    const conn = await pool.getConnection();
+    const [rows] = await pool.query(findCommentByIdQuery, [commentId]);
+    conn.release();
+    return rows[0];
+};
+
+// 댓글 삭제하기
+export const removeComment = async (commentId) => {
+    const conn = await pool.getConnection();
+    await conn.query(deleteCommentQuery, [commentId]);
+    conn.release();
+};
+
+// 댓글 조회하기
+export const getComments = async (sentimentID) => {
     try {
-        const conn = await pool.getConnection();
-        await pool.query(alarmStatus, [alarmId]);
-        const [readResult] = await pool.query(getAlarmStatus, [alarmId]);
-        conn.release();
-        return readResult[0].read_at;
-    } catch (err) {
-        console.error(err);
+        const [commentResult] = await pool.query(getComment, [sentimentID]);
+        const comment = commentResult;
+        console.log('comment : ', comment);
+        
+        if (commentResult.length === 0) {
+            // 댓글이 없을 때
+            return null;
+          }
+        return comment;
+      } catch (error) {
+        console.error(error);
         throw new BaseError(status.PARAMETER_IS_WRONG);
-    }
+      }
+
 }

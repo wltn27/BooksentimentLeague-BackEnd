@@ -40,36 +40,14 @@ app.use(setUserInLocals);
 app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 
 // router setting
-// app.use('/users', userRouter);
-// app.use('/users/:userId', userRouter);
-app.use('/sentiments', sentimentRouter);
-app.use('/:userId/notifications', alarmtRouter);
-app.use('/users/:userId/notifications/:alarmId', alarmtRouter);
-// app.use('/sentiments/:sentimentId', sentimentRouter);
-/* 
-app.use('/search', searchRouter);
-app.use('/ranks/', rankRouter);
-app.use('/search', searchRouter);
-*/
-/*
-// 네이버 검색 API 예제 - 책 검색
-const client_id = 'yFYCUKN3fb2RGTD9IWM2';
-const client_secret = 't6jTrLLNcA';
 
-app.get('/search/book', async function (req, res) {
-    const api_url = 'https://openapi.naver.com/v1/search/book?query=' + encodeURI(req.query.query);
-  
-    try {
-      const response = await axios.get(api_url, {
-        headers: {'X-Naver-Client-Id': client_id, 'X-Naver-Client-Secret': client_secret}
-      });
-  
-      res.status(response.status).json(response.data);
-    } catch (error) {
-      res.status(error.response.status).end();
-      console.error('error = ' + error.response.status);
-    }
-  });*/
+app.use('/users', userRouter);
+app.use('/users/:userId', userRouter);
+app.use('/sentiments/:userId', sentimentRouter);
+app.use('/sentiments/:sentimentId', sentimentRouter);
+/**app.use('/search', searchRouter);
+ app.use('/ranks/', rankRouter);
+ */
 
 // 기존 코드
 app.get('/', (req, res, next) => {
