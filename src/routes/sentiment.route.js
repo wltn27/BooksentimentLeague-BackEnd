@@ -4,9 +4,12 @@ import asyncHandler from 'express-async-handler';
 import { upload } from '../middleware/imageUploader.js';
 
 // import controller
-import { wrSentiment, rewrSentiment, delSentiment } from "../controllers/sentiment.controller.js";
+import { wrSentiment, rewrSentiment, delSentiment, getSentiment } from "../controllers/sentiment.controller.js";
 import { wrComment, delComment } from "../controllers/sentiment.controller.js";
 export const sentimentRouter = express.Router({mergeParams: true});
+
+// 센티멘트 조회
+sentimentRouter.get('/', asyncHandler(getSentiment));
 
 // 센티멘트 작성
 sentimentRouter.post('/:userId/write', upload.array('Img_file', 5) , asyncHandler(wrSentiment));

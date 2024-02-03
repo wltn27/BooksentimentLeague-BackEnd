@@ -219,7 +219,7 @@ export const updateMyPage = async (req, res, next) => {
 
         res.status(200).json(result);
     } else {
-        res.status(500).json({"message" : "로그인 해와라"})
+        res.status(500).json({"message" : "로그인 해오십쇼"})
     }
 }
 

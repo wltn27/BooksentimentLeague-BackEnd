@@ -35,6 +35,8 @@ export const selectInsertedCommentQuery = `
     LEFT JOIN tier t ON ut.tier_id = t.tier_id
     WHERE c.comment_id = LAST_INSERT_ID();
 `;
+// 댓글 리스트 조회
+export const getCommentList = "SELECT * FROM comment WHERE sentiment_id = ?;";
 
 // 댓글 존재 확인
 export const findCommentByIdQuery = "SELECT * FROM comment WHERE comment_id = ?;";

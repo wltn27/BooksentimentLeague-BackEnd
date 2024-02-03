@@ -1,19 +1,30 @@
 // sentiment.controller.js
 import { StatusCodes } from "http-status-codes";
-import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
-
+import { BaseError } from "../../config/error.js";
 import { response } from "../../config/response.js";
 import { status } from "../../config/response.status.js";
+
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 //import { getUserId } from "../models/sentiment.sql.js";
 
-import { insertSentiment } from "../services/sentiment.service.js";
-import { updateSentiment } from "../services/sentiment.service.js";
-import { deleteSentiment } from "../services/sentiment.service.js";
-import { insertComment, deleteComment } from './../services/sentiment.service.js';
+import { insertComment, deleteComment, insertSentiment, updateSentiment, deleteSentiment } from './../services/sentiment.service.js';
+import { readSentiment, readComment } from './../providers/sentiment.provider.js';
 import { getUser } from "../models/user.dao.js";
 
 dotenv.config();
+
+// 센티멘트 조회
+export const getSentiment = async (req, res, next ) => {
+    console.log("센티멘트 조회 요청");
+    
+    const sentimentObject = await readSentiment(req.params.sentimentId);
+    const commentObject = await readComment(req.params.sentimentId);
+
+    if(!sentimentObject)
+        return res.status(StatusCodes.NOT_FOUND).json(new BaseError(status.SENTIMENT_NOT_FOUND));
+    return res.status(StatusCodes.OK).json([{"sentiment" : sentimentObject}, commentObject])
+}
 
 // 센티멘트 작성
 export const wrSentiment = async (req, res, next ) => {
