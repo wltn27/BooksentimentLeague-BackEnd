@@ -9,7 +9,7 @@ import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js"
 import { insertCommentQuery, selectInsertedCommentQuery, findCommentByIdQuery, deleteCommentQuery, insertAlarmQuery,
         totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm, getCommentList } from "./../models/sentiment.sql.js";
 import { getAlarmInfo, alarmStatus, getAlarmStatus } from "./sentiment.sql.js";
-import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
+import { deleteImageFromS3 } from '../middleware/imageUploader.js';
 
 function isValidUrl(string) {
     try {
