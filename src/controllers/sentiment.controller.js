@@ -1,19 +1,30 @@
 // sentiment.controller.js
 import { StatusCodes } from "http-status-codes";
-import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
-
+import { BaseError } from "../../config/error.js";
 import { response } from "../../config/response.js";
 import { status } from "../../config/response.status.js";
+
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 //import { getUserId } from "../models/sentiment.sql.js";
 
-import { insertSentiment } from "../services/sentiment.service.js";
-import { updateSentiment } from "../services/sentiment.service.js";
-import { deleteSentiment } from "../services/sentiment.service.js";
-import { insertComment, deleteComment } from './../services/sentiment.service.js';
+import { insertComment, deleteComment, insertSentiment, updateSentiment, deleteSentiment } from './../services/sentiment.service.js';
+import { readSentiment, readComment } from './../providers/sentiment.provider.js';
 import { getUser } from "../models/user.dao.js";
 
 dotenv.config();
+
+// 센티멘트 조회
+export const getSentiment = async (req, res, next ) => {
+    console.log("센티멘트 조회 요청");
+    
+    const sentimentObject = await readSentiment(req.params.sentimentId);
+    const commentObject = await readComment(req.params.sentimentId);
+
+    if(!sentimentObject)
+        return res.status(StatusCodes.NOT_FOUND).json(new BaseError(status.SENTIMENT_NOT_FOUND));
+    return res.status(StatusCodes.OK).json([{"sentiment" : sentimentObject}, commentObject])
+}
 
 // 센티멘트 작성
 export const wrSentiment = async (req, res, next ) => {
@@ -72,8 +83,8 @@ export const delComment = async (req, res, next) => {
         const token = req.cookies.refreshToken;
         const data = jwt.verify(token, process.env.REFRESH_SECRET);
         const userData = await getUser(data.user_id); // 사용자 정보 반환
-
         const comment = await deleteComment(commentId, userData);
+        
         console.log("댓글 삭제 성공!");
         res.status(StatusCodes.OK).json(comment);
     } catch (error) {
@@ -81,3 +92,16 @@ export const delComment = async (req, res, next) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+// 알림 조회
+export const getAlarm = async (req, res, next ) => {
+    console.log("알림 조회 요청");
+    res.send(response(status.SUCCESS, await getAlarmService(req.params.userId)));
+}
+
+// 알림 상태 업데이트
+export const updateAlarm = async (req, res, next ) => {
+    console.log("알림 상태 업데이트 요청");
+    res.send(response(status.SUCCESS, await updateAlarmService(req.params.userId, req.params.alarmId)));
+   
+}
