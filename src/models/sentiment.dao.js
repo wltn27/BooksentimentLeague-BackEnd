@@ -8,7 +8,7 @@ import { updateSentimentSql, deleteSentimentSql } from "./sentiment.sql.js";
 import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js";
 import { insertCommentQuery, selectInsertedCommentQuery, findCommentByIdQuery, deleteCommentQuery, insertAlarmQuery,
         totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm } from "./../models/sentiment.sql.js";
-import { deleteImageFromS3 } from '../middleware/ImageUploader.js';
+import { deleteImageFromS3 } from '../middleware/imageUploader.js';
 
 function isValidUrl(string) {
     try {
@@ -339,6 +339,7 @@ export const createComment = async (sentimentId, userId, parent_id, content) => 
         
         return rows[0];
      } catch (err) {
+        console.log(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
      }
 };

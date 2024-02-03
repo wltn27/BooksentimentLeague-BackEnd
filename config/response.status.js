@@ -25,6 +25,7 @@ export const status = {
     FOLLOW_ALREADY_EXIST: {status: StatusCodes.CONFLICT, "isSuccess": false, "code": "MEMBER4009", "message": "이미 팔로우 중입니다."},
     ID_ALREADY_EXIST: {status: StatusCodes.CONFLICT, "isSuccess": false, "code": "MEMBER4008", "message": "ID가 이미 등록되어 있습니다."},   
     NOT_CHANGED_STATUS: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4010", "message": "완료로 바뀌지 않았습니다."},
+    PASSWORD_NOT_EQUAL: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER40018", "message": "비밀번호가 틀렸습니다."},
    
     SENTIMENT_ALREADY_EXIST: { status: StatusCodes.CONFLICT, "isSuccess": false, "code": "MEMBER4011", "message": "작성한 센티멘트가 이미 존재합니다.."}, 
     SENTIMENT_NOT_FOUND: { status: StatusCodes.NOT_FOUND, "isSuccess": false, "code": "MEMBER4012", "message": "센티멘트가 존재하지 않습니다."},

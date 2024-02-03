@@ -1,7 +1,7 @@
 // sentiment.route.js
 import express from "express";
 import asyncHandler from 'express-async-handler';
-import { upload } from '../middleware/ImageUploader.js';
+import { upload } from '../middleware/imageUploader.js';
 
 // import controller
 import { wrSentiment, rewrSentiment, delSentiment } from "../controllers/sentiment.controller.js";

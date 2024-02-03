@@ -1,12 +1,11 @@
 import { transporter, config } from '../../config/mail.config.js';
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { changeUserInfo } from "../models/user.dao.js";
-import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, 
-    followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO, ScrapSentimentResponseDTO} from "./../dtos/user.response.dto.js"
 import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, 
     updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserSentimentLikeStatus, unlikeComment, 
-    likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus} from "../models/user.dao.js";
+    likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus, changeUserInfo} from "../models/user.dao.js";
+import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, 
+        followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO, ScrapSentimentResponseDTO} from "./../dtos/user.response.dto.js"   
 import { createClient } from 'redis';
 import dotenv from 'dotenv';
 
@@ -15,11 +14,10 @@ dotenv.config();
 export const joinUser = async (body) => {
    
     if(!await existEmail(body.email))
-        throw new BaseError(status.EMAIL_ALREADY_EXIST);
+        return new BaseError(status.EMAIL_ALREADY_EXIST);
     
     if(!await existNick(body.nickname))
-        throw new BaseError(status.NICKNAME_ALREADY_EXIST);
-    
+        return new BaseError(status.NICKNAME_ALREADY_EXIST);
     
     let joinUserId = await addUser({
         'email' : body.email,
@@ -33,26 +31,26 @@ export const joinUser = async (body) => {
 export const checkingEmail = async (email) => {
 
     if(!await existEmail(email)){
-        throw new BaseError(status.EMAIL_ALREADY_EXIST);
+        return false;
     }
-    return checkEmailResponseDTO(); 
+    return true; 
 }
 
 export const checkingNick = async (nickname) => {
 
     if(!await existNick(nickname)){
-        throw new BaseError(status.NICKNAME_ALREADY_EXIST);
+        return false;
     }
-    return checkNickResponseDTO(); 
+    return true; 
 }
 
 export const loginUser = async (body) => {
 
     if(await existEmail(body.email))
-        throw new BaseError(status.EMAIL_NOT_EXIST);
+        return new BaseError(status.EMAIL_NOT_EXIST);
 
     if(!await confirmPassword(body))
-        throw new BaseError(status.EMAIL_ALREADY_EXIST);
+        return new BaseError(status.PASSWORD_NOT_EQUAL);
 
     const user_id = await getUserIdFromEmail(body.email);
     const userData = await getUser(user_id);
@@ -61,7 +59,7 @@ export const loginUser = async (body) => {
 
 export const findUser = async (email, verificationCode) => {
     if(await existEmail(email))
-        throw new BaseError(status.EMAIL_NOT_EXIST);
+        return new BaseError(status.EMAIL_NOT_EXIST);
 
         const client = createClient({
             password: process.env.REDIS_PASSWORD,
@@ -74,18 +72,17 @@ export const findUser = async (email, verificationCode) => {
     await client.connect();
 
     if(verificationCode != await client.get(email)){
-        throw new BaseError(status.AUTH_NOT_EQUAL);
+        return new BaseError(status.AUTH_NOT_EQUAL);
     }
     
-    return // 성공했다는 json 반환
-    
+    return json({"message" : "인증 성공하였습니다."});
 }
 
 export const changeUser = async (password, userId) => {
     if(!await updateUserPassword(password, userId)){
-        throw new BaseError(status.INTERNAL_SERVER_ERROR);
+        return new BaseError(status.INTERNAL_SERVER_ERROR);
     }
-    return // 성공했다는 json 반환
+    return json({"message" : "비밀번호 변경에 성공하였습니다."});
 }
 
 export const saveVerificationCode = async (email, verificationCode) => {
@@ -97,7 +94,7 @@ export const saveVerificationCode = async (email, verificationCode) => {
                 port: process.env.REDIS_PORT
             }
         });   
-        console.log(`email: ${email}, verificationCode: ${verificationCode}`);
+        
         await client.connect();
         await client.setEx(`${email}`, 300, `${verificationCode}`, (err, result) => {
             if (err) {
@@ -109,7 +106,7 @@ export const saveVerificationCode = async (email, verificationCode) => {
         await client.quit();
     }
     catch (error){
-        throw new BaseError(status.EMAIL_NOT_EXIST); // error status 변경 필요
+        return new BaseError(status.EMAIL_NOT_EXIST); // error status 변경 필요
     }    
 };
 
@@ -133,9 +130,9 @@ export const sendEmail = async (to, subject, text) => {
 export const updateUserData = async (user_id, userData, file) => {
     console.log(file);
     if(! await changeUserInfo(user_id, userData, file.location)){
-        throw new BaseError(status.INTERNAL_SERVER_ERROR);
+        return new BaseError(status.INTERNAL_SERVER_ERROR);
     }
-    return {}
+    return json({"message" : "마이프로필 변경에 성공하였습니다."})
 };
 
 export const followUser = async (followingId, userId) => {
@@ -154,7 +151,7 @@ export const followUser = async (followingId, userId) => {
         }
     } catch (error) {
         console.error('Error in followUser:', error);
-        throw error;
+        return error;
     }
 }
 
@@ -163,7 +160,7 @@ export const likeSentimentUser = async (userId, sentimentId) => {
         // 사용자가 자신의 센티먼트에 추천을 시도하는지 확인
         const isSentimentOwner = await checkSentimentOwner(sentimentId, userId);
         if (isSentimentOwner) {
-            throw new BaseError(status.SENTIMENT_NOT_SELF);
+            return new BaseError(status.SENTIMENT_NOT_SELF);
         }
 
         // 이미 추천이 되어 있는지 확인
@@ -179,7 +176,7 @@ export const likeSentimentUser = async (userId, sentimentId) => {
         }
     } catch (error) {
         console.error('Error in likeSentimentUser:', error);
-        throw error;
+        return error;
     }
 };
 
@@ -188,7 +185,7 @@ export const likeCommentUser = async (userId, commentId) => {
         // 사용자가 자신의 댓글에 추천을 시도하는지 확인
         const isCommentOwner = await checkCommentOwner(commentId, userId);
         if (isCommentOwner) {
-            throw new BaseError(status.COMMENT_NOT_SELF);
+            return new BaseError(status.COMMENT_NOT_SELF);
         }
 
         // 이미 추천이 되어 있는지 확인
@@ -204,7 +201,7 @@ export const likeCommentUser = async (userId, commentId) => {
         }
     } catch (error) {
         console.error('Error in likeCommentUser:', error);
-        throw error;
+        return error;
     }
 };
 
@@ -213,7 +210,7 @@ export const scrapSentimentUser = async (userId, sentimentId) => {
         // 사용자가 자신의 센티먼트에 스크랩을 시도하는지 확인
         const isSentimentOwner = await checkSentimentOwner(sentimentId, userId);
         if (isSentimentOwner) {
-            throw new BaseError(status.SCRAP_NOT_SELF);
+            return new BaseError(status.SCRAP_NOT_SELF);
         }
 
         // 이미 스크랩이 되어 있는지 확인
@@ -229,7 +226,7 @@ export const scrapSentimentUser = async (userId, sentimentId) => {
         }
     } catch (error) {
         console.error('Error in scrapSentimentUser:', error);
-        throw error;
+        return error;
     }
 };
 
@@ -244,6 +241,6 @@ export const updateAlarmService = async (userId, alarmId) => {
   
     } catch (err) {
       console.error('Error:', err);
-      throw new BaseError(status.PARAMETER_IS_WRONG);
+      return new BaseError(status.PARAMETER_IS_WRONG);
     }
   }

@@ -4,10 +4,11 @@ import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData, changeUserPassword, getUserId, getUserFromEmail, getUserTier, updateUserData,
-    getFollowerCount, getFollowingCount, getSentimentCount, getLikeCount, getScrapCount, getFollower, getFollowingStatus, getFollowing, getFollowerStatus, getSentiment,
-    getScrap, getSentimentCommentCount, getSentimentLikeCount, getSentimentScrapCount, insertFollow, confirmFollow, deleteFollow, likeSentimentQuery, unlikeSentimentQuery, 
-    checkSentimentOwnerQuery, checkUserSentimentLikeStatusQuery, likeCommentQuery, unlikeCommentQuery, checkCommentOwnerQuery, checkUserCommentLikeStatusQuery, scrapSentimentQuery, 
-    unscrapSentimentQuery, checkUserSentimentScrapStatusQuery, getAlarmInfo, alarmStatus, getAlarmStatus } from "./../models/user.sql.js";
+        getFollowerCount, getFollowingCount, getSentimentCount, getLikeCount, getScrapCount, getFollower, getFollowingStatus, getFollowing, getFollowerStatus, getSentiment,
+        getScrap, getSentimentCommentCount, getSentimentLikeCount, getSentimentScrapCount, insertFollow, confirmFollow, deleteFollow, likeSentimentQuery, unlikeSentimentQuery, 
+        checkSentimentOwnerQuery, checkUserSentimentLikeStatusQuery, likeCommentQuery, unlikeCommentQuery, checkCommentOwnerQuery, checkUserCommentLikeStatusQuery, scrapSentimentQuery, 
+        unscrapSentimentQuery, checkUserSentimentScrapStatusQuery, getAlarmInfo, alarmStatus, getAlarmStatus, getImageSql } from "./../models/user.sql.js";
+import { deleteImageFromS3 } from '../middleware/imageUploader.js';
 
 
 
@@ -144,7 +145,7 @@ export const getUserByEmail = async(email) => {
 
 // 마이 페이지 정보 받기
 export const getMyPage = async(user_id) => {
-    //try{
+    try{
         const conn = await pool.getConnection();
         const [userData] = await pool.query(getUserData, user_id);
 
@@ -159,9 +160,9 @@ export const getMyPage = async(user_id) => {
 
         return userData[0];    
 
-    // }catch (err) {
-    //     throw new BaseError(status.PARAMETER_IS_WRONG);
-    // }
+    }catch (err) {
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
 }
 
 // 마이 페이지 정보 수정하기
@@ -169,6 +170,16 @@ export const changeUserInfo = async(user_id, userData, image_path) => {
     try{
         const conn = await pool.getConnection();
         
+        const oldImg = await pool.query(getImageSql, [user_id]);
+        console.log('oldImg: ', oldImg[0][0]);
+
+        // 프로필 이미지가 없다면 
+        if(oldImg[0][0].profile_image != ''){
+            const imgUrl = new URL(oldImg[0][0].profile_image);
+            const key = imgUrl.pathname.substring(1);
+            await deleteImageFromS3(key); // S3에서 삭제
+        }   
+
         const [user] = await pool.query(updateUserData, [{'status_message': userData.status_message}, {'profile_image': image_path}, user_id]);
 
         console.log(user);
@@ -180,9 +191,11 @@ export const changeUserInfo = async(user_id, userData, image_path) => {
         conn.release();
         return true;    
     }catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
+
 // 팔로우하기 함수
 export const updateUserFollow = async (followingId, userId) => {
     try {
@@ -255,11 +268,11 @@ export const existFollow = async (followingId, userId) => {
     }
 }
 
-export const getSentimentList = async(user_id) => {
+export const getSentimentList = async(user_id, num, cursorId) => {
     try{
         const conn = await pool.getConnection();
         
-        const [sentimentObject] = await pool.query(getSentiment, user_id); // 닉네임, 티어는 토큰에서 활용하는 방안으로
+        const [sentimentObject] = await pool.query(getSentiment, [user_id, num, cursorId]); // 닉네임, 티어는 토큰에서 활용하는 방안으로
 
         for(let i =0; i < sentimentObject.length; i++){
             Object.assign(sentimentObject[i], { comment_num: (await pool.query(getSentimentCommentCount, [user_id, i]))[0][0].comment_num });
@@ -267,8 +280,8 @@ export const getSentimentList = async(user_id) => {
             Object.assign(sentimentObject[i], { scrap_num: (await pool.query(getSentimentScrapCount, [user_id, i]))[0][0].scrap_num });
         }
         conn.release();
-        return sentimentObject;``
-    }catch (err) {
+        return sentimentObject;
+    } catch (err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
