@@ -144,7 +144,7 @@ export const getSentiment = async (sentimentID) => {
         const [sentiment] = await pool.query(getSentimentInfo, [sentimentID]); // 여기 안에 닉네임이 없음
 
         const [userIdResult] = await pool.query(getUserId, [sentimentID]);
-        console.log("user_id", userIdResult);
+        //console.log("user_id", userIdResult);
         const userId = userIdResult[0].user_id;
 
         const [nicknameResult] = await pool.query(getNickname, userId);

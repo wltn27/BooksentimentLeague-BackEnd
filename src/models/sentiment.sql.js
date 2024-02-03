@@ -61,8 +61,6 @@ export const getComment = `
     WHERE c.sentiment_id = ?
     ORDER BY c.created_at DESC; `
 
-// "SELECT * FROM comment WHERE sentiment_id=?;";
-
 // 티어 상승 조건 조회
 export const totalSentiment = "SELECT * FROM sentiment WHERE user_id = ?;";
 export const totalRecommend = "SELECT SUM(`like`) as totalLikes FROM user_sentiment WHERE user_id = ?;";
