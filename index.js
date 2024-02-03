@@ -21,9 +21,13 @@ const app = express();
 
 // server setting - veiw, static, body-parser etc..
 app.set('port', process.env.PORT || 3000)   // 서버 포트 지정
-app.use((req, res) => {
-    res.header("Access-Control-Allow-Origin", "http://127.0.0.1:3000");
-});                            // cors 방식 허용
+app.use((req, res, next) => {                             // cors 방식 허용
+    res.setHeader("Access-Control-Allow-Origin", "http://43.203.124.12:3000");
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});                           
+
 app.use(express.static('public'));          // 정적 파일 접근
 app.use(express.json());                    // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
 app.use(express.urlencoded({extended: false})); // 단순 객체 문자열 형태로 본문 데이터 해석
@@ -38,8 +42,6 @@ app.use(expressSession({
         maxAge: 1000 * 60 * 60 * 24 * 7 // 1주일 동안 유효
     }
 }));
-
-
 //swagger settings
 app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 
