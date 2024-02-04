@@ -1,7 +1,7 @@
 import { userRouter } from './src/routes/user.route.js';
 import { sentimentRouter } from './src/routes/sentiment.route.js';
-/* import { searchRouter } from './src/routes/search.route.js';
 import { rankRouter } from './src/routes/rank.route.js';
+/* import { searchRouter } from './src/routes/search.route.js';
 */
 
 import { specs } from './config/swagger.config.js';
@@ -52,8 +52,9 @@ app.use('/users/:userId', userRouter);
 app.use('/sentiments', sentimentRouter);
 
 app.use('/sentiments/:sentimentId', sentimentRouter);
+app.use('/ranks/', rankRouter);
 /**app.use('/search', searchRouter);
- app.use('/ranks/', rankRouter);
+
  */
 
 app.get('/', (req, res, next) => {
