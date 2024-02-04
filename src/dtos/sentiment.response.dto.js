@@ -18,12 +18,26 @@ export const sentimentDTO = (data) => {
 
 // 댓글 DTO
 export const commentDTO = (data) => {
-    return {
-        "comments" : [
-            { comment_id : 1, nick : "str", content : "댓글 내용", parent_id : NULL },
-            { comment_id : 2, nick : "str", content : "댓글 내용", parent_id : 1 } // 위 댓글의 대댓글
-        ]
-    }
+    // 닉네임, 작성(수정)날짜, 내용, 프로필ㄹ사진,
+    if (data === null) {
+        // data가 null인 경우의 처리
+        return { message : "작성된 댓글이 없습니다. "};
+      } else {
+        // data가 null이 아닌 경우의 처리\
+        return data.map(item => (
+            {
+            "comment_id":  item.comment_id,
+            "nickname" : item.nickname,
+            "profile_image" : item.profile_image,
+            "content": item.content,
+            "like" : item.like,
+            "parent_id" : item.parent_id,
+            "created_at" : formatDate(item.created_at),
+            "updated_at" : formatDate(item.updated_at),
+            } 
+        ));
+      }
+    
 }
 
 export const WriteCommentResponseDTO = (nickname, tier, created_at, profile_image, content, like_num, parent_id, comment_id ) => {
