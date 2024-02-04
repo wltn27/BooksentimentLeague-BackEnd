@@ -4,11 +4,8 @@ import { BaseError } from "../../config/error.js";
 import { response } from "../../config/response.js";
 import { status } from "../../config/response.status.js";
 
-import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
-
-import { readSearchListAll, readSearchListBook, readSearchListSentiment, readSearchListNick } from './../providers/search.provider.js';
-
+import { readSearchListSentiment } from './../providers/search.provider.js';
+// readSearchListAll, readSearchListBook, readSearchListNick
 
 // 도서 검색 api 구현되면 그때 함
 
@@ -32,11 +29,11 @@ import { readSearchListAll, readSearchListBook, readSearchListSentiment, readSea
 export const getSearchListSentiment = async (req, res, next ) => {
     console.log("검색결과 리스트(센티멘트) 조회 요청");
 
-    const searchListObject = await readSearchListSentiment(req.query.query);
+    const searchListObject = await readSearchListSentiment(req.query.query, req.body.cursorId);
 
-    if(!searchListObject)
-        return res.status(StatusCodes.NOT_FOUND).json(new BaseError(status.SENTIMENT_NOT_FOUND));
-    return res.status(StatusCodes.OK).json([{"sentiment" : searchListObject}, commentObject])
+    if(searchListObject == '')
+        return res.status(StatusCodes.OK).json({"sentimentObject" : searchListObject});
+    return res.status(StatusCodes.OK).json(searchListObject)
 }
 
 // 검색결과 리스트(닉네임) 조회

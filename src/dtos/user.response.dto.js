@@ -152,7 +152,7 @@ export const sentimentResponseDTO = (data) => {
     return {"sentimentObject": sentimentObject, "cursorId": data[data.length-1].sentiment_id};
 }
 
-const formatDate = (date) => {
+export const formatDate = (date) => {
     const options = {
         year: 'numeric',
         month: '2-digit',
