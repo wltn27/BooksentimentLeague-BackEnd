@@ -7,7 +7,7 @@ import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData,
         getFollowerCount, getFollowingCount, getSentimentCount, getLikeCount, getScrapCount, getFollower, getFollowingStatus, getFollowing, getFollowerStatus, getSentiment,
         getScrap, getSentimentCommentCount, getSentimentLikeCount, getSentimentScrapCount, insertFollow, confirmFollow, deleteFollow, likeSentimentQuery, unlikeSentimentQuery, 
         checkSentimentOwnerQuery, checkUserSentimentLikeStatusQuery, likeCommentQuery, unlikeCommentQuery, checkCommentOwnerQuery, checkUserCommentLikeStatusQuery, scrapSentimentQuery, 
-        unscrapSentimentQuery, checkUserSentimentScrapStatusQuery, getAlarmInfo, alarmStatus, getAlarmStatus, getImageSql } from "./../models/user.sql.js";
+        unscrapSentimentQuery, checkUserSentimentScrapStatusQuery, getAlarmInfo, alarmStatus, getAlarmStatus, getImageSql, insertUserTierSql } from "./../models/user.sql.js";
 import { deleteImageFromS3 } from '../middleware/imageUploader.js';
 
 
@@ -19,6 +19,7 @@ export const addUser = async (data) => {
 
         const result = await pool.query(insertUserSql, [data.email, data.password, data.nickname]);
 
+        await pool.query(insertUserTierSql, result[0].insertId); // user_tier 관계 추가
         conn.release();
         return result[0].insertId;
         
