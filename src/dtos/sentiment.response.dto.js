@@ -1,5 +1,5 @@
 // sentiment DTO
-export const sentimentDTO = (data) => {
+export const sentimentResponseDTO = (data) => {
     return {
         "nickname": data[0].nickname,
         "sentiment_title": data[0].sentiment_title,
@@ -10,34 +10,25 @@ export const sentimentDTO = (data) => {
         "book_image": data[0].book_image,
         "author" : data[0].author,
         "publisher" : data[0].publisher,
-        "created_at": data[0].created_at,
-        "updated_at": data[0].updated_at
+        "created_at": formatDate(data[0].created_at)
     };
 };
 
 
 // 댓글 DTO
-export const commentDTO = (data) => {
-    // 닉네임, 작성(수정)날짜, 내용, 프로필ㄹ사진,
-    if (data === null) {
-        // data가 null인 경우의 처리
-        return { message : "작성된 댓글이 없습니다. "};
-      } else {
-        // data가 null이 아닌 경우의 처리\
-        return data.map(item => (
-            {
-            "comment_id":  item.comment_id,
-            "nickname" : item.nickname,
-            "profile_image" : item.profile_image,
-            "content": item.content,
-            "like" : item.like,
-            "parent_id" : item.parent_id,
-            "created_at" : formatDate(item.created_at),
-            "updated_at" : formatDate(item.updated_at),
-            } 
-        ));
-      }
-    
+export const commentResponseDTO = (data) => {
+    const commentObject = [];
+
+    for (let i = 0; i < data.length; i++) {
+        commentObject.push({
+            "comment_id": data[i].comment_id,
+            "nickname":  data[i].nickname,
+            "parent_id":  data[i].parent_id,
+            "created_at":  formatDate(data[i].created_at),
+            "content":  data[i].content,
+        })
+    }
+    return {"comment": commentObject};
 }
 
 export const WriteCommentResponseDTO = (nickname, tier, created_at, profile_image, content, like_num, parent_id, comment_id ) => {
@@ -53,7 +44,31 @@ export const WriteCommentResponseDTO = (nickname, tier, created_at, profile_imag
     }
 }
 
+// alarm DTO
+export const alarmDTO = (data) => {
+    return data.map(item => ({
+        "title": item.title,
+        "content": item.content,
+        "read_at": item.read_at,
+        "created_at": item.created_at,
+    }));
+};
+
 export const DeleteCommentResponseDTO = () => {
     console.log("DeleteCommentResponseDTO clear");
     return {"message" : "댓글이 삭제되었습니다"};
 }
+
+const formatDate = (date) => {
+    const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false // 24시간 형식으로 표시
+    };
+
+    return new Intl.DateTimeFormat('kr', options).format(new Date(date));
+};

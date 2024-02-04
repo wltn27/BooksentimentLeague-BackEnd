@@ -1,3 +1,20 @@
-// sentiment.provider.js -> 외부에서 끌어오는 거 제공.. ?
-import { ex } from "../dtos/sentiment.dto.js";
-import { exs } from "../models/sentiment.dao.js";
+// sentiment.provider.js
+import { BaseError } from "../../config/error.js";
+import { status } from "../../config/response.status.js";
+import { getSentiment, getComment } from "../models/sentiment.dao.js";
+import { sentimentResponseDTO, commentResponseDTO } from "./../dtos/sentiment.response.dto.js"
+
+// 센티멘트 조회
+export const readSentiment = async (sentimentId) => {
+    const sentiment = await getSentiment(sentimentId);
+    if(!sentiment)
+        return false;
+    return sentimentResponseDTO(sentiment);
+}
+
+// 댓글 조회
+export const readComment = async (sentimentId) => {
+    const comment = await getComment(sentimentId);
+
+    return commentResponseDTO(comment);
+}

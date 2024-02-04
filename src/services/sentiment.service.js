@@ -2,14 +2,12 @@
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
-// import DTOs
-import { sentimentDTO, WriteCommentResponseDTO, DeleteCommentResponseDTO, commentDTO } from "./../dtos/sentiment.response.dto.js"
-
 // import DAOs
-import { addSentiment, getSentiment, modifyImage } from "../models/sentiment.dao.js";
-import { modifySentiment } from "../models/sentiment.dao.js";
-import { eliminateSentiment } from "../models/sentiment.dao.js";
-import { createComment, findCommentById, removeComment } from "../models/sentiment.dao.js";
+import { addSentiment, getSentiment, modifyImage, modifySentiment, eliminateSentiment, createComment, findCommentById, removeComment,
+        getAlarmDao, updateAlarmDao} from "../models/sentiment.dao.js";
+
+// import DTOs
+import { sentimentResponseDTO, WriteCommentResponseDTO, DeleteCommentResponseDTO, commentResponseDTO, alarmDTO } from "./../dtos/sentiment.response.dto.js"
 
 // 센티멘트 작성
 export const insertSentiment = async (userId, body, files) => {
@@ -31,8 +29,8 @@ export const insertSentiment = async (userId, body, files) => {
   if (insertSentimentData == -1) { 
     throw new BaseError(status.SENTIMENT_ALREADY_EXIST);
   } else {
-    console.log('sentimentDTO: ', sentimentDTO(await getSentiment(insertSentimentData)))
-    return sentimentDTO(await getSentiment(insertSentimentData));
+    console.log('sentimentResponseDTO: ', sentimentResponseDTO(await getSentiment(insertSentimentData)))
+    return sentimentResponseDTO(await getSentiment(insertSentimentData));
   }
 }
 
@@ -67,7 +65,7 @@ export const updateSentiment = async (sentimentId, body, files) => {
     });
 
     // 수정된 센티멘트 정보 반환
-    return sentimentDTO(await getSentiment(modifiedData));
+    return sentimentResponseDTO(await getSentiment(modifiedData));
 
   } catch (err) {
     console.error('Error:', err);
@@ -109,22 +107,22 @@ export const insertComment = async (sentimentId, userId, parent_id, content) => 
 
 // 댓글 삭제
 export const deleteComment = async (commentId, userData) => {
-    try {
-        // 삭제하려는 댓글이 존재하는지 확인
-        const comment = await findCommentById(commentId);
-        if (!comment) {
-            throw new Error('Comment not found');
-        }
+  try {
+      // 삭제하려는 댓글이 존재하는지 확인
+      const comment = await findCommentById(commentId);
+      if (!comment) {
+          throw new Error('Comment not found');
+      }
 
-        // 삭제하려는 댓글 작성자와 현재 사용자가 같은지 확인
-        if (comment.user_id !== userData[0].user_id) {
-            throw new BaseError(status.COMMENT_NOT_DELETE);
-        }
+      // 삭제하려는 댓글 작성자와 현재 사용자가 같은지 확인
+      if (comment.user_id !== userData[0].user_id) {
+          throw new BaseError(status.COMMENT_NOT_DELETE);
+      }
 
-        await removeComment(commentId);
-        return DeleteCommentResponseDTO();
-    } catch (error) {
-        console.error('Error in deleteComment:', error);
-        throw error;
-    }
+      await removeComment(commentId);
+      return DeleteCommentResponseDTO();
+  } catch (error) {
+      console.error('Error in deleteComment:', error);
+      throw error;
+  }
 };
