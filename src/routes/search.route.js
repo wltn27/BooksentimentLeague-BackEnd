@@ -9,7 +9,7 @@ import { getSearchListSentiment, getSearchBooks } from "../controllers/search.co
 export const searchRouter = express.Router({mergeParams: true});
 
 // searchRouter.get('/', asyncHandler(getSearchListAll));
-// searchRouter.get('/book', asyncHandler(getSearchListBook));
+searchRouter.get('/book', asyncHandler(getSearchBooks));
 searchRouter.get('/sentiment', asyncHandler(getSearchListSentiment));
 // searchRouter.get('/nickname', asyncHandler(getSearchListNick));
 

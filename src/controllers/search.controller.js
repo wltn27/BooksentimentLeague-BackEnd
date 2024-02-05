@@ -32,11 +32,6 @@ export const getSearchBooks = async (req, res) => {
 //     return res.status(StatusCodes.OK).json([{"sentiment" : searchListObject}, commentObject])
 // }
 
-// // 검색결과 리스트(관련 서적) 조회
-// export const getSearchListBook = async (req, res, next ) => {
-//     console.log("검색결과 리스트(관련 서적) 요청");
-// }
-
 // 검색결과 리스트(센티멘트) 조회
 export const getSearchListSentiment = async (req, res, next ) => {
     console.log("검색결과 리스트(센티멘트) 조회 요청");
