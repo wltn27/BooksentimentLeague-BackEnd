@@ -4,8 +4,20 @@ import { BaseError } from "../../config/error.js";
 import { response } from "../../config/response.js";
 import { status } from "../../config/response.status.js";
 
-import { readSearchListSentiment } from './../providers/search.provider.js';
+import { readSearchListSentiment, searchForBooks } from './../providers/search.provider.js';
 // readSearchListAll, readSearchListBook, readSearchListNick
+
+// 도서 검색 API
+export const getSearchBooks = async (req, res) => {
+    try {
+      const { title } = req.body;
+      const bookData = await searchForBooks(title);
+      res.status(StatusCodes.OK).json({ bookData });
+    } catch (error) {
+      console.error('Search Books Error:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
 
 // 도서 검색 api 구현되면 그때 함
 

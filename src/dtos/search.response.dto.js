@@ -24,3 +24,15 @@ export const sentimentResponseDTO = (data) => {
     }
     return {"sentimentObject": sentimentObject, "cursorId": data[data.length-1].sentiment_id};
 }
+
+export const searchResponseDTO = (books) => {
+    return books.map(book => ({
+      title: book.title,
+      image: book.image,
+      author: book.author,
+      publisher: book.publisher,
+      pubdate: book.pubdate,
+      avr_score: 4.0, // book.avr_score,
+      eval_num: 22 // book.eval_num
+    }));
+  };
