@@ -1,7 +1,7 @@
 // search.provider.js
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { getSentimentList } from "../models/search.dao.js";
+import { getSentimentList, getSentimentData } from "../models/search.dao.js";
 import { searchResponseDTO, sentimentResponseDTO } from "./../dtos/search.response.dto.js"
 import fetch from 'node-fetch';
 
@@ -23,8 +23,21 @@ export const searchForBooks = async (title) => {
       throw new Error('Failed to fetch books');
     }
   
-    const books = await response.json();
-    return searchResponseDTO(books.items);
+    // const books = await response.json();
+    // return searchResponseDTO(books.items);
+    const data = await response.json();
+    const booksWithSentiments = await Promise.all(data.items.map(async (book) => {
+        // 제목, 저자, 출판사를 기반으로 감정 데이터 조회
+        const sentimentData = await getSentimentData(book.title.replace(/<[^>]+>/g, ''), book.author, book.publisher);
+        return {
+            ...book,
+            avr_score: sentimentData.avr_score, // 집계된 평균 점수
+            eval_num: sentimentData.eval_num // 집계된 감정 표현 수
+        };
+    }));
+    
+    // DTO를 통해 최종 응답 데이터 형식으로 변환
+    return searchResponseDTO(booksWithSentiments);
   };
 
 // 검색결과 리스트(센티멘트) 조회

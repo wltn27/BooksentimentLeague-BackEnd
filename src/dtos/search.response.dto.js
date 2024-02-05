@@ -32,7 +32,7 @@ export const searchResponseDTO = (books) => {
       author: book.author,
       publisher: book.publisher,
       pubdate: book.pubdate,
-      avr_score: 4.0, // book.avr_score,
-      eval_num: 22 // book.eval_num
+      avr_score: book.avr_score || 0,
+      eval_num: book.eval_num || 0
     }));
   };

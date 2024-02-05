@@ -18,6 +18,7 @@ export const getSentiment = `
     ORDER BY like_num desc, ut.tier_id desc, s.user_id ASC
     limit 10 offset ?;
 `;
+
 export const getSentimentCommentCount = `
 SELECT COUNT(*) as comment_num
 FROM user_comment as uc 
@@ -27,4 +28,16 @@ JOIN (
     WHERE sentiment_id = ?
 ) as c ON uc.comment_id = c.comment_id;` 
 
-
+export const getBookSentimentData = `
+    SELECT 
+        AVG(score) AS avr_score,
+        COUNT(*) AS eval_num
+    FROM 
+        sentiment
+    WHERE 
+        book_title = ? AND
+        author = ? AND
+        publisher = ?
+    GROUP BY 
+        book_title, author, publisher;
+`;
