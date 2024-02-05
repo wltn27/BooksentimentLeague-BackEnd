@@ -1,8 +1,8 @@
 import { userRouter } from './src/routes/user.route.js';
 import { sentimentRouter } from './src/routes/sentiment.route.js';
 import { alarmtRouter } from './src/routes/sentiment.route.js';
-import { rankRouter } from './src/routes/rank.route.js';
-// import { searchRouter } from './src/routes/search.route.js';
+import { searchRouter } from './src/routes/search.route.js';
+
 
 import { specs } from './config/swagger.config.js';
 import { status } from './config/response.status.js';
@@ -22,7 +22,7 @@ const app = express();
 // server setting - veiw, static, body-parser etc..
 app.set('port', process.env.PORT || 3000)   // 서버 포트 지정
 app.use((req, res, next) => {                             // cors 방식 허용
-    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Origin", "http://43.203.124.12:3000");
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -53,7 +53,7 @@ app.use('/sentiments', sentimentRouter);
 app.use('/sentiments/:sentimentId', sentimentRouter);
 app.use('/ranks/', rankRouter);
 app.use('/users/:userId/notifications/:alarmId', alarmtRouter);
-// app.use('/search', searchRouter);
+app.use('/search', searchRouter);
 
 app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));

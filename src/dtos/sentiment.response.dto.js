@@ -1,4 +1,6 @@
 // sentiment DTO
+import { formatDate } from "./../dtos/user.response.dto.js"
+
 export const sentimentResponseDTO = (data) => {
     return {
         "nickname": data[0].nickname,
@@ -58,17 +60,3 @@ export const DeleteCommentResponseDTO = () => {
     console.log("DeleteCommentResponseDTO clear");
     return {"message" : "댓글이 삭제되었습니다"};
 }
-
-const formatDate = (date) => {
-    const options = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false // 24시간 형식으로 표시
-    };
-
-    return new Intl.DateTimeFormat('kr', options).format(new Date(date));
-};

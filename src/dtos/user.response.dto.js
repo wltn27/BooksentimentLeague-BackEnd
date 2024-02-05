@@ -156,7 +156,8 @@ export const UnreadNotificationResponseDTO = (unreadCount) => {
     return {unreadCount: unreadCount};
 };
 
-const formatDate = (date) => {
+export const formatDate = (date) => {
+
     const options = {
         year: 'numeric',
         month: '2-digit',
