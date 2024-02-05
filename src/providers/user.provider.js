@@ -25,6 +25,9 @@ export const readFollowingList = async(user_id) => {
 
 export const readSentimentList = async(user_id, num, cursorId) => {
     const sentimentObject = await getSentimentList(user_id, num, cursorId);
+    if(sentimentObject == '')
+        return {};
+    console.log(sentimentObject);
 
     return sentimentResponseDTO(sentimentObject);
 }

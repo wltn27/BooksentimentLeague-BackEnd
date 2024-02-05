@@ -5,6 +5,8 @@ export const confirmNick = "SELECT EXISTS(SELECT 1 FROM user WHERE nickname = ?)
 
 export const insertUserSql = "INSERT INTO user (email, password, nickname) VALUES (?, ?, ?);";
 
+export const insertUserTierSql = "INSERT INTO user_tier (user_id, tier_id) VALUES (?, 1);";
+
 export const getUserData = "SELECT * FROM user WHERE user_id = ?";
 
 export const changeUserPassword = "UPDATE user set password = ? WHERE user_id = ?";
