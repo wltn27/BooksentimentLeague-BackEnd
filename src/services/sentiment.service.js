@@ -126,3 +126,23 @@ export const deleteComment = async (commentId, userData) => {
       throw error;
   }
 };
+
+// 알림 조회
+export const getAlarmService = async (userId) => {
+  const alarmData = await getAlarmDao(userId);
+  console.log('alarmDTO: ', alarmDTO(alarmData));
+  return alarmDTO(alarmData);
+}
+
+// 알림 상태 업데이트
+export const updateAlarmService = async (userId, alarmId) => {
+  try {
+    const readStatus = await updateAlarmDao(alarmId);
+    console.log('readStatus: ', readStatus);
+    return readStatus;
+
+  } catch (err) {
+    console.error('Error:', err);
+    throw new BaseError(status.PARAMETER_IS_WRONG);
+  }
+}

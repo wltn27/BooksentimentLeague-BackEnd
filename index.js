@@ -1,8 +1,8 @@
 import { userRouter } from './src/routes/user.route.js';
 import { sentimentRouter } from './src/routes/sentiment.route.js';
+import { alarmtRouter } from './src/routes/sentiment.route.js';
 import { rankRouter } from './src/routes/rank.route.js';
-/* import { searchRouter } from './src/routes/search.route.js';
-*/
+// import { searchRouter } from './src/routes/search.route.js';
 
 import { specs } from './config/swagger.config.js';
 import { status } from './config/response.status.js';
@@ -50,12 +50,10 @@ app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 app.use('/users', userRouter);
 app.use('/users/:userId', userRouter);
 app.use('/sentiments', sentimentRouter);
-
 app.use('/sentiments/:sentimentId', sentimentRouter);
 app.use('/ranks/', rankRouter);
-/**app.use('/search', searchRouter);
-
- */
+app.use('/users/:userId/notifications/:alarmId', alarmtRouter);
+// app.use('/search', searchRouter);
 
 app.get('/', (req, res, next) => {
     res.send(response(status.SUCCESS, "루트 페이지!"));
