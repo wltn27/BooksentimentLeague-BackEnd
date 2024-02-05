@@ -111,7 +111,7 @@ export const deleteComment = async (commentId, userData) => {
       // 삭제하려는 댓글이 존재하는지 확인
       const comment = await findCommentById(commentId);
       if (!comment) {
-          throw new Error('Comment not found');
+          throw new Error('댓글이 존재하지 않습니다.');
       }
 
       // 삭제하려는 댓글 작성자와 현재 사용자가 같은지 확인
