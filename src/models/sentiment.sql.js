@@ -25,6 +25,10 @@ export const insertCommentQuery = `
     INSERT INTO comment (user_id, sentiment_id, parent_id, content, created_at, updated_at)
     VALUES (?, ?, ?, ?, NOW(), NOW());
 `;
+export const insertUserCommentQuery = `
+    INSERT INTO user_comment (comment_id, user_id, \`like\`)
+    VALUES (?, ?, 0);
+`;
 
 // 방금 작성한 댓글에 대한 정보 검색
 export const selectInsertedCommentQuery = `
@@ -45,6 +49,7 @@ export const findCommentByIdQuery = "SELECT * FROM comment WHERE comment_id = ?;
 
 // 댓글 삭제
 export const deleteCommentQuery = "DELETE FROM comment WHERE comment_id = ?;";
+export const deleteUserCommentQuery = "DELETE FROM user_comment WHERE comment_id = ?;";
 
 // 댓글/대댓글 작성 알림
 export const insertAlarmQuery = `
