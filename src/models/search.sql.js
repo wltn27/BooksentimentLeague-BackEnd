@@ -27,4 +27,22 @@ JOIN (
     WHERE sentiment_id = ?
 ) as c ON uc.comment_id = c.comment_id;` 
 
-
+// 본인일 경우 follow_status 변경
+export const getNickname = `
+    SELECT
+        u.profile_image,
+        u.nickname,
+        u.status_message,
+        CASE WHEN EXISTS (SELECT 1 FROM follow WHERE following_id = u.user_id AND follower_id = ?) THEN 'following' ELSE 'follow' END AS follow_status
+    FROM
+        user u
+    LEFT JOIN
+        follow f ON f.following_id = u.user_id
+    WHERE
+        u.nickname LIKE ?
+    GROUP BY
+        u.user_id
+    ORDER BY
+        COUNT(f.following_id) DESC, u.user_id ASC
+    LIMIT 10 OFFSET 0;
+`;

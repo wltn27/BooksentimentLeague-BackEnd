@@ -22,3 +22,21 @@ export const getSentimentList = async(searchWord, cursorId) => {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
+
+export const getNicknameList = async(searchWord, cursorId) => {
+    try{
+        const conn = await pool.getConnection();
+        
+        const [nicknameObject] = await pool.query(getNickname, [`%${searchWord}%`, `%${searchWord}%`, cursorId]);
+
+        for(let i =0; i < nicknameObject.length; i++){
+            Object.assign(nicknameObject[i], { comment_num: (await pool.query(getSentimentCommentCount, nicknameObject[i].sentiment_id))[0][0].comment_num });
+        }
+
+        conn.release();
+        return nicknameObject;
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}

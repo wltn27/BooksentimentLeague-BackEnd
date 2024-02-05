@@ -4,8 +4,8 @@ import { BaseError } from "../../config/error.js";
 import { response } from "../../config/response.js";
 import { status } from "../../config/response.status.js";
 
-import { readSearchListSentiment } from './../providers/search.provider.js';
-// readSearchListAll, readSearchListBook, readSearchListNick
+import { readSearchListSentiment, readSearchListNick } from './../providers/search.provider.js';
+// readSearchListAll, readSearchListBook
 
 // 도서 검색 api 구현되면 그때 함
 
@@ -33,11 +33,16 @@ export const getSearchListSentiment = async (req, res, next ) => {
 
     if(searchListObject == '')
         return res.status(StatusCodes.OK).json({"sentimentObject" : searchListObject});
-    return res.status(StatusCodes.OK).json(searchListObject)
+    return res.status(StatusCodes.OK).json(searchListObject);
 }
 
 // 검색결과 리스트(닉네임) 조회
 export const getSearchListNick = async (req, res, next ) => {
     console.log("검색결과 리스트(닉네임) 조회 요청");
 
+    const searchListObject = await readSearchListNick(req.query.query, req.body.cursorId);
+
+    if(searchListObject == '')
+        return res.status(StatusCodes.OK).json({"nicknameObject" : searchListObject});
+    return res.status(StatusCodes.OK).json(searchListObject);
 }

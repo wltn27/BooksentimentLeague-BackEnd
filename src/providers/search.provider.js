@@ -18,3 +18,18 @@ export const readSearchListSentiment = async (searchWord, cursorId) => {
     
     return sentimentResponseDTO(sentimentList);
 }
+
+// 검색결과 리스트(닉네임) 조회
+export const readSearchListNick = async (searchWord, cursorId) => {
+    let sentimentList;
+    if(cursorId == undefined){
+        nicknameList = await getNicknameList(searchWord, 0);
+    } else {
+        nicknameList = await getNicknameList(searchWord, cursorId);
+    }
+
+    if(sentimentList == '') // 아무 검색 결과가 안 뜰 때 빈 배열 반환
+        return [];
+    
+    return sentimentResponseDTO(sentimentList);
+}
