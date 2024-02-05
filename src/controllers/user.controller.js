@@ -199,8 +199,9 @@ export const myPage = async (req, res, next) => {
         //로그인 되어 있는 상태
         console.log("로그인 되어 있는 상태");
         const userData = await readMyPage(user_id);
+        console.log("유저 데이터 받기 성공");
         const sentimentData = await readSentimentList(user_id, 3, 0);
-
+        console.log([userData, sentimentData]);
         res.status(200).json([userData, sentimentData]);
     } else {
         res.status(500).json({"message" : "로그인 해오십쇼!"})
