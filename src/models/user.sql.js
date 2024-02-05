@@ -154,4 +154,4 @@ export const checkUserSentimentScrapStatusQuery = `SELECT scrap FROM user_sentim
 export const alarmStatus = "UPDATE alarm SET read_at = 1 WHERE alarm_id=?;";
 export const getAlarmStatus = "SELECT read_at FROM alarm WHERE alarm_id=?";
 export const getAlarmInfo = "SELECT title, content, read_at, created_at FROM alarm WHERE user_id= ? ORDER BY created_at DESC;";
-
+export const getUnreadAlarmCount = "SELECT COUNT(*) AS unreadCount FROM alarm WHERE user_id = ? AND read_at = 0"

@@ -1,7 +1,7 @@
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
-import { getMyPage, getFollowerList, getFollowingList, getSentimentList, getScrapList, getAlarmDao} from "../models/user.dao.js";
-import { followerListDTO, followingListDTO, sentimentResponseDTO, alarmDTO } from "./../dtos/user.response.dto.js";
+import { getMyPage, getFollowerList, getFollowingList, getSentimentList, getScrapList, getAlarmDao, countUnreadNotifications } from "../models/user.dao.js";
+import { followerListDTO, followingListDTO, sentimentResponseDTO, alarmDTO, UnreadNotificationResponseDTO } from "./../dtos/user.response.dto.js";
 
 export const readMyPage = async (user_id) => {
     
@@ -38,6 +38,10 @@ export const readScrapList = async(user_id) => {
 // 알림 조회
 export const getAlarmService = async(userId) => {
     const alarmData = await getAlarmDao(userId);
-    console.log('alarmDTO: ', alarmDTO(alarmData));
     return alarmDTO(alarmData);
+}
+
+export const getUnreadNotificationsCount = async (userId) => {
+    const unreadCount = await countUnreadNotifications(userId);
+    return UnreadNotificationResponseDTO(unreadCount);
 }

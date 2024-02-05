@@ -94,14 +94,13 @@ export const delComment = async (req, res, next) => {
 };
 
 // 알림 조회
-export const getAlarm = async (req, res, next ) => {
+export const getAlarm = async (req, res, next) => {
     console.log("알림 조회 요청");
     res.send(response(status.SUCCESS, await getAlarmService(req.params.userId)));
 }
 
 // 알림 상태 업데이트
-export const updateAlarm = async (req, res, next ) => {
+export const updateAlarm = async (req, res, next) => {
     console.log("알림 상태 업데이트 요청");
     res.send(response(status.SUCCESS, await updateAlarmService(req.params.userId, req.params.alarmId)));
-   
 }

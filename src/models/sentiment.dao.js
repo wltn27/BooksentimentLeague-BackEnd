@@ -6,8 +6,9 @@ import { status } from "../../config/response.status.js";
 import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getNickname, insertUserSentiment, getSentimentId } from "./sentiment.sql.js";
 import { updateSentimentSql, deleteSentimentSql, deleteUserSentimentSql } from "./sentiment.sql.js";
 import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js";
-import { insertCommentQuery, selectInsertedCommentQuery, findCommentByIdQuery, deleteCommentQuery, insertAlarmQuery,
-        totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm, getCommentList } from "./../models/sentiment.sql.js";
+import { insertCommentQuery, insertUserCommentQuery, selectInsertedCommentQuery, findCommentByIdQuery,
+         deleteCommentQuery, deleteUserCommentQuery, insertAlarmQuery,
+         totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm, getCommentList } from "./../models/sentiment.sql.js";
 import { getAlarmInfo, alarmStatus, getAlarmStatus } from "./sentiment.sql.js";
 import { deleteImageFromS3 } from '../middleware/imageUploader.js';
 
@@ -373,9 +374,14 @@ export const getComment = async (sentimentId) => {
 
 // 댓글 작성하기
 export const createComment = async (sentimentId, userId, parent_id, content) => {
+    const conn = await pool.getConnection();
     try {
-        const conn = await pool.getConnection();
-        await conn.query(insertCommentQuery, [userId, sentimentId, parent_id, content]);
+        await conn.beginTransaction();
+        const parentId = parent_id === undefined ? null : parent_id;
+        const [commentResult] = await conn.query(insertCommentQuery, [userId, sentimentId, parent_id, content]);
+        const commentId = commentResult.insertId;
+        await conn.query(insertUserCommentQuery, [commentId, userId]);
+        
         const [rows] = await conn.query(selectInsertedCommentQuery);
         
         // sentiment 작성자 ID 조회 (sentimentId를 사용하여 조회)
@@ -387,10 +393,11 @@ export const createComment = async (sentimentId, userId, parent_id, content) => 
         
         // 알림 추가
         await conn.query(insertAlarmQuery, [sentimentUserId, title, content]);
+        await conn.commit();
         conn.release();
-        
         return rows[0];
      } catch (err) {
+        await conn.rollback();
         console.log(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
      }
@@ -407,6 +414,14 @@ export const findCommentById = async (commentId) => {
 // 댓글 삭제하기
 export const removeComment = async (commentId) => {
     const conn = await pool.getConnection();
-    await conn.query(deleteCommentQuery, [commentId]);
-    conn.release();
+    try {
+        await conn.beginTransaction();
+        await conn.query(deleteUserCommentQuery, [commentId]);
+        await conn.query(deleteCommentQuery, [commentId]);
+        await conn.commit();
+        conn.release();
+    } catch (err) {
+        await conn.rollback();
+        throw err;
+    }    
 };

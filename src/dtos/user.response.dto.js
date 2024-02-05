@@ -45,7 +45,7 @@ export const alarmDTO = (data) => {
         "title": item.title,
         "content": item.content,
         "read_at": item.read_at,
-        "created_at": item.created_at,
+        "created_at":  formatDate(item.created_at),
     }));
 };
 
@@ -151,6 +151,10 @@ export const sentimentResponseDTO = (data) => {
     }
     return {"sentimentObject": sentimentObject, "cursorId": data[data.length-1].sentiment_id};
 }
+
+export const UnreadNotificationResponseDTO = (unreadCount) => {
+    return {unreadCount: unreadCount};
+};
 
 const formatDate = (date) => {
     const options = {

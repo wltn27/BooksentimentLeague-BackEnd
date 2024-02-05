@@ -7,7 +7,7 @@ import { confirmEmail, confirmNick, getUserPassword, insertUserSql, getUserData,
         getFollowerCount, getFollowingCount, getSentimentCount, getLikeCount, getScrapCount, getFollower, getFollowingStatus, getFollowing, getFollowerStatus, getSentiment,
         getScrap, getSentimentCommentCount, getSentimentLikeCount, getSentimentScrapCount, insertFollow, confirmFollow, deleteFollow, likeSentimentQuery, unlikeSentimentQuery, 
         checkSentimentOwnerQuery, checkUserSentimentLikeStatusQuery, likeCommentQuery, unlikeCommentQuery, checkCommentOwnerQuery, checkUserCommentLikeStatusQuery, scrapSentimentQuery, 
-        unscrapSentimentQuery, checkUserSentimentScrapStatusQuery, getAlarmInfo, alarmStatus, getAlarmStatus, getImageSql } from "./../models/user.sql.js";
+        unscrapSentimentQuery, checkUserSentimentScrapStatusQuery, getAlarmInfo, alarmStatus, getAlarmStatus, getImageSql, getUnreadAlarmCount } from "./../models/user.sql.js";
 import { deleteImageFromS3 } from '../middleware/imageUploader.js';
 
 
@@ -201,12 +201,13 @@ export const updateUserFollow = async (followingId, userId) => {
     try {
         const conn = await pool.getConnection();
         console.log(userId)
-        const [user] = await pool.query(insertFollow, [followingId, userId]);
+        await pool.query(insertFollow, [followingId, userId]);
 
         conn.release();
         return true;
         
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
@@ -221,21 +222,23 @@ export const getFollowerList = async(user_id) => {
 
         conn.release();
         return followObject;
-    }catch (err) {
+    } catch (err) {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
+
 // 언팔로우하기 함수
 export const updateUserUnFollow = async (followingId, userId) => {
     try {
         const conn = await pool.getConnection();
         console.log(userId)
-        const [user] = await pool.query(deleteFollow, [followingId, userId]);
+        await pool.query(deleteFollow, [followingId, userId]);
 
         conn.release();
         return true;
         
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
@@ -254,6 +257,7 @@ export const getFollowingList = async(user_id) => {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
+
 // 팔로우 중복되는 지 확인
 export const existFollow = async (followingId, userId) => {
     try {
@@ -264,6 +268,7 @@ export const existFollow = async (followingId, userId) => {
         return confirm[0].isExistFollow === 1; // 중복이 있으면 true, 없으면 false 반환
 
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
@@ -304,15 +309,17 @@ export const getScrapList = async(user_id) => {
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
+
 // 추천하기 - 센티멘트
 export const likeSentiment = async (userId, sentimentId) => {
     try {
         const conn = await pool.getConnection();
-        const [user] = await pool.query(likeSentimentQuery, [userId, sentimentId]);
+        await pool.query(likeSentimentQuery, [userId, sentimentId]);
 
         conn.release();
         return true;
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
@@ -321,11 +328,12 @@ export const likeSentiment = async (userId, sentimentId) => {
 export const unlikeSentiment = async (userId, sentimentId) => {
     try {
         const conn = await pool.getConnection();
-        const [user] = await pool.query(unlikeSentimentQuery, [userId, sentimentId]);
+        await pool.query(unlikeSentimentQuery, [userId, sentimentId]);
     
         conn.release();
         return true;
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
@@ -339,6 +347,7 @@ export const checkUserSentimentLikeStatus = async (userId, sentimentId) => {
         conn.release();
         return rows.length > 0 && rows[0].like === 1; // 이미 추천된 상태면 true, 아니면 false 반환
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
@@ -352,6 +361,7 @@ export const checkSentimentOwner = async (sentimentId, userId) => {
         conn.release();
         return rows.length > 0 && rows[0].user_id === Number(userId);
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
@@ -360,11 +370,12 @@ export const checkSentimentOwner = async (sentimentId, userId) => {
 export const likeComment = async (userId, commentId) => {
     try {
         const conn = await pool.getConnection();
-        const [user] = await pool.query(likeCommentQuery, [userId, commentId]);
+        await pool.query(likeCommentQuery, [userId, commentId]);
 
         conn.release();
         return true;
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
@@ -373,11 +384,12 @@ export const likeComment = async (userId, commentId) => {
 export const unlikeComment = async (userId, commentId) => {
     try {
         const conn = await pool.getConnection();
-        const [user] = await pool.query(unlikeCommentQuery, [userId, commentId]);
+        await pool.query(unlikeCommentQuery, [userId, commentId]);
     
         conn.release();
         return true;
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
@@ -391,6 +403,7 @@ export const checkUserCommentLikeStatus = async (userId, commentId) => {
         conn.release();
         return rows.length > 0 && rows[0].like === 1; // 이미 추천된 상태면 true, 아니면 false 반환
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
@@ -404,6 +417,7 @@ export const checkCommentOwner = async (commentId, userId) => {
         conn.release();
         return rows.length > 0 && rows[0].user_id === Number(userId);
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
@@ -412,11 +426,12 @@ export const checkCommentOwner = async (commentId, userId) => {
 export const scrapSentiment = async (userId, sentimentId) => {
     try {
         const conn = await pool.getConnection();
-        const [user] = await pool.query(scrapSentimentQuery, [userId, sentimentId]);
+        await pool.query(scrapSentimentQuery, [userId, sentimentId]);
 
         conn.release();
         return true;
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
@@ -425,11 +440,12 @@ export const scrapSentiment = async (userId, sentimentId) => {
 export const unscrapSentiment = async (userId, sentimentId) => {
     try {
         const conn = await pool.getConnection();
-        const [user] = await pool.query(unscrapSentimentQuery, [userId, sentimentId]);
+        await pool.query(unscrapSentimentQuery, [userId, sentimentId]);
     
         conn.release();
         return true;
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
@@ -443,6 +459,7 @@ export const checkUserSentimentScrapStatus = async (userId, sentimentId) => {
         conn.release();
         return rows.length > 0 && rows[0].scrap === 1; // 이미 추천된 상태면 true, 아니면 false 반환
     } catch (err) {
+        console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 };
@@ -477,4 +494,10 @@ export const updateAlarmDao = async (alarmId) => {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
+}
+
+export const countUnreadNotifications = async (userId) => {
+    const conn = await pool.getConnection();
+    const [rows] = await pool.query(getUnreadAlarmCount, [userId]);
+    return rows[0].unreadCount;
 }
