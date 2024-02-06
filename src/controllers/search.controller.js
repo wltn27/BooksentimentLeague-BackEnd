@@ -7,6 +7,18 @@ import { status } from "../../config/response.status.js";
 import { readSearchListSentiment, readSearchListNick } from './../providers/search.provider.js';
 // readSearchListAll, readSearchListBook
 
+// 도서 검색 API
+export const getSearchBooks = async (req, res) => {
+    try {
+      const { title } = req.query.query;
+      const bookData = await searchForBooks(title);
+      res.status(StatusCodes.OK).json({ bookData });
+    } catch (error) {
+      console.error('Search Books Error:', error);
+      res.status(500).json({ message: "도서 검색에 실패했습니다." });
+    }
+};
+
 // 도서 검색 api 구현되면 그때 함
 
 // // 검색결과 리스트(전체) 조회

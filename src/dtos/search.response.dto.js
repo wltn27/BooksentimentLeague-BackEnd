@@ -42,3 +42,15 @@ export const nicknameResponseDTO = (data, cursorId) => {
     }
     return {"nicknameObject": nicknameObject, "cursorId": data.length-1 + cursorId};
 }
+
+export const searchResponseDTO = (books) => {
+    return books.map(book => ({
+      title: book.title,
+      image: book.image,
+      author: book.author,
+      publisher: book.publisher,
+      pubdate: book.pubdate,
+      avr_score: book.avr_score || 0,
+      eval_num: book.eval_num || 0
+    }));
+  };

@@ -18,6 +18,7 @@ export const getSentiment = `
     ORDER BY like_num desc, ut.tier_id desc, s.user_id ASC
     limit 10 offset ?;
 `;
+
 export const getSentimentCommentCount = `
 SELECT COUNT(*) as comment_num
 FROM user_comment as uc 
