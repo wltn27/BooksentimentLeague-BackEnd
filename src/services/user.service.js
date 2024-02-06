@@ -75,7 +75,7 @@ export const findUser = async (email, verificationCode) => {
         return new BaseError(status.AUTH_NOT_EQUAL);
     }
     
-    return json({"message" : "인증 성공하였습니다."});
+    return {"message" : "인증 성공하였습니다."};
 }
 
 export const changeUser = async (password, userId) => {
