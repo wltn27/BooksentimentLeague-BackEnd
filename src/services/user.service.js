@@ -240,7 +240,7 @@ export const updateAlarmService = async (userId, alarmId) => {
       return readStatus;
   
     } catch (err) {
-      console.error('Error:', err);
-      return new BaseError(status.PARAMETER_IS_WRONG);
+      console.error('Error in updateAlarmService:', err);
+      return error;
     }
   }

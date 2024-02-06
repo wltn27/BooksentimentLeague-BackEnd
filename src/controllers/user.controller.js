@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser, 
         updateUserData, sendEmail, updateAlarmService} from './../services/user.service.js';
-import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList, getAlarmService} from './../providers/user.provider.js';
+import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList, getAlarmService, getUnreadNotificationsCount} from './../providers/user.provider.js';
 import { getUser } from "../models/user.dao.js";
 import { checkEmailResponseDTO, checkNickResponseDTO} from "./../dtos/user.response.dto.js"
 
@@ -103,9 +103,9 @@ export const sendEmailVerification = async (req, res, next) => {
     try {
         await saveVerificationCode(email, verificationCode);      // redis에 코드 저장
         await sendEmail(email, 'Your Verification Code', `Your code is: ${verificationCode}`);
-        res.status(200).send({"messgae" : "메일로 인증번호를 전송하였습니다."});
+        res.status(200).send({"message" : "메일로 인증번호를 전송하였습니다."});
     } catch (error) {
-        res.status(500).send({"messgae" : "인증번호 전송에 실패하였습니다."});
+        res.status(500).send({"message" : "인증번호 전송에 실패하였습니다."});
     }
 };
 
@@ -150,7 +150,7 @@ export const refreshToken = async (req, res, next) => {
             httpOnly : true,
         })
 
-        res.status(StatusCodes.OK).json({"message" : "access token을 재 발행햇습니다."});
+        res.status(StatusCodes.OK).json({"message" : "access token을 재 발행했습니다."});
     } 
      catch (err) {
         res.status(StatusCodes.BAD_GATEWAY).json({"message" : "access token을 발행하지 못 했습니다."});
@@ -314,6 +314,18 @@ export const updateAlarm = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in updateAlarmService:', error);
+        return res.status(500).json({message: error.data.message});
+    }
+}
+
+export const getUnreadNotifications = async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const unreadCount = await getUnreadNotificationsCount(userId);
+        console.log(unreadCount);
+        res.json({ unreadCount });
+    } catch (error) {
+        console.error('Error in getUnreadNotificationsCount:', error);
         return res.status(500).json({message: error.data.message});
     }
 }
