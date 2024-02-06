@@ -1,3 +1,17 @@
+export const getBookSentimentData = `
+    SELECT 
+        AVG(score) AS avr_score,
+        COUNT(*) AS eval_num
+    FROM 
+        sentiment
+    WHERE 
+        book_title = ? AND
+        author = ? AND
+        publisher = ?
+    GROUP BY 
+        book_title, author, publisher;
+`;
+
 // 유저 센티멘트 리스트 조회, 최대 10개 제한
 export const getSentiment = `
     SELECT
