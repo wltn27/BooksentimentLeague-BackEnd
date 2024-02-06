@@ -106,7 +106,7 @@ export const saveVerificationCode = async (email, verificationCode) => {
         await client.quit();
     }
     catch (error){
-        return new BaseError(status.EMAIL_NOT_EXIST); // error status 변경 필요
+        return new BaseError(status.NOT_SAVE_AUTH);
     }    
 };
 
