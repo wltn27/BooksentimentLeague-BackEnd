@@ -3,7 +3,7 @@ import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
-import { getSentiment, getSentimentCommentCount } from "./../models/search.sql.js";
+import { getSentiment, getSentimentCommentCount, getNickname } from "./../models/search.sql.js";
 
 export const getSentimentList = async(searchWord, cursorId) => {
     try{
@@ -19,24 +19,25 @@ export const getSentimentList = async(searchWord, cursorId) => {
         return sentimentObject;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.fail_sentiment_list);
     }
 }
 
-export const getNicknameList = async(searchWord, cursorId) => {
+export const getNicknameList = async(searchWord, cursorId, userId) => {
     try{
         const conn = await pool.getConnection();
         
-        const [nicknameObject] = await pool.query(getNickname, [`%${searchWord}%`, `%${searchWord}%`, cursorId]);
+        const [nicknameObject] = await pool.query(getNickname, [userId, `%${searchWord}%`, cursorId]);
 
         for(let i =0; i < nicknameObject.length; i++){
-            Object.assign(nicknameObject[i], { comment_num: (await pool.query(getSentimentCommentCount, nicknameObject[i].sentiment_id))[0][0].comment_num });
+            if(nicknameObject[i].user_id == userId)
+                nicknameObject[i].follow_status = "myself";
         }
 
         conn.release();
         return nicknameObject;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.fail_nickname_list);
     }
 }

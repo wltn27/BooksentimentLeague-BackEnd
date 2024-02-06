@@ -30,6 +30,7 @@ JOIN (
 // 본인일 경우 follow_status 변경
 export const getNickname = `
     SELECT
+        u.user_id,
         u.profile_image,
         u.nickname,
         u.status_message,
@@ -44,5 +45,5 @@ export const getNickname = `
         u.user_id
     ORDER BY
         COUNT(f.following_id) DESC, u.user_id ASC
-    LIMIT 10 OFFSET 0;
+    LIMIT 10 OFFSET ?;
 `;

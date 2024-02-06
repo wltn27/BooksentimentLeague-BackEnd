@@ -1,7 +1,8 @@
 import { formatDate } from "./../dtos/user.response.dto.js";
 
-export const sentimentResponseDTO = (data) => {
-
+export const sentimentResponseDTO = (data, cursorId) => {
+    if(cursorId == undefined)
+        cursorId = 0;
     const sentimentObject = [];
 
     for (let i = 0; i < data.length; i++) {
@@ -22,5 +23,22 @@ export const sentimentResponseDTO = (data) => {
             "scrap_num":  data[i].scrap_num
         })
     }
-    return {"sentimentObject": sentimentObject, "cursorId": data[data.length-1].sentiment_id};
+    return {"sentimentObject": sentimentObject, "cursorId": data.length-1 + cursorId};
+}
+
+export const nicknameResponseDTO = (data, cursorId) => {
+    if(cursorId == undefined)
+        cursorId = 0;
+
+    const nicknameObject = [];
+
+    for (let i = 0; i < data.length; i++) {
+        nicknameObject.push({
+            "profile_image": data[i].profile_image,
+            "nickname": data[i].nickname,
+            "status_message" : data[i].status_message,
+            "follow_status" : data[i].follow_status
+        })
+    }
+    return {"nicknameObject": nicknameObject, "cursorId": data.length-1 + cursorId};
 }
