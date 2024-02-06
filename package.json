@@ -7,7 +7,8 @@
     "scripts":
         {
         "test":"echo \"Error: no test specified\" && exit 1",
-        "start":"nodemon --exec babel-node index.js"
+        "start":"nodemon --exec babel-node index.js",
+        "server": "forever start -c babel-node index.js"
         },
     "author":"",
     "license":"ISC",

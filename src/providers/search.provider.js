@@ -15,8 +15,8 @@ export const searchForBooks = async (title) => {
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
-        'X-Naver-Client-Id': naver_client_id,
-        'X-Naver-Client-Secret': naver_client_secret,
+        'X-Naver-Client-Id': process.env.NAVER_CLIENT_ID,
+        'X-Naver-Client-Secret': process.env.NAVER_CLIENT_SECRET,
       },
     });
   

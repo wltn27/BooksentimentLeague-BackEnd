@@ -4,13 +4,13 @@ import { BaseError } from "../../config/error.js";
 import { response } from "../../config/response.js";
 import { status } from "../../config/response.status.js";
 
-import { readSearchListSentiment, readSearchListNick } from './../providers/search.provider.js';
+import { readSearchListSentiment, readSearchListNick, searchForBooks } from './../providers/search.provider.js';
 // readSearchListAll, readSearchListBook
 
 // 도서 검색 API
 export const getSearchBooks = async (req, res) => {
     try {
-      const { title } = req.query.query;
+      const title = req.query.query;
       const bookData = await searchForBooks(title);
       res.status(StatusCodes.OK).json({ bookData });
     } catch (error) {
