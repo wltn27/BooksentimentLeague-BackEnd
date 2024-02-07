@@ -1,7 +1,8 @@
 import { formatDate } from "./../dtos/user.response.dto.js";
 
-export const sentimentResponseDTO = (data) => {
-
+export const sentimentResponseDTO = (data, cursorId) => {
+    if(cursorId == undefined)
+        cursorId = 0;
     const sentimentObject = [];
 
     for (let i = 0; i < data.length; i++) {
@@ -22,11 +23,28 @@ export const sentimentResponseDTO = (data) => {
             "scrap_num":  data[i].scrap_num
         })
     }
-    return {"sentimentObject": sentimentObject, "cursorId": data[data.length-1].sentiment_id};
+    return {"sentimentObject": sentimentObject, "cursorId": data.length + cursorId};
 }
 
-export const searchResponseDTO = (books) => {
-    return books.map(book => ({
+export const nicknameResponseDTO = (data, cursorId) => {
+    if(cursorId == undefined)
+        cursorId = 0;
+
+    const nicknameObject = [];
+
+    for (let i = 0; i < data.length; i++) {
+        nicknameObject.push({
+            "profile_image": data[i].profile_image,
+            "nickname": data[i].nickname,
+            "status_message" : data[i].status_message,
+            "follow_status" : data[i].follow_status
+        })
+    }
+    return {"nicknameObject": nicknameObject, "cursorId": data.length + cursorId};
+}
+
+export const searchResponseDTO = (books, start_index) => {
+    const bookObject =  books.map(book => ({
       title: book.title,
       image: book.image,
       author: book.author,
@@ -35,4 +53,6 @@ export const searchResponseDTO = (books) => {
       avr_score: book.avr_score || 0,
       eval_num: book.eval_num || 0
     }));
+
+    return {bookObject, cursorId : bookObject.length + start_index -1};
   };

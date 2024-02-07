@@ -1,3 +1,17 @@
+export const getBookSentimentData = `
+    SELECT 
+        AVG(score) AS avr_score,
+        COUNT(*) AS eval_num
+    FROM 
+        sentiment
+    WHERE 
+        book_title = ? AND
+        author = ? AND
+        publisher = ?
+    GROUP BY 
+        book_title, author, publisher;
+`;
+
 // 유저 센티멘트 리스트 조회, 최대 10개 제한
 export const getSentiment = `
     SELECT
@@ -16,7 +30,7 @@ export const getSentiment = `
     WHERE sentiment_title LIKE ? or s.content LIKE ?
     GROUP BY s.user_id
     ORDER BY like_num desc, ut.tier_id desc, s.user_id ASC
-    limit 10 offset ?;
+    limit ? offset ?;
 `;
 
 export const getSentimentCommentCount = `
@@ -28,16 +42,23 @@ JOIN (
     WHERE sentiment_id = ?
 ) as c ON uc.comment_id = c.comment_id;` 
 
-export const getBookSentimentData = `
-    SELECT 
-        AVG(score) AS avr_score,
-        COUNT(*) AS eval_num
-    FROM 
-        sentiment
-    WHERE 
-        book_title = ? AND
-        author = ? AND
-        publisher = ?
-    GROUP BY 
-        book_title, author, publisher;
+// 본인일 경우 follow_status 변경
+export const getNickname = `
+    SELECT
+        u.user_id,
+        u.profile_image,
+        u.nickname,
+        u.status_message,
+        CASE WHEN EXISTS (SELECT 1 FROM follow WHERE following_id = u.user_id AND follower_id = ?) THEN 'following' ELSE 'follow' END AS follow_status
+    FROM
+        user u
+    LEFT JOIN
+        follow f ON f.following_id = u.user_id
+    WHERE
+        u.nickname LIKE ?
+    GROUP BY
+        u.user_id
+    ORDER BY
+        COUNT(f.following_id) DESC, u.user_id ASC
+    LIMIT ? OFFSET ?;
 `;

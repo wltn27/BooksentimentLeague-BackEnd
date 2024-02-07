@@ -26,11 +26,14 @@ export const status = {
     ID_ALREADY_EXIST: {status: StatusCodes.CONFLICT, "isSuccess": false, "code": "MEMBER4008", "message": "ID가 이미 등록되어 있습니다."},   
     NOT_CHANGED_STATUS: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4010", "message": "완료로 바뀌지 않았습니다."},
     PASSWORD_NOT_EQUAL: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER40018", "message": "비밀번호가 틀렸습니다."},
+    NOT_SAVE_AUTH : {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER40020", "message": "인증번호가 저장되지 않았습니다."},
    
     SENTIMENT_ALREADY_EXIST: { status: StatusCodes.CONFLICT, "isSuccess": false, "code": "MEMBER4011", "message": "작성한 센티멘트가 이미 존재합니다.."}, 
     SENTIMENT_NOT_FOUND: { status: StatusCodes.NOT_FOUND, "isSuccess": false, "code": "MEMBER4012", "message": "센티멘트가 존재하지 않습니다."},
     NOT_EQUAL_USER: {status:StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4013", "message": "현재 사용자와 작성자가 일치하지 않습니다."},
-      
+    fail_sentiment_list : {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER40021", "message": "센티멘트 리스트 반환에 실패했습니다."},
+    fail_nickname_list : {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER40022", "message": "닉네임 리스트 반환에 실패했습니다."},
+
     SENTIMENT_NOT_SELF: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4014", "message": "본인 센티멘트는 추천할 수 없습니다."},
     COMMENT_NOT_SELF: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4015", "message": "본인 댓글은 추천할 수 없습니다."},
     SCRAP_NOT_SELF: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4016", "message": "본인 센티멘트는 스크랩할 수 없습니다."},
