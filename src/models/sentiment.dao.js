@@ -434,7 +434,7 @@ export const getSentimentListDao = async (page_num) => {
         const [list] = await conn.query(getSentimentListSql(), [(page_num-1) * 3]);
 
         if (list.length == 0) {
-            return -1;
+            return { message :"조회된 센티멘트가 없습니다."};
         }
 
         conn.release();

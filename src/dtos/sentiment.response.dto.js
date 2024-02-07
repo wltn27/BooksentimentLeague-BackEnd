@@ -69,7 +69,7 @@ export const sentimentListDTO = (data) => {
         "author" : item.author,
         "publisher" : item.publisher,
         "nickname" : item.author_nickname,
-        "tier" : item.tier, // tier 값이 어디서 오는지 확인 필요
+        "tier" : item.tier, 
         "like_count" : item.total_likes,
         "comment_count" : item.total_comments,
         "scrap_count" : item.total_scraps,
