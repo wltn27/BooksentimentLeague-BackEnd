@@ -3,7 +3,7 @@ import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, 
     updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserSentimentLikeStatus, unlikeComment, 
-    likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus, changeUserInfo} from "../models/user.dao.js";
+    likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus, changeUserInfo, updateAlarmDao} from "../models/user.dao.js";
 import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, 
         followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO, ScrapSentimentResponseDTO} from "./../dtos/user.response.dto.js"   
 import { createClient } from 'redis';
@@ -151,7 +151,7 @@ export const followUser = async (followingId, userId) => {
         }
     } catch (error) {
         console.error('Error in followUser:', error);
-        return error;
+        return json({"message" : "팔로우/언팔로우 수행에 실패하였습니다."});
     }
 }
 
@@ -176,7 +176,7 @@ export const likeSentimentUser = async (userId, sentimentId) => {
         }
     } catch (error) {
         console.error('Error in likeSentimentUser:', error);
-        return error;
+        return json({"message" : "센티멘트 추천 및 취소 수행에 실패하였습니다."});
     }
 };
 
@@ -201,7 +201,7 @@ export const likeCommentUser = async (userId, commentId) => {
         }
     } catch (error) {
         console.error('Error in likeCommentUser:', error);
-        return error;
+        return json({"message" : "댓글 추천 및 취소 수행에 실패하였습니다."});
     }
 };
 
@@ -226,11 +226,9 @@ export const scrapSentimentUser = async (userId, sentimentId) => {
         }
     } catch (error) {
         console.error('Error in scrapSentimentUser:', error);
-        return error;
+        return json({"message" : "센티멘트 스크랩 및 취소 수행에 실패하였습니다."});
     }
 };
-
-import { updateAlarmDao } from "../models/user.dao.js";
 
 // 알림 상태 업데이트
 export const updateAlarmService = async (userId, alarmId) => {
@@ -241,6 +239,6 @@ export const updateAlarmService = async (userId, alarmId) => {
   
     } catch (err) {
       console.error('Error in updateAlarmService:', err);
-      return error;
+      return json({"message" : "알림 상태 업데이트 수행에 실패하였습니다."});
     }
   }

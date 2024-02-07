@@ -101,7 +101,7 @@ export const insertComment = async (sentimentId, userId, parent_id, content) => 
         return WriteCommentResponseDTO(newComment);
     } catch (error) {
         console.error('Error in insertComment:', error);
-        throw error;
+        throw new Error("댓글 작성에 실패하였습니다.");
     }
 }
 
@@ -123,15 +123,20 @@ export const deleteComment = async (commentId, userData) => {
       return DeleteCommentResponseDTO();
   } catch (error) {
       console.error('Error in deleteComment:', error);
-      throw error;
+      throw new Error("댓글 삭제 수행에 실패하였습니다.");
   }
 };
 
 // 알림 조회
 export const getAlarmService = async (userId) => {
-  const alarmData = await getAlarmDao(userId);
-  console.log('alarmDTO: ', alarmDTO(alarmData));
-  return alarmDTO(alarmData);
+  try {
+    const alarmData = await getAlarmDao(userId);
+    console.log('alarmDTO: ', alarmDTO(alarmData));
+    return alarmDTO(alarmData);
+  } catch (err) {
+    console.error('Error:', err);
+    throw new Error("알림 조회에 실패하였습니다.");
+  }
 }
 
 // 알림 상태 업데이트
@@ -140,9 +145,8 @@ export const updateAlarmService = async (userId, alarmId) => {
     const readStatus = await updateAlarmDao(alarmId);
     console.log('readStatus: ', readStatus);
     return readStatus;
-
   } catch (err) {
     console.error('Error:', err);
-    throw new BaseError(status.PARAMETER_IS_WRONG);
+    throw new Error("알림 상태 업데이트에 실패하였습니다.");
   }
 }

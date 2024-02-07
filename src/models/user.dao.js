@@ -212,7 +212,7 @@ export const updateUserFollow = async (followingId, userId) => {
         
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("팔로우 수행에 실패하였습니다.");
     }
 }
 
@@ -243,7 +243,7 @@ export const updateUserUnFollow = async (followingId, userId) => {
         
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("언팔로우 수행에 실패하였습니다.");
     }
 }
 
@@ -273,7 +273,7 @@ export const existFollow = async (followingId, userId) => {
 
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("팔로우 중복 확인 수행에 실패하였습니다.");
     }
 }
 
@@ -324,7 +324,7 @@ export const likeSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("센티멘트 추천 수행에 실패하였습니다.");
     }
 };
 
@@ -338,7 +338,7 @@ export const unlikeSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("센티멘트 추천 취소 수행에 실패하였습니다.");
     }
 };
 
@@ -352,7 +352,7 @@ export const checkUserSentimentLikeStatus = async (userId, sentimentId) => {
         return rows.length > 0 && rows[0].like === 1; // 이미 추천된 상태면 true, 아니면 false 반환
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("이미 추천된 센티멘트인지 확인 수행에 실패하였습니다.");
     }
 };
 
@@ -366,7 +366,7 @@ export const checkSentimentOwner = async (sentimentId, userId) => {
         return rows.length > 0 && rows[0].user_id === Number(userId);
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("현재 사용자가 센티멘트 작성자인지 확인 수행에 실패하였습니다.");
     }
 };
 
@@ -380,7 +380,7 @@ export const likeComment = async (userId, commentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("댓글 추천 수행에 실패하였습니다.");
     }
 };
 
@@ -394,7 +394,7 @@ export const unlikeComment = async (userId, commentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("댓글 추천 취소 수행에 실패하였습니다.");
     }
 };
 
@@ -408,7 +408,7 @@ export const checkUserCommentLikeStatus = async (userId, commentId) => {
         return rows.length > 0 && rows[0].like === 1; // 이미 추천된 상태면 true, 아니면 false 반환
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("이미 추천된 댓글인지 확인 수행에 실패하였습니다.");
     }
 };
 
@@ -422,7 +422,7 @@ export const checkCommentOwner = async (commentId, userId) => {
         return rows.length > 0 && rows[0].user_id === Number(userId);
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("현재 사용자가 댓글 작성자인지 확인 수행에 실패하였습니다.");
     }
 };
 
@@ -436,7 +436,7 @@ export const scrapSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("스크랩 수행에 실패하였습니다.");
     }
 };
 
@@ -450,7 +450,7 @@ export const unscrapSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("스크랩 취소 수행에 실패하였습니다.");
     }
 };
 
@@ -464,7 +464,7 @@ export const checkUserSentimentScrapStatus = async (userId, sentimentId) => {
         return rows.length > 0 && rows[0].scrap === 1; // 이미 추천된 상태면 true, 아니면 false 반환
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("이미 스크랩된 센티멘트인지 확인 수행에 실패하였습니다.");
     }
 };
 
@@ -482,7 +482,7 @@ export const getAlarmDao = async (userId) => {
         return alarm;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("알림 조회 수행에 실패하였습니다.");
     }
 }
 
@@ -496,7 +496,7 @@ export const updateAlarmDao = async (alarmId) => {
         return readResult[0].read_at;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("알림 상태 업데이트 수행에 실패하였습니다.");
     }
 }
 
