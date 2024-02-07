@@ -30,7 +30,7 @@ export const getSentiment = `
     WHERE sentiment_title LIKE ? or s.content LIKE ?
     GROUP BY s.user_id
     ORDER BY like_num desc, ut.tier_id desc, s.user_id ASC
-    limit 10 offset ?;
+    limit ? offset ?;
 `;
 
 export const getSentimentCommentCount = `
@@ -60,5 +60,5 @@ export const getNickname = `
         u.user_id
     ORDER BY
         COUNT(f.following_id) DESC, u.user_id ASC
-    LIMIT 10 OFFSET ?;
+    LIMIT ? OFFSET ?;
 `;
