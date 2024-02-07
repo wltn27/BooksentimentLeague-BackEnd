@@ -8,7 +8,7 @@
         {
         "test":"echo \"Error: no test specified\" && exit 1",
         "start":"nodemon --exec babel-node index.js",
-        "server": "forever start index.js"
+        "server": "forever start --minUptime 3000 --spinSleepTime 3000 -l app.log -a index.js"
         },
     "author":"",
     "license":"ISC",
