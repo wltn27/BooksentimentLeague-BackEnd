@@ -5,7 +5,6 @@ import { response } from "../../config/response.js";
 import { status } from "../../config/response.status.js";
 
 import { readSearchListSentiment, readSearchListNick, searchForBooks } from './../providers/search.provider.js';
-// readSearchListAll, readSearchListBook
 
 // 도서 검색 API
 export const getSearchBooks = async (req, res) => {
@@ -19,17 +18,17 @@ export const getSearchBooks = async (req, res) => {
     }
 };
 
-// 도서 검색 api 구현되면 그때 함
-
 // // 검색결과 리스트(전체) 조회
 // export const getSearchListAll = async (req, res, next ) => {
 //     console.log("검색결과 리스트(전체) 요청");
     
-//     const searchListObject = await readSearchListAll(req.query.query);
+//     const searchBookObject = await searchForBooks(req.query.query);
+//     const searchSentimentObject = await readSearchListSentiment(req.query.query);
+//     const searchNicknameObject = await readSearchListNick(req.query.query, req.body.userId);
 
 //     if(!searchListObject)
 //         return res.status(StatusCodes.NOT_FOUND).json(new BaseError(status.SENTIMENT_NOT_FOUND));
-//     return res.status(StatusCodes.OK).json([{"sentiment" : searchListObject}, commentObject])
+//     return res.status(StatusCodes.OK).send()
 // }
 
 // 검색결과 리스트(센티멘트) 조회
