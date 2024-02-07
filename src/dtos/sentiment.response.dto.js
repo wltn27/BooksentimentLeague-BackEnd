@@ -33,16 +33,16 @@ export const commentResponseDTO = (data) => {
     return {"comment": commentObject};
 }
 
-export const WriteCommentResponseDTO = (nickname, tier, created_at, profile_image, content, like_num, parent_id, comment_id ) => {
+export const WriteCommentResponseDTO = (data) => {
     return {
-        "nickname" : nickname,
-        "tier" : tier,
-        "datetime" : created_at,
-        "profile_image" : profile_image,
-        "content" : content,
-        "like_num" : like_num,
-        "parent_id" : parent_id,
-        "comment_id" : comment_id
+        "nickname" : data.nickname,
+        "tier" : data.tier,
+        "datetime" : formatDate(data.created_at),
+        "profile_image" : data.profile_image,
+        "content" : data.content,
+        "like_num" : data.like_num,
+        "parent_id" : data.parent_id,
+        "comment_id" : data.comment_id
     }
 }
 

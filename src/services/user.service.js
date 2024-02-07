@@ -143,11 +143,11 @@ export const followUser = async (followingId, userId) => {
         if (isFollowing) {
             // 이미 팔로우 중인 경우, 언팔로우 수행
             await updateUserUnFollow(followingId, userId);
-            return followResponseDTO("following"); // "following" 상태 반환
+            return followResponseDTO("follow"); // "follow" 상태 반환
         } else {
             // 팔로우 수행
             await updateUserFollow(followingId, userId);
-            return followResponseDTO("follow"); // "follow" 상태 반환
+            return followResponseDTO("following"); // "following" 상태 반환
         }
     } catch (error) {
         console.error('Error in followUser:', error);

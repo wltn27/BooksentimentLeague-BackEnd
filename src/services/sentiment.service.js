@@ -98,6 +98,7 @@ export const deleteSentiment = async (sentimentId) => {
 export const insertComment = async (sentimentId, userId, parent_id, content) => {
     try {
         const newComment = await createComment(sentimentId, userId, parent_id, content);
+        console.log(newComment);
         return WriteCommentResponseDTO(newComment);
     } catch (error) {
         console.error('Error in insertComment:', error);

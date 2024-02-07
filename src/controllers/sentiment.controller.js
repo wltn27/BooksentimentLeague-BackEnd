@@ -67,6 +67,7 @@ export const wrComment = async (req, res, next) => {
         const { parent_id, content } = req.body;
         const comment = await insertComment(sentimentId, userId, parent_id, content);
         console.log("댓글 작성 성공!");
+        console.log(comment);
         res.status(StatusCodes.OK).json(comment);
     } catch (error) {
         console.error('Error in writeComment:', error);
