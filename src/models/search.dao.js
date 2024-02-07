@@ -5,11 +5,11 @@ import { status } from "../../config/response.status.js";
 
 import { getSentiment, getSentimentCommentCount, getNickname, getBookSentimentData } from "./../models/search.sql.js";
 
-export const getSentimentList = async(searchWord, cursorId) => {
+export const getSentimentList = async(searchWord, limit, cursorId) => {
     try{
         const conn = await pool.getConnection();
         
-        const [sentimentObject] = await pool.query(getSentiment, [`%${searchWord}%`, `%${searchWord}%`, cursorId]);
+        const [sentimentObject] = await pool.query(getSentiment, [`%${searchWord}%`, `%${searchWord}%`, limit, cursorId]);
 
         for(let i =0; i < sentimentObject.length; i++){
             Object.assign(sentimentObject[i], { comment_num: (await pool.query(getSentimentCommentCount, sentimentObject[i].sentiment_id))[0][0].comment_num });
@@ -23,11 +23,11 @@ export const getSentimentList = async(searchWord, cursorId) => {
     }
 }
 
-export const getNicknameList = async(searchWord, cursorId, userId) => {
+export const getNicknameList = async(searchWord, limit, cursorId, userId) => {
     try{
         const conn = await pool.getConnection();
         
-        const [nicknameObject] = await pool.query(getNickname, [userId, `%${searchWord}%`, cursorId]);
+        const [nicknameObject] = await pool.query(getNickname, [userId, `%${searchWord}%`, limit, cursorId]);
 
         for(let i =0; i < nicknameObject.length; i++){
             if(nicknameObject[i].user_id == userId)

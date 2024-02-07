@@ -23,7 +23,7 @@ export const sentimentResponseDTO = (data, cursorId) => {
             "scrap_num":  data[i].scrap_num
         })
     }
-    return {"sentimentObject": sentimentObject, "cursorId": data.length-1 + cursorId};
+    return {"sentimentObject": sentimentObject, "cursorId": data.length + cursorId};
 }
 
 export const nicknameResponseDTO = (data, cursorId) => {
@@ -40,11 +40,11 @@ export const nicknameResponseDTO = (data, cursorId) => {
             "follow_status" : data[i].follow_status
         })
     }
-    return {"nicknameObject": nicknameObject, "cursorId": data.length-1 + cursorId};
+    return {"nicknameObject": nicknameObject, "cursorId": data.length + cursorId};
 }
 
-export const searchResponseDTO = (books) => {
-    return books.map(book => ({
+export const searchResponseDTO = (books, start_index) => {
+    const bookObject =  books.map(book => ({
       title: book.title,
       image: book.image,
       author: book.author,
@@ -53,4 +53,6 @@ export const searchResponseDTO = (books) => {
       avr_score: book.avr_score || 0,
       eval_num: book.eval_num || 0
     }));
+
+    return {bookObject, cursorId : bookObject.length + start_index -1};
   };
