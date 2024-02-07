@@ -10,6 +10,7 @@ import { insertCommentQuery, insertUserCommentQuery, selectInsertedCommentQuery,
          deleteCommentQuery, deleteUserCommentQuery, insertAlarmQuery,
          totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm, getCommentList } from "./../models/sentiment.sql.js";
 import { getAlarmInfo, alarmStatus, getAlarmStatus } from "./sentiment.sql.js";
+import { getSentimentListSql, getFollowingSentimentListSql } from "./sentiment.sql.js";
 import { deleteImageFromS3 } from '../middleware/imageUploader.js';
 
 function isValidUrl(string) {
@@ -425,3 +426,41 @@ export const removeComment = async (commentId) => {
         throw err;
     }    
 };
+
+// 센티멘트 리스트 조회
+export const getSentimentListDao = async (page_num) => {
+    try {
+        const conn = await pool.getConnection();
+        const [list] = await conn.query(getSentimentListSql(), [(page_num-1) * 3]);
+
+        if (list.length == 0) {
+            return -1;
+        }
+
+        conn.release();
+        return list;
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
+
+// 팔로우한 사람의 센티멘트 리스트 조회
+export const getSentimentFollowDao = async (userId, page_num) => {
+    try {
+        const conn = await pool.getConnection();
+        const [list] = await conn.query(getFollowingSentimentListSql(), [userId, (page_num-1) * 3]);
+
+
+        if (list.length == 0) {
+            return { message :"조회된 센티멘트가 없습니다."};
+        }
+
+        conn.release();
+        return list;
+    } catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}

@@ -11,6 +11,7 @@ import jwt from 'jsonwebtoken';
 import { insertComment, deleteComment, insertSentiment, updateSentiment, deleteSentiment } from './../services/sentiment.service.js';
 import { readSentiment, readComment } from './../providers/sentiment.provider.js';
 import { getUser } from "../models/user.dao.js";
+import { sentimentListProv, sentimentFollowProv} from '../providers/sentiment.provider.js';
 
 dotenv.config();
 
@@ -103,4 +104,24 @@ export const getAlarm = async (req, res, next) => {
 export const updateAlarm = async (req, res, next) => {
     console.log("알림 상태 업데이트 요청");
     res.send(response(status.SUCCESS, await updateAlarmService(req.params.userId, req.params.alarmId)));
+}
+
+// 센티멘트 리스트 조회
+export const sentimentList = async (req, res, next) => {
+    console.log("센티멘트 리스트 조회 요청");
+    try {
+        const result = await sentimentListProv(req.query.page || 1);
+        res.send(response(status.SUCCESS, result));
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+
+// 팔로우한 사람 센티멘트 리스트 조회
+export const sentimentListFollowing = async (req, res, next) => {
+    console.log("팔로우한 사람의 센티멘트 리스트 조회 요청");
+    res.send(response(status.SUCCESS, await sentimentFollowProv(req.params.userId, req.query.page || 1)));
+
 }
