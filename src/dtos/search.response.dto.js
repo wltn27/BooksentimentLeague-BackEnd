@@ -34,6 +34,7 @@ export const nicknameResponseDTO = (data, cursorId) => {
 
     for (let i = 0; i < data.length; i++) {
         nicknameObject.push({
+            "user_id" : data[i].user_id,
             "profile_image": data[i].profile_image,
             "nickname": data[i].nickname,
             "status_message" : data[i].status_message,
