@@ -47,10 +47,6 @@ app.use(expressSession({
 //swagger settings
 app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 
-app.post('/users/:userId/mypage', (req, res, next) => {
-    console.log(req.file);
-})
-
 // router setting
 app.use('/users', userRouter);
 app.use('/users/:userId', userRouter);
