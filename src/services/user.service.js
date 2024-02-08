@@ -132,7 +132,7 @@ export const updateUserData = async (user_id, userData, file) => {
     if(! await changeUserInfo(user_id, userData, file.location)){
         return new BaseError(status.INTERNAL_SERVER_ERROR);
     }
-    return json({"message" : "마이프로필 변경에 성공하였습니다."})
+    return {"message" : "마이프로필 변경에 성공하였습니다."};
 };
 
 export const followUser = async (followingId, userId) => {

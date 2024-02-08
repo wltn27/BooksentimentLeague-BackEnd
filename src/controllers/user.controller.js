@@ -213,6 +213,7 @@ export const updateMyPage = async (req, res, next) => {
     const userData = req.body;
     console.log("마이페이지 수정을 요청하였습니다.");
  
+    console.log("file :", req.file);
     if (req.session[user_id] || true) {
         //로그인 되어 있는 상태
         console.log("로그인 되어 있는 상태");

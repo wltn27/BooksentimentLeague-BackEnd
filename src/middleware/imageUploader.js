@@ -59,7 +59,6 @@ const profile_upload = multer({
       key: function (req, file, cb) {
         // 파일 이름 생성
         const folderPath = 'profile/'; // 여기에 원하는 폴더 경로를 추가
-        //const fileName = `${folderPath}${Date.now()}_${file.originalname}`;
         const fileName = `${folderPath}${uuid()}_${file.originalname}`;
         cb(null, fileName);
       },
