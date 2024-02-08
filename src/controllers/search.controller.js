@@ -37,7 +37,7 @@ export const getSearchListAll = async (req, res, next ) => {
 export const getSearchListSentiment = async (req, res, next ) => {
     console.log("검색결과 리스트(센티멘트) 조회 요청");
 
-    const searchListObject = await readSearchListSentiment(req.query.query, req.body.cursorId);
+    const searchListObject = await readSearchListSentiment(req.query.query, 10, req.body.cursorId);
 
     if(searchListObject == '')
         return res.status(StatusCodes.OK).json({message : "검색어에 맞는 결과가 없습니다."});
@@ -48,7 +48,7 @@ export const getSearchListSentiment = async (req, res, next ) => {
 export const getSearchListNick = async (req, res, next ) => {
     console.log("검색결과 리스트(닉네임) 조회 요청");
 
-    const searchListObject = await readSearchListNick(req.query.query, req.body.cursorId, req.body.userId);
+    const searchListObject = await readSearchListNick(req.query.query, 10, req.body.cursorId, req.body.userId);
 
     if(searchListObject == '')
         return res.status(StatusCodes.OK).json({message : "검색어에 맞는 결과가 없습니다."});
