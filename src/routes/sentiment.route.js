@@ -11,7 +11,7 @@ export const sentimentRouter = express.Router({mergeParams: true});
 export const alarmtRouter = express.Router({mergeParams: true});
 
 // 센티멘트 조회
-sentimentRouter.get('/', asyncHandler(getSentiment));
+sentimentRouter.get('/:sentimentId', asyncHandler(getSentiment));
 
 // 센티멘트 작성
 sentimentRouter.post('/:userId/write', upload.array('Img_file', 5) , asyncHandler(wrSentiment));

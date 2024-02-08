@@ -82,7 +82,7 @@ export const changeUser = async (password, userId) => {
     if(!await updateUserPassword(password, userId)){
         return new BaseError(status.INTERNAL_SERVER_ERROR);
     }
-    return json({"message" : "비밀번호 변경에 성공하였습니다."});
+    return {"message" : "비밀번호 변경에 성공하였습니다."};
 }
 
 export const saveVerificationCode = async (email, verificationCode) => {
