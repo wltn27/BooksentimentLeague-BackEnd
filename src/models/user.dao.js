@@ -175,10 +175,10 @@ export const changeUserInfo = async(user_id, userData, image_path) => {
         const conn = await pool.getConnection();
         
         const oldImg = await pool.query(getImageSql, [user_id]);
-        console.log('oldImg: ', oldImg[0]);
+        console.log(oldImg[0][0].profile_image == '');
 
-        // 프로필 이미지가 없다면 
-        if(oldImg[0][0].profile_image == ''){
+        // 기존에 프로필 이미지가 있다면 
+        if(oldImg[0][0].profile_image != ''){
             const imgUrl = new URL(oldImg[0][0].profile_image);
             const key = imgUrl.pathname.substring(1);
             await deleteImageFromS3(key); // S3에서 삭제
