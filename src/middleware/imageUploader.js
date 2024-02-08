@@ -11,7 +11,7 @@ import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
 
 dotenv.config();
 
-const allowedExtensions = ['.png', '.jpg', '.jpeg', '.bmp', '.gif'];
+const allowedExtensions = ['.png', '.jpg', '.jpeg', '.bmp', '.gif', '.bmp'];
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
