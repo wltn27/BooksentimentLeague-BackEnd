@@ -16,7 +16,7 @@ export const getSearchBooks = async (req, res) => {
       res.status(StatusCodes.OK).json({ bookData });
     } catch (error) {
       console.error('Search Books Error:', error);
-      res.status(500).json({ message: "도서 검색에 실패했습니다." });
+      return new BaseError(status.FAIL_SEARCH_BOOK);
     }
 };
 

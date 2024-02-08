@@ -341,7 +341,7 @@ export const getAlarmDao = async (userId) => {
         return alarm;
     } catch (err) {
         console.error(err);
-        throw new Error("알림 조회 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_GET_ALARM);
     }
 }
 
@@ -355,7 +355,7 @@ export const updateAlarmDao = async (alarmId) => {
         return readResult[0].read_at;
     } catch (err) {
         console.error(err);
-        throw new Error("알림 상태 업데이트 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_UPDATE_ALARM);
     }
 }
 
@@ -399,7 +399,7 @@ export const createComment = async (sentimentId, userId, parent_id, content) => 
      } catch (err) {
         await conn.rollback();
         console.log(err);
-        throw new Error("댓글 작성 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_COMMENT_WRITE);
      }
 };
 
@@ -423,6 +423,6 @@ export const removeComment = async (commentId) => {
     } catch (err) {
         await conn.rollback();
         console.log(err);
-        throw new Error("댓글 삭제 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_COMMENT_DELETE);
     }    
 };

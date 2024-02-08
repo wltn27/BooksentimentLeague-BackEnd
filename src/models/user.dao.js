@@ -212,7 +212,7 @@ export const updateUserFollow = async (followingId, userId) => {
         
     } catch (err) {
         console.error(err);
-        throw new Error("팔로우 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_USER_FOLLOW);
     }
 }
 
@@ -243,7 +243,7 @@ export const updateUserUnFollow = async (followingId, userId) => {
         
     } catch (err) {
         console.error(err);
-        throw new Error("언팔로우 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_USER_FOLLOW);
     }
 }
 
@@ -324,7 +324,7 @@ export const likeSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new Error("센티멘트 추천 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_LIKE_SENTIMENT);
     }
 };
 
@@ -338,7 +338,7 @@ export const unlikeSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new Error("센티멘트 추천 취소 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_LIKE_SENTIMENT);
     }
 };
 
@@ -380,7 +380,7 @@ export const likeComment = async (userId, commentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new Error("댓글 추천 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_LIKE_COMMENT);
     }
 };
 
@@ -394,7 +394,7 @@ export const unlikeComment = async (userId, commentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new Error("댓글 추천 취소 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_LIKE_COMMENT);
     }
 };
 
@@ -436,7 +436,7 @@ export const scrapSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new Error("스크랩 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_SCRAP_SENTIMENT);
     }
 };
 
@@ -450,7 +450,7 @@ export const unscrapSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new Error("스크랩 취소 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_SCRAP_SENTIMENT);
     }
 };
 
@@ -482,7 +482,7 @@ export const getAlarmDao = async (userId) => {
         return alarm;
     } catch (err) {
         console.error(err);
-        throw new Error("알림 조회 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_GET_ALARM);
     }
 }
 
@@ -496,7 +496,7 @@ export const updateAlarmDao = async (alarmId) => {
         return readResult[0].read_at;
     } catch (err) {
         console.error(err);
-        throw new Error("알림 상태 업데이트 수행에 실패하였습니다.");
+        throw new BaseError(status.FAIL_UPDATE_ALARM);
     }
 }
 

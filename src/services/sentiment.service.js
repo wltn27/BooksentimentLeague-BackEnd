@@ -102,7 +102,7 @@ export const insertComment = async (sentimentId, userId, parent_id, content) => 
         return WriteCommentResponseDTO(newComment);
     } catch (error) {
         console.error('Error in insertComment:', error);
-        throw new Error("댓글 작성에 실패하였습니다.");
+        throw new BaseError(status.FAIL_COMMENT_WRITE);
     }
 }
 
@@ -124,7 +124,7 @@ export const deleteComment = async (commentId, userData) => {
       return DeleteCommentResponseDTO();
   } catch (error) {
       console.error('Error in deleteComment:', error);
-      throw new Error("댓글 삭제 수행에 실패하였습니다.");
+      throw new BaseError(status.FAIL_COMMENT_DELETE);
   }
 };
 

@@ -151,7 +151,7 @@ export const followUser = async (followingId, userId) => {
         }
     } catch (error) {
         console.error('Error in followUser:', error);
-        return json({"message" : "팔로우/언팔로우 수행에 실패하였습니다."});
+        return new BaseError(status.FAIL_USER_FOLLOW);
     }
 }
 
@@ -176,7 +176,7 @@ export const likeSentimentUser = async (userId, sentimentId) => {
         }
     } catch (error) {
         console.error('Error in likeSentimentUser:', error);
-        return json({"message" : "센티멘트 추천 및 취소 수행에 실패하였습니다."});
+        return new BaseError(status.FAIL_LIKE_SENTIMENT);
     }
 };
 
@@ -201,7 +201,7 @@ export const likeCommentUser = async (userId, commentId) => {
         }
     } catch (error) {
         console.error('Error in likeCommentUser:', error);
-        return json({"message" : "댓글 추천 및 취소 수행에 실패하였습니다."});
+        return new BaseError(status.FAIL_LIKE_COMMENT);
     }
 };
 
@@ -226,7 +226,7 @@ export const scrapSentimentUser = async (userId, sentimentId) => {
         }
     } catch (error) {
         console.error('Error in scrapSentimentUser:', error);
-        return json({"message" : "센티멘트 스크랩 및 취소 수행에 실패하였습니다."});
+        return new BaseError(status.FAIL_SCRAP_SENTIMENT);
     }
 };
 
@@ -239,6 +239,6 @@ export const updateAlarmService = async (userId, alarmId) => {
   
     } catch (err) {
       console.error('Error in updateAlarmService:', err);
-      return json({"message" : "알림 상태 업데이트 수행에 실패하였습니다."});
+      return new BaseError(status.FAIL_UPDATE_ALARM);
     }
   }

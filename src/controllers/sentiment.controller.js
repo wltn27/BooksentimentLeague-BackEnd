@@ -71,7 +71,7 @@ export const wrComment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(comment);
     } catch (error) {
         console.error('Error in writeComment:', error);
-        res.status(500).json({ error: error.message });
+        return new BaseError(status.FAIL_COMMENT_WRITE);
     }
 };
 
@@ -90,7 +90,7 @@ export const delComment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(comment);
     } catch (error) {
         console.error('Error in deleteComment:', error);
-        res.status(500).json({ error: error.message });
+        return new BaseError(status.FAIL_COMMENT_DELETE);
     }
 };
 

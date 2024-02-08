@@ -187,7 +187,7 @@ export const userFollow = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userFollow:', error);
-        return res.status(500).json({"message": "팔로우에 실패하였습니다."});
+        return new BaseError(status.FAIL_USER_FOLLOW);
     }
 }
 
@@ -266,7 +266,7 @@ export const userLikeSentiment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userLikeSentiment:', error);
-        return res.status(500).json({"message" : "센티멘트 추천에 실패하였습니다."});
+        return new BaseError(status.FAIL_LIKE_SENTIMENT);
     }
 }
 
@@ -278,7 +278,7 @@ export const userLikeCommment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userLikeCommment:', error);
-        return res.status(500).json({"message" : "댓글 추천에 실패하였습니다."});
+        return new BaseError(status.FAIL_LIKE_COMMENT);
     }
 }
 
@@ -290,7 +290,7 @@ export const userScrapSentiment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userScrapSentiment:', error);
-        return res.status(500).json({"message" : "센티멘트 스크랩에 실패하였습니다."});
+        return new BaseError(status.FAIL_SCRAP_SENTIMENT);
     }
 }
 
@@ -302,7 +302,7 @@ export const getAlarm = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in getAlarm:', error);
-        return res.status(500).json({"message": "알림 조회에 실패하였습니다."});
+        return new BaseError(status.FAIL_GET_ALARM);
     }
 }
 
@@ -315,7 +315,7 @@ export const updateAlarm = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in updateAlarmService:', error);
-        return res.status(500).json({"message": "알림 상태 업데이트에 실패하였습니다."});
+        return new BaseError(status.FAIL_UPDATE_ALARM);
     }
 }
 
@@ -327,6 +327,6 @@ export const getUnreadNotifications = async (req, res) => {
         res.json({ unreadCount });
     } catch (error) {
         console.error('Error in getUnreadNotificationsCount:', error);
-        return res.status(500).json({"message": "읽지 않은 알림 조회에 실패하였습니다."});
+        return new BaseError(status.FAIL_GET_UNREAD);
     }
 }

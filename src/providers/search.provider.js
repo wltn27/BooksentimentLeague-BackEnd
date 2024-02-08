@@ -43,7 +43,7 @@ export const searchForBooks = async (title, display, start_index) => {
     }
     catch (err){
         console.error(err);
-        throw new Error('Failed to fetch books');
+        throw new BaseError(status.FAIL_SEARCH_BOOK);
     }
 }
 
