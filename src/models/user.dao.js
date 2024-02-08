@@ -175,7 +175,6 @@ export const changeUserInfo = async(user_id, userData, image_path) => {
         const conn = await pool.getConnection();
         
         const oldImg = await pool.query(getImageSql, [user_id]);
-        console.log(oldImg[0][0].profile_image == '');
 
         // 기존에 프로필 이미지가 있다면 
         if(oldImg[0][0].profile_image != ''){

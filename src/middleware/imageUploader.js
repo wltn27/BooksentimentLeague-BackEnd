@@ -66,6 +66,7 @@ const profile_upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB 제한
   fileFilter: (req, file, cb) => {
       const ext = path.extname(file.originalname).toLowerCase();
+      console.log("ext :", ext);
       if (!allowedExtensions.includes(ext)) {
           return cb(new Error('Invalid file type'));
       }
