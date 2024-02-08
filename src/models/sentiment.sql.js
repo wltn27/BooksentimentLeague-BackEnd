@@ -72,3 +72,36 @@ export const tierAlarm = "INSERT INTO alarm (user_id, title, content, read_at, c
 export const alarmStatus = "UPDATE alarm SET read_at = 1 WHERE alarm_id=?;";
 export const getAlarmStatus = "SELECT read_at FROM alarm WHERE alarm_id=?";
 export const getAlarmInfo = "SELECT title, content, read_at, created_at FROM alarm WHERE user_id= ?;";
+
+// 센티멘트 리스트 조회
+export const getSentimentListSql = () => `
+    SELECT s.sentiment_title, s.book_title, u.nickname as nickname, 
+        ut.tier_id as tier,
+        (SELECT COUNT(*) FROM user_sentiment us WHERE us.sentiment_id = s.sentiment_id) as total_likes,
+        (SELECT COUNT(*) FROM user_sentiment us WHERE us.sentiment_id = s.sentiment_id AND us.scrap = true) as total_scraps,
+        (SELECT COUNT(*) FROM comment c WHERE c.sentiment_id = s.sentiment_id) as total_comments,
+        s.book_image, s.author, s.publisher, s.score, s.created_at
+    FROM sentiment s
+    JOIN user u ON s.user_id = u.user_id
+    JOIN user_tier ut ON u.user_id = ut.user_id
+    ORDER BY s.created_at DESC
+    LIMIT 3 OFFSET ?;
+`;
+
+export const getFollowingSentimentListSql = () => `
+    SELECT s.sentiment_title, s.book_title, u.nickname as nickname, 
+        ut.tier_id as tier,
+        (SELECT COUNT(*) FROM user_sentiment us WHERE us.sentiment_id = s.sentiment_id) as total_likes,
+        (SELECT COUNT(*) FROM user_sentiment us WHERE us.sentiment_id = s.sentiment_id AND us.scrap = true) as total_scraps,
+        (SELECT COUNT(*) FROM comment c WHERE c.sentiment_id = s.sentiment_id) as total_comments,
+        s.book_image, s.author, s.publisher, s.score, s.created_at
+    FROM sentiment s
+    JOIN user u ON s.user_id = u.user_id
+    JOIN user_tier ut ON u.user_id = ut.user_id
+    WHERE s.user_id IN (
+        SELECT following_id FROM follow WHERE follower_id = ?
+    )
+    ORDER BY s.created_at DESC
+    LIMIT 3 OFFSET ?;
+`;
+

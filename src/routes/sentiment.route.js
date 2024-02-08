@@ -7,6 +7,8 @@ import { upload } from '../middleware/imageUploader.js';
 import { wrSentiment, rewrSentiment, delSentiment, getSentiment } from "../controllers/sentiment.controller.js";
 import { getAlarm, updateAlarm } from "../controllers/sentiment.controller.js";
 import { wrComment, delComment } from "../controllers/sentiment.controller.js";
+import { sentimentList, sentimentListFollowing } from "../controllers/sentiment.controller.js";
+
 export const sentimentRouter = express.Router({mergeParams: true});
 export const alarmtRouter = express.Router({mergeParams: true});
 
@@ -33,3 +35,9 @@ alarmtRouter.get('/', asyncHandler(getAlarm));
 
 // 알림 상태 업데이트
 alarmtRouter.patch('/', asyncHandler(updateAlarm));
+
+// 센티멘트 리스트 조회
+sentimentRouter.get('/', asyncHandler(sentimentList));
+
+// 팔로우한 사람의 센티멘트 리스트 조회
+sentimentRouter.get('/follow/:userId', asyncHandler(sentimentListFollowing));

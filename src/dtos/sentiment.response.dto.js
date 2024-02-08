@@ -60,3 +60,20 @@ export const DeleteCommentResponseDTO = () => {
     console.log("DeleteCommentResponseDTO clear");
     return {"message" : "댓글이 삭제되었습니다"};
 }
+
+// sentimentListDTO
+export const sentimentListDTO = (data) => {
+    return data.map(item => ({
+        "sentiment_title" : item.sentiment_title,
+        "book_title" : item.book_title,
+        "author" : item.author,
+        "publisher" : item.publisher,
+        "nickname" : item.author_nickname,
+        "tier" : item.tier, 
+        "like_count" : item.total_likes,
+        "comment_count" : item.total_comments,
+        "scrap_count" : item.total_scraps,
+        "created_date" : formatDate(item.created_at),
+        "score" : item.score
+    }));
+}
