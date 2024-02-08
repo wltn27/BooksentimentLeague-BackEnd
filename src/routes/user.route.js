@@ -32,4 +32,4 @@ userRouter.get('/notifications', asyncHandler(getAlarm));
 userRouter.get('/notifications/unread', asyncHandler(getUnreadNotifications));
 
 userRouter.patch('/notifications/:alarmId', asyncHandler(updateAlarm));
-userRouter.patch('/mypage', profile_upload.single('files'), asyncHandler(updateMyPage));
+userRouter.post('/mypage', profile_upload.single('files'), asyncHandler(updateMyPage));
