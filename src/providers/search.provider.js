@@ -22,6 +22,12 @@ export const searchForBooks = async (title, display, start_index) => {
                 'X-Naver-Client-Secret': process.env.NAVER_CLIENT_SECRET,
             },
         })
+
+        if (!response.ok) {
+            // API 호출이 실패한 경우
+            console.error('API call failed with status:', response.status);
+            throw new BaseError(status.FAIL_SEARCH_BOOK, '도서 검색 API 호출 실패');
+        }
     
         const data = await response.json();
         
