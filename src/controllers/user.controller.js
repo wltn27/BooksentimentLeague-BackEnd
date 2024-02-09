@@ -8,6 +8,7 @@ import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser,
 import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList, getAlarmService, getUnreadNotificationsCount} from './../providers/user.provider.js';
 import { getUser } from "../models/user.dao.js";
 import { checkEmailResponseDTO, checkNickResponseDTO} from "./../dtos/user.response.dto.js"
+import { response } from "express";
 
 dotenv.config();
 

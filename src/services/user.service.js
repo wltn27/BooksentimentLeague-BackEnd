@@ -129,10 +129,11 @@ export const sendEmail = async (to, subject, text) => {
 
 export const updateUserData = async (user_id, userData, file) => {
     console.log(file);
-    if(! await changeUserInfo(user_id, userData, file.location)){
+    const result = await changeUserInfo(user_id, userData, file.location);
+    if(!result){
         return new BaseError(status.INTERNAL_SERVER_ERROR);
     }
-    return {"message" : "마이프로필 변경에 성공하였습니다."};
+    return result;
 };
 
 export const followUser = async (followingId, userId) => {

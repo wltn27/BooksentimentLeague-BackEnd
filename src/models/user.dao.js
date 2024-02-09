@@ -176,8 +176,9 @@ export const changeUserInfo = async(user_id, userData, image_path) => {
         
         const oldImg = await pool.query(getImageSql, [user_id]);
 
+        console.log(oldImg[0]);
         // 기존에 프로필 이미지가 있다면 
-        if(oldImg[0][0].profile_image != ''){
+        if(oldImg[0][0].profile_image != null){
             const imgUrl = new URL(oldImg[0][0].profile_image);
             const key = imgUrl.pathname.substring(1);
             await deleteImageFromS3(key); // S3에서 삭제
@@ -185,14 +186,12 @@ export const changeUserInfo = async(user_id, userData, image_path) => {
 
         const [user] = await pool.query(updateUserData, [{'status_message': userData.status_message}, {'profile_image': image_path}, user_id]);
 
-        console.log(user);
-
         if(user.changedRows != 1){              // 마이페이지 유저 정보가 바뀌지 않았다면
             return false;
         }
 
         conn.release();
-        return true;    
+        return {'status_message': userData.status_message,'profile_image': image_path};   
     }catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
