@@ -5,8 +5,8 @@ import { getRankingListDao} from "../models/rank.dao.js";
 import { rankDTO } from '../dtos/rank.response.dto.js';
 
 // 랭킹 리스트 조회
-export const getRankingListProvider = async(season, cursorId ) => {
-    const rankData = await getRankingListDao(season, cursorId);
+export const getRankingListProvider = async(season, cursorId, nickname ) => {
+    const rankData = await getRankingListDao(season, cursorId, nickname);
     console.log('rankData: ', rankData);
 
     // 반환된 데이터가 배열인 경우 rankDTO를 호출합니다.

@@ -20,5 +20,5 @@ export const getRankingList = async (req, res, next ) => {
     console.log('data : ', data);
     const userData = data.nickname; // 사용자 정보 반환
     */
-    res.send(response(status.SUCCESS, await getRankingListProvider(req.query.season || 1, req.body.cursorId)));
+    res.send(response(status.SUCCESS, await getRankingListProvider(req.query.season || 1, req.body.cursorId, req.query.nickname)));
 }
