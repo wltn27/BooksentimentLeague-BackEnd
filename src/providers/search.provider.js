@@ -10,7 +10,7 @@ import { searchResponseDTO, sentimentResponseDTO, nicknameResponseDTO } from "./
 dotenv.config();
 
 // 도서 검색
-export const searchForBooks = async (title, display, start_index) => {
+export const searchForBooks = async (title, display, start_index, userId) => {
     try{
         const apiUrl = "https://openapi.naver.com/v1/search/book?query=" + encodeURIComponent(title) +
                         "&display=" + display + 
@@ -34,14 +34,36 @@ export const searchForBooks = async (title, display, start_index) => {
         if(data.items == '')
             return [];
 
+    
         const booksWithSentiments = await Promise.all(data.items.map(async (book) => {
             // 제목, 저자, 출판사를 기반으로 감정 데이터 조회
             const sentimentData = await getSentimentData(book.title.replace(/<[^>]+>/g, ''), book.author, book.publisher);
-            return {
-                ...book,
-                avr_score: sentimentData.avr_score, // 집계된 평균 점수
-                eval_num: sentimentData.eval_num // 집계된 감정 표현 수
-            };
+
+            let total_score = 0;
+            let total_num = 0;
+            let user_score = null;
+
+            if(Array.isArray(sentimentData)){
+                sentimentData.forEach(function(sentiment) {
+                    if(sentiment.user_id == userId) {
+                        user_score = sentiment.avr_score;
+                    }
+
+                    total_score += sentiment.avr_score;
+                    total_num += sentiment.eval_num; 
+                });
+            }
+            
+            if(total_score != 0 && total_num != 0){
+                total_score /= total_num;
+            }
+
+                return {
+                    ...book,
+                    avr_score: total_score, // 집계된 평균 점수
+                    eval_num: total_num, // 집계된 감정 표현 수
+                    user_score : user_score
+                };
         }));
         
         // DTO를 통해 최종 응답 데이터 형식으로 변환

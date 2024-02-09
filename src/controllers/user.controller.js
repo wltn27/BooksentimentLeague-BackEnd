@@ -8,7 +8,6 @@ import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser,
 import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList, getAlarmService, getUnreadNotificationsCount} from './../providers/user.provider.js';
 import { getUser } from "../models/user.dao.js";
 import { checkEmailResponseDTO, checkNickResponseDTO} from "./../dtos/user.response.dto.js"
-import { response } from "express";
 
 dotenv.config();
 
@@ -216,8 +215,6 @@ export const updateMyPage = async (req, res, next) => {
  
     console.log("file :", req.file);
     if (req.session[user_id] || true) {
-        //로그인 되어 있는 상태
-        console.log("로그인 되어 있는 상태");
         const result = await updateUserData(user_id, userData, req.file);
 
         res.status(200).json(result);

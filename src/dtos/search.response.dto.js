@@ -53,7 +53,8 @@ export const searchResponseDTO = (books, start_index) => {
       pubdate: book.pubdate,
       description: book.description,
       avr_score: book.avr_score || 0,
-      eval_num: book.eval_num || 0
+      eval_num: book.eval_num || 0,
+      user_score: book.user_score
     }));
 
     return {bookObject, cursorId : bookObject.length + start_index -1};
