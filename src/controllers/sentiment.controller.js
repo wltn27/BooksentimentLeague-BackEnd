@@ -110,7 +110,7 @@ export const updateAlarm = async (req, res, next) => {
 export const sentimentList = async (req, res, next) => {
     console.log("센티멘트 리스트 조회 요청");
     try {
-        const result = await sentimentListProv(req.query.page || 1);
+        const result = await sentimentListProv(req.body.cursorId || 1);
         res.send(response(status.SUCCESS, result));
     } catch (error) {
         console.error(error);
@@ -122,6 +122,6 @@ export const sentimentList = async (req, res, next) => {
 // 팔로우한 사람 센티멘트 리스트 조회
 export const sentimentListFollowing = async (req, res, next) => {
     console.log("팔로우한 사람의 센티멘트 리스트 조회 요청");
-    res.send(response(status.SUCCESS, await sentimentFollowProv(req.params.userId, req.query.page || 1)));
+    res.send(response(status.SUCCESS, await sentimentFollowProv(req.params.userId, req.body.cursorId || 1)));
 
 }

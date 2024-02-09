@@ -24,13 +24,19 @@ export const readComment = async (sentimentId) => {
 // 센티멘트 리스트 조회 
 export const sentimentListProv = async (page_num) => {
     const list = await getSentimentListDao(page_num);
-
-    return sentimentListDTO(list);
+    if (Array.isArray(list.data) && list.data.length > 0) {
+        console.log('sentimentListDTO : ', sentimentListDTO(list));
+        return sentimentListDTO(list);
+    }
+    return list;
 }
 
 // 팔로우한 사람의 센티멘트 리스트 조회
 export const sentimentFollowProv = async (userId, page_num) => {
     const list = await getSentimentFollowDao(userId, page_num);
-
-    return sentimentListDTO(list);
+    if (Array.isArray(list.data) && list.data.length > 0) {
+        console.log('sentimentListDTO : ', sentimentListDTO(list));
+        return sentimentListDTO(list);
+    }
+    return list;
 }
