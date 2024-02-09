@@ -51,6 +51,7 @@ export const searchResponseDTO = (books, start_index) => {
       author: book.author,
       publisher: book.publisher,
       pubdate: book.pubdate,
+      description: book.description,
       avr_score: book.avr_score || 0,
       eval_num: book.eval_num || 0
     }));
