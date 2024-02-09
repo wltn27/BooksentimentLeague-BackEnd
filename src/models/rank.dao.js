@@ -5,21 +5,28 @@ import { status } from "../../config/response.status.js";
 
 import { getRankInfo } from "./rank.sql.js";
 
-export const getRankingListDao = async () => {
+export const getRankingListDao = async (season, cursorId) => {
     try {
         const conn = await pool.getConnection();
-        const [rankList] = await conn.query(getRankInfo); 
+        const [totalRank] = await conn.query(getRankInfo, [season, (cursorId - 1) * 15]); 
         conn.release();
 
-        // 랭킹을 계산하여 각 객체에 추가합니다.
-        for (let i = 0; i < rankList.length; i++) {
-            rankList[i].ranking = i + 1;
+        if (totalRank.length === 0) {
+            return {
+                message: `해당 시즌(season =${season})의 데이터가 없습니다 .`,
+                data: []  
+            };
         }
 
-        console.log('rankList: ', rankList);
-        return rankList;
+        for (let i = 0; i < totalRank.length; i++) {
+            totalRank[i].ranking = i + 1;
+        }
+
+        console.log('totalRank: ', totalRank);
+        return totalRank;
     } catch (error) {
         console.error('Error: ', error);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
 }
+

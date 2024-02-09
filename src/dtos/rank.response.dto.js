@@ -12,7 +12,8 @@ export const rankDTO = (data) => {
                 "nickname" : item.nickname, 
                 "status_message" : item.status_message, 
                 "sentiment_num" : item.sentimentCount, 
-                "like_num" : item.totalLikes
+                "like_num" : item.totalLikes,
+                "scrap_num" : item.totalScraps
             }
         )) 
         }
