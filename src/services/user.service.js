@@ -74,6 +74,8 @@ export const findUser = async (email, verificationCode) => {
     if(verificationCode != await client.get(email)){
         return new BaseError(status.AUTH_NOT_EQUAL);
     }
+
+    await client.quit();
     
     return {"message" : "인증 성공하였습니다."};
 }
