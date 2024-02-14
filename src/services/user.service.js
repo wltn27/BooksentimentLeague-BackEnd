@@ -44,6 +44,29 @@ export const checkingNick = async (nickname) => {
     return true; 
 }
 
+export const checkingAuth = async (email, verificationCode) => {
+    if(!await existEmail(email))
+        return new BaseError(status.EMAIL_ALREADY_EXIST);
+
+        const client = createClient({
+            password: process.env.REDIS_PASSWORD,
+            socket: {
+                host: process.env.REDIS_HOST,
+                port: process.env.REDIS_PORT
+            }
+        });    
+
+    await client.connect();
+
+    if(verificationCode != await client.get(email)){
+        return new BaseError(status.AUTH_NOT_EQUAL);
+    }
+
+    await client.quit();
+    
+    return {"message" : "인증 성공하였습니다."};
+}
+
 export const loginUser = async (body) => {
 
     if(await existEmail(body.email))

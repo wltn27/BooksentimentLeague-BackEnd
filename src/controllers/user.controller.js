@@ -3,7 +3,7 @@ import { status } from "../../config/response.status.js";
 import { StatusCodes } from "http-status-codes";
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { joinUser, checkingNick, checkingEmail, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser, 
+import { joinUser, checkingNick, checkingEmail, checkingAuth, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser, 
         updateUserData, sendEmail, updateAlarmService} from './../services/user.service.js';
 import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList, getAlarmService, getUnreadNotificationsCount} from './../providers/user.provider.js';
 import { getUser } from "../models/user.dao.js";
@@ -40,6 +40,15 @@ export const checkNick = async (req, res, next) => {
         return res.status(StatusCodes.OK).json(checkNickResponseDTO());
     else
         return res.status(StatusCodes.BAD_REQUEST).json(new BaseError(status.NICKNAME_ALREADY_EXIST));
+}
+
+export const checkAuth = async (req, res, next) => {
+    const { email, verificationCode}= req.body;
+    console.log("인증번호 인증을 요청하였습니다.");
+    const checkingUserData = await checkingAuth(email, verificationCode);
+
+    console.log("회원가입 인증번호 요청을 성공하였습니다.");
+    return res.status(StatusCodes.OK).json(checkingUserData);
 }
 
 export const userLogin = async (req, res, next) => {
