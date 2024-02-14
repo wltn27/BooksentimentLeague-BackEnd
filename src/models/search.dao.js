@@ -9,7 +9,7 @@ export const getSentimentList = async(searchWord, limit, cursorId) => {
     try{
         const conn = await pool.getConnection();
         
-        const [sentimentObject] = await pool.query(getSentiment, [`%${searchWord}%`, `%${searchWord}%`, limit, cursorId]);
+        const [sentimentObject] = await pool.query(getSentiment, [`%${searchWord}%`, `%${searchWord}%`, `%${searchWord}%`, limit, cursorId]);
 
         for(let i =0; i < sentimentObject.length; i++){
             Object.assign(sentimentObject[i], { comment_num: (await pool.query(getSentimentCommentCount, sentimentObject[i].sentiment_id))[0][0].comment_num });

@@ -28,7 +28,7 @@ export const getSentiment = `
         user_tier ut ON s.user_id = ut.user_id
     LEFT JOIN
         tier t ON ut.tier_id = t.tier_id
-    WHERE sentiment_title LIKE ? or s.content LIKE ?
+    WHERE book_title LIKE ? or sentiment_title LIKE ? or s.content LIKE ?
     GROUP BY s.user_id
     ORDER BY like_num desc, ut.tier_id desc, s.user_id ASC
     limit ? offset ?;
