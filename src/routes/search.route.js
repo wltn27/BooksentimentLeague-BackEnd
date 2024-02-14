@@ -11,5 +11,5 @@ searchRouter.get('/title', asyncHandler(getSearchBooks));
 
 searchRouter.get('/', asyncHandler(getSearchListAll));
 searchRouter.get('/book', asyncHandler(getSearchBooks));
-searchRouter.get('/sentiment', asyncHandler(getSearchListSentiment));
-searchRouter.get('/nickname', asyncHandler(getSearchListNick));
+searchRouter.get('/sentiment/:cursorId', asyncHandler(getSearchListSentiment));
+searchRouter.get('/nickname/:cursorId', asyncHandler(getSearchListNick));

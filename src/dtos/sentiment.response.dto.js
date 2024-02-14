@@ -64,16 +64,19 @@ export const DeleteCommentResponseDTO = () => {
 // sentimentListDTO
 export const sentimentListDTO = (data) => {
     return data.map(item => ({
+        "sentiment_id": item.sentiment_id,
+        "book_image": item.book_image,
         "sentiment_title" : item.sentiment_title,
         "book_title" : item.book_title,
+        "nickname" : item.author_nickname,
+        "tier" : item.tier,
+        "score" : item.score,
+        "content": item.content,
+        "created_at" : formatDate(item.created_at),
         "author" : item.author,
         "publisher" : item.publisher,
-        "nickname" : item.author_nickname,
-        "tier" : item.tier, 
-        "like_count" : item.total_likes,
-        "comment_count" : item.total_comments,
-        "scrap_count" : item.total_scraps,
-        "created_date" : formatDate(item.created_at),
-        "score" : item.score
+        "comment_num" : item.total_comments,
+        "like_num" : item.total_likes,
+        "scrap_num" : item.total_scraps
     }));
 }

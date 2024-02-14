@@ -77,13 +77,8 @@ export const searchForBooks = async (title, display, start_index, userId) => {
 
 // 검색결과 리스트(센티멘트) 조회
 export const readSearchListSentiment = async (searchWord, limit, cursorId) => {
-    let sentimentList;
-    if(cursorId == undefined){
-        sentimentList = await getSentimentList(searchWord, limit, 0);
-    } else {
-        sentimentList = await getSentimentList(searchWord, limit, cursorId);
-    }
-
+    let sentimentList = await getSentimentList(searchWord, limit, cursorId);
+    
     if(sentimentList == '') // 아무 검색 결과가 안 뜰 때 빈 배열 반환
         return [];
     
@@ -92,12 +87,7 @@ export const readSearchListSentiment = async (searchWord, limit, cursorId) => {
 
 // 검색결과 리스트(닉네임) 조회
 export const readSearchListNick = async (searchWord, limit, cursorId, userId) => {
-    let nicknameList;
-    if(cursorId == undefined){
-        nicknameList = await getNicknameList(searchWord, limit, 0, userId);
-    } else {
-        nicknameList = await getNicknameList(searchWord, limit, cursorId, userId);
-    }
+    let nicknameList = await getNicknameList(searchWord, limit, cursorId, userId);
 
     if(nicknameList == '') // 아무 검색 결과가 안 뜰 때 빈 배열 반환
         return [];
