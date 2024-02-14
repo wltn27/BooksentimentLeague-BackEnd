@@ -3,7 +3,7 @@ import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, 
     updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserSentimentLikeStatus, unlikeComment, 
-    likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus, changeUserInfo} from "../models/user.dao.js";
+    likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus, changeUserInfo, updateAlarmDao} from "../models/user.dao.js";
 import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, 
         followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO, ScrapSentimentResponseDTO} from "./../dtos/user.response.dto.js"   
 import { createClient } from 'redis';
@@ -74,6 +74,8 @@ export const findUser = async (email, verificationCode) => {
     if(verificationCode != await client.get(email)){
         return new BaseError(status.AUTH_NOT_EQUAL);
     }
+
+    await client.quit();
     
     return {"message" : "인증 성공하였습니다."};
 }
@@ -82,7 +84,7 @@ export const changeUser = async (password, userId) => {
     if(!await updateUserPassword(password, userId)){
         return new BaseError(status.INTERNAL_SERVER_ERROR);
     }
-    return json({"message" : "비밀번호 변경에 성공하였습니다."});
+    return {"message" : "비밀번호 변경에 성공하였습니다."};
 }
 
 export const saveVerificationCode = async (email, verificationCode) => {
@@ -129,10 +131,11 @@ export const sendEmail = async (to, subject, text) => {
 
 export const updateUserData = async (user_id, userData, file) => {
     console.log(file);
-    if(! await changeUserInfo(user_id, userData, file.location)){
+    const result = await changeUserInfo(user_id, userData, file.location);
+    if(!result){
         return new BaseError(status.INTERNAL_SERVER_ERROR);
     }
-    return json({"message" : "마이프로필 변경에 성공하였습니다."})
+    return result;
 };
 
 export const followUser = async (followingId, userId) => {
@@ -143,15 +146,15 @@ export const followUser = async (followingId, userId) => {
         if (isFollowing) {
             // 이미 팔로우 중인 경우, 언팔로우 수행
             await updateUserUnFollow(followingId, userId);
-            return followResponseDTO("following"); // "following" 상태 반환
+            return followResponseDTO("follow"); // "follow" 상태 반환
         } else {
             // 팔로우 수행
             await updateUserFollow(followingId, userId);
-            return followResponseDTO("follow"); // "follow" 상태 반환
+            return followResponseDTO("following"); // "following" 상태 반환
         }
     } catch (error) {
         console.error('Error in followUser:', error);
-        return error;
+        return new BaseError(status.FAIL_USER_FOLLOW);
     }
 }
 
@@ -176,7 +179,7 @@ export const likeSentimentUser = async (userId, sentimentId) => {
         }
     } catch (error) {
         console.error('Error in likeSentimentUser:', error);
-        return error;
+        return new BaseError(status.FAIL_LIKE_SENTIMENT);
     }
 };
 
@@ -201,7 +204,7 @@ export const likeCommentUser = async (userId, commentId) => {
         }
     } catch (error) {
         console.error('Error in likeCommentUser:', error);
-        return error;
+        return new BaseError(status.FAIL_LIKE_COMMENT);
     }
 };
 
@@ -226,11 +229,9 @@ export const scrapSentimentUser = async (userId, sentimentId) => {
         }
     } catch (error) {
         console.error('Error in scrapSentimentUser:', error);
-        return error;
+        return new BaseError(status.FAIL_SCRAP_SENTIMENT);
     }
 };
-
-import { updateAlarmDao } from "../models/user.dao.js";
 
 // 알림 상태 업데이트
 export const updateAlarmService = async (userId, alarmId) => {
@@ -241,6 +242,6 @@ export const updateAlarmService = async (userId, alarmId) => {
   
     } catch (err) {
       console.error('Error in updateAlarmService:', err);
-      return error;
+      return new BaseError(status.FAIL_UPDATE_ALARM);
     }
   }

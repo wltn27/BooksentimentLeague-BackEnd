@@ -34,6 +34,7 @@ export const nicknameResponseDTO = (data, cursorId) => {
 
     for (let i = 0; i < data.length; i++) {
         nicknameObject.push({
+            "user_id" : data[i].user_id,
             "profile_image": data[i].profile_image,
             "nickname": data[i].nickname,
             "status_message" : data[i].status_message,
@@ -50,8 +51,10 @@ export const searchResponseDTO = (books, start_index) => {
       author: book.author,
       publisher: book.publisher,
       pubdate: book.pubdate,
+      description: book.description,
       avr_score: book.avr_score || 0,
-      eval_num: book.eval_num || 0
+      eval_num: book.eval_num || 0,
+      user_score: book.user_score
     }));
 
     return {bookObject, cursorId : bookObject.length + start_index -1};

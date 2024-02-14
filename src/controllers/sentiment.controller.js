@@ -68,10 +68,11 @@ export const wrComment = async (req, res, next) => {
         const { parent_id, content } = req.body;
         const comment = await insertComment(sentimentId, userId, parent_id, content);
         console.log("댓글 작성 성공!");
+        console.log(comment);
         res.status(StatusCodes.OK).json(comment);
     } catch (error) {
         console.error('Error in writeComment:', error);
-        res.status(500).json({ error: error.message });
+        return new BaseError(status.FAIL_COMMENT_WRITE);
     }
 };
 
@@ -90,7 +91,7 @@ export const delComment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(comment);
     } catch (error) {
         console.error('Error in deleteComment:', error);
-        res.status(500).json({ error: error.message });
+        return new BaseError(status.FAIL_COMMENT_DELETE);
     }
 };
 

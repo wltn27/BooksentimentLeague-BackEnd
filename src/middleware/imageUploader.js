@@ -59,7 +59,6 @@ const profile_upload = multer({
       key: function (req, file, cb) {
         // 파일 이름 생성
         const folderPath = 'profile/'; // 여기에 원하는 폴더 경로를 추가
-        //const fileName = `${folderPath}${Date.now()}_${file.originalname}`;
         const fileName = `${folderPath}${uuid()}_${file.originalname}`;
         cb(null, fileName);
       },
@@ -67,6 +66,7 @@ const profile_upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB 제한
   fileFilter: (req, file, cb) => {
       const ext = path.extname(file.originalname).toLowerCase();
+      console.log("ext :", ext);
       if (!allowedExtensions.includes(ext)) {
           return cb(new Error('Invalid file type'));
       }

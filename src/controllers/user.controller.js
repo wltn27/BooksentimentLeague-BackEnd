@@ -187,7 +187,7 @@ export const userFollow = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userFollow:', error);
-        return res.status(500).json({message: error.data.message});
+        return new BaseError(status.FAIL_USER_FOLLOW);
     }
 }
 
@@ -213,9 +213,8 @@ export const updateMyPage = async (req, res, next) => {
     const userData = req.body;
     console.log("마이페이지 수정을 요청하였습니다.");
  
+    console.log("file :", req.file);
     if (req.session[user_id] || true) {
-        //로그인 되어 있는 상태
-        console.log("로그인 되어 있는 상태");
         const result = await updateUserData(user_id, userData, req.file);
 
         res.status(200).json(result);
@@ -265,7 +264,7 @@ export const userLikeSentiment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userLikeSentiment:', error);
-        return res.status(500).json({message: error.data.message});
+        return new BaseError(status.FAIL_LIKE_SENTIMENT);
     }
 }
 
@@ -277,7 +276,7 @@ export const userLikeCommment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userLikeCommment:', error);
-        return res.status(500).json({message: error.data.message});
+        return new BaseError(status.FAIL_LIKE_COMMENT);
     }
 }
 
@@ -289,7 +288,7 @@ export const userScrapSentiment = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in userScrapSentiment:', error);
-        return res.status(500).json({message: error.data.message});
+        return new BaseError(status.FAIL_SCRAP_SENTIMENT);
     }
 }
 
@@ -301,7 +300,7 @@ export const getAlarm = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in getAlarm:', error);
-        return res.status(500).json({message: error.data.message});
+        return new BaseError(status.FAIL_GET_ALARM);
     }
 }
 
@@ -314,7 +313,7 @@ export const updateAlarm = async (req, res, next) => {
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('Error in updateAlarmService:', error);
-        return res.status(500).json({message: error.data.message});
+        return new BaseError(status.FAIL_UPDATE_ALARM);
     }
 }
 
@@ -326,6 +325,6 @@ export const getUnreadNotifications = async (req, res) => {
         res.json({ unreadCount });
     } catch (error) {
         console.error('Error in getUnreadNotificationsCount:', error);
-        return res.status(500).json({message: error.data.message});
+        return new BaseError(status.FAIL_GET_UNREAD);
     }
 }

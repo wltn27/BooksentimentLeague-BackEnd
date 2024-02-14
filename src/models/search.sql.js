@@ -1,15 +1,16 @@
 export const getBookSentimentData = `
-    SELECT 
-        AVG(score) AS avr_score,
+    SELECT
+        user_id,
+        score as avr_score,
         COUNT(*) AS eval_num
-    FROM 
+    FROM
         sentiment
-    WHERE 
+    WHERE
         book_title = ? AND
         author = ? AND
         publisher = ?
-    GROUP BY 
-        book_title, author, publisher;
+    GROUP BY
+        user_id
 `;
 
 // 유저 센티멘트 리스트 조회, 최대 10개 제한

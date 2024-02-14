@@ -10,13 +10,13 @@ import { readSearchListSentiment, readSearchListNick, searchForBooks } from './.
 export const getSearchBooks = async (req, res) => {
     try {
       const title = req.query.query;
-      const bookData = await searchForBooks(title, 5, 1);   // 5개씩, 처음부터
+      const bookData = await searchForBooks(title, 5, 1, req.body.userId);   // 5개씩, 처음부터
       if(bookData == '')
         return res.status(StatusCodes.OK).json({message : "검색어에 맞는 결과가 없습니다."});
       res.status(StatusCodes.OK).json({ bookData });
     } catch (error) {
       console.error('Search Books Error:', error);
-      res.status(500).json({ message: "도서 검색에 실패했습니다." });
+      return new BaseError(status.FAIL_SEARCH_BOOK);
     }
 };
 
@@ -24,7 +24,7 @@ export const getSearchBooks = async (req, res) => {
 export const getSearchListAll = async (req, res, next ) => {
     console.log("검색결과 리스트(전체) 요청");
     
-    const searchBookObject = await searchForBooks(req.query.query, 3, 1);
+    const searchBookObject = await searchForBooks(req.query.query, 3, 1, req.body.userId);
     const searchSentimentObject = await readSearchListSentiment(req.query.query, 3, 0);
     const searchNicknameObject = await readSearchListNick(req.query.query, 3, 0, req.body.userId);
 
@@ -37,7 +37,7 @@ export const getSearchListAll = async (req, res, next ) => {
 export const getSearchListSentiment = async (req, res, next ) => {
     console.log("검색결과 리스트(센티멘트) 조회 요청");
 
-    const searchListObject = await readSearchListSentiment(req.query.query, req.body.cursorId);
+    const searchListObject = await readSearchListSentiment(req.query.query, 10, req.body.cursorId);
 
     if(searchListObject == '')
         return res.status(StatusCodes.OK).json({message : "검색어에 맞는 결과가 없습니다."});
@@ -48,7 +48,7 @@ export const getSearchListSentiment = async (req, res, next ) => {
 export const getSearchListNick = async (req, res, next ) => {
     console.log("검색결과 리스트(닉네임) 조회 요청");
 
-    const searchListObject = await readSearchListNick(req.query.query, req.body.cursorId, req.body.userId);
+    const searchListObject = await readSearchListNick(req.query.query, 10, req.body.cursorId, req.body.userId);
 
     if(searchListObject == '')
         return res.status(StatusCodes.OK).json({message : "검색어에 맞는 결과가 없습니다."});

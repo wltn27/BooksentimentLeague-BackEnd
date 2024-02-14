@@ -175,10 +175,10 @@ export const changeUserInfo = async(user_id, userData, image_path) => {
         const conn = await pool.getConnection();
         
         const oldImg = await pool.query(getImageSql, [user_id]);
-        console.log('oldImg: ', oldImg[0][0]);
 
-        // 프로필 이미지가 없다면 
-        if(oldImg[0][0].profile_image != ''){
+        console.log(oldImg[0]);
+        // 기존에 프로필 이미지가 있다면 
+        if(oldImg[0][0].profile_image != null){
             const imgUrl = new URL(oldImg[0][0].profile_image);
             const key = imgUrl.pathname.substring(1);
             await deleteImageFromS3(key); // S3에서 삭제
@@ -186,14 +186,12 @@ export const changeUserInfo = async(user_id, userData, image_path) => {
 
         const [user] = await pool.query(updateUserData, [{'status_message': userData.status_message}, {'profile_image': image_path}, user_id]);
 
-        console.log(user);
-
         if(user.changedRows != 1){              // 마이페이지 유저 정보가 바뀌지 않았다면
             return false;
         }
 
         conn.release();
-        return true;    
+        return {'status_message': userData.status_message,'profile_image': image_path};   
     }catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
@@ -212,7 +210,7 @@ export const updateUserFollow = async (followingId, userId) => {
         
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_USER_FOLLOW);
     }
 }
 
@@ -243,7 +241,7 @@ export const updateUserUnFollow = async (followingId, userId) => {
         
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_USER_FOLLOW);
     }
 }
 
@@ -273,7 +271,7 @@ export const existFollow = async (followingId, userId) => {
 
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("팔로우 중복 확인 수행에 실패하였습니다.");
     }
 }
 
@@ -324,7 +322,7 @@ export const likeSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_LIKE_SENTIMENT);
     }
 };
 
@@ -338,7 +336,7 @@ export const unlikeSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_LIKE_SENTIMENT);
     }
 };
 
@@ -352,7 +350,7 @@ export const checkUserSentimentLikeStatus = async (userId, sentimentId) => {
         return rows.length > 0 && rows[0].like === 1; // 이미 추천된 상태면 true, 아니면 false 반환
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("이미 추천된 센티멘트인지 확인 수행에 실패하였습니다.");
     }
 };
 
@@ -366,7 +364,7 @@ export const checkSentimentOwner = async (sentimentId, userId) => {
         return rows.length > 0 && rows[0].user_id === Number(userId);
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("현재 사용자가 센티멘트 작성자인지 확인 수행에 실패하였습니다.");
     }
 };
 
@@ -380,7 +378,7 @@ export const likeComment = async (userId, commentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_LIKE_COMMENT);
     }
 };
 
@@ -394,7 +392,7 @@ export const unlikeComment = async (userId, commentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_LIKE_COMMENT);
     }
 };
 
@@ -408,7 +406,7 @@ export const checkUserCommentLikeStatus = async (userId, commentId) => {
         return rows.length > 0 && rows[0].like === 1; // 이미 추천된 상태면 true, 아니면 false 반환
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("이미 추천된 댓글인지 확인 수행에 실패하였습니다.");
     }
 };
 
@@ -422,7 +420,7 @@ export const checkCommentOwner = async (commentId, userId) => {
         return rows.length > 0 && rows[0].user_id === Number(userId);
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("현재 사용자가 댓글 작성자인지 확인 수행에 실패하였습니다.");
     }
 };
 
@@ -436,7 +434,7 @@ export const scrapSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_SCRAP_SENTIMENT);
     }
 };
 
@@ -450,7 +448,7 @@ export const unscrapSentiment = async (userId, sentimentId) => {
         return true;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_SCRAP_SENTIMENT);
     }
 };
 
@@ -464,7 +462,7 @@ export const checkUserSentimentScrapStatus = async (userId, sentimentId) => {
         return rows.length > 0 && rows[0].scrap === 1; // 이미 추천된 상태면 true, 아니면 false 반환
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new Error("이미 스크랩된 센티멘트인지 확인 수행에 실패하였습니다.");
     }
 };
 
@@ -482,7 +480,7 @@ export const getAlarmDao = async (userId) => {
         return alarm;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_GET_ALARM);
     }
 }
 
@@ -496,7 +494,7 @@ export const updateAlarmDao = async (alarmId) => {
         return readResult[0].read_at;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_UPDATE_ALARM);
     }
 }
 

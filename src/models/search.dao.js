@@ -45,13 +45,10 @@ export const getNicknameList = async(searchWord, limit, cursorId, userId) => {
 export const getSentimentData = async(booktitle, author, publisher) => {
     try {
         const [results] = await pool.query(getBookSentimentData, [booktitle, author, publisher]);
+     
         if (results.length > 0) {
-            // 성공적으로 감정 데이터를 찾고 집계함
-            const { avr_score, eval_num } = results[0];
-            return {
-                avr_score: avr_score || 0, // null일 경우 기본값 0
-                eval_num: eval_num || 0 // 감정 표현이 없는 경우 기본값 0
-            };
+            // 성공적으로 감정 데이터를 찾고 집계
+            return results;
         } else {
             // 감정 표현이 없는 경우 기본값 반환
             return { avr_score: 0, eval_num: 0 };

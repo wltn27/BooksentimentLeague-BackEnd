@@ -4,7 +4,7 @@ export const getRankInfo = `
     SELECT 
         u.nickname,
         u.status_message,
-        ut.tier_id AS tier,
+        t.tier, -- tier 테이블에서 tier 열의 데이터를 가져옴
         COUNT(DISTINCT s.sentiment_id) AS sentimentCount,
         SUM(us.like) AS totalLikes,
         SUM(us.scrap) AS totalScraps 
@@ -16,6 +16,8 @@ export const getRankInfo = `
         user_sentiment us ON u.user_id = us.user_id
     LEFT JOIN 
         user_tier ut ON u.user_id = ut.user_id
+    LEFT JOIN 
+        tier t ON ut.tier_id = t.tier_id -- user_tier와 tier 테이블을 조인
     GROUP BY 
         u.user_id
     ORDER BY 

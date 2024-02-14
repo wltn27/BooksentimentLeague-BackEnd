@@ -342,7 +342,7 @@ export const getAlarmDao = async (userId) => {
         return alarm;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_GET_ALARM);
     }
 }
 
@@ -356,7 +356,7 @@ export const updateAlarmDao = async (alarmId) => {
         return readResult[0].read_at;
     } catch (err) {
         console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_UPDATE_ALARM);
     }
 }
 
@@ -400,7 +400,7 @@ export const createComment = async (sentimentId, userId, parent_id, content) => 
      } catch (err) {
         await conn.rollback();
         console.log(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
+        throw new BaseError(status.FAIL_COMMENT_WRITE);
      }
 };
 
@@ -423,7 +423,8 @@ export const removeComment = async (commentId) => {
         conn.release();
     } catch (err) {
         await conn.rollback();
-        throw err;
+        console.log(err);
+        throw new BaseError(status.FAIL_COMMENT_DELETE);
     }    
 };
 

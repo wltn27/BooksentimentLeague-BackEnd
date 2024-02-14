@@ -38,7 +38,20 @@ export const status = {
     COMMENT_NOT_SELF: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4015", "message": "본인 댓글은 추천할 수 없습니다."},
     SCRAP_NOT_SELF: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4016", "message": "본인 센티멘트는 스크랩할 수 없습니다."},
     COMMENT_NOT_DELETE: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4017", "message": "본인 댓글 외에는 삭제할 수 없습니다."},
+
+    FAIL_USER_FOLLOW: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4018", "message": "팔로우에 실패하였습니다."},
+    FAIL_LIKE_SENTIMENT: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4019", "message": "센티멘트 추천에 실패하였습니다."},
+    FAIL_LIKE_COMMENT: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4020", "message": "댓글 추천에 실패하였습니다."},
+    FAIL_SCRAP_SENTIMENT: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4021", "message": "센티멘트 스크랩에 실패하였습니다."},
+
+    FAIL_GET_ALARM: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4022", "message": "알림 조회에 실패하였습니다."},
+    FAIL_UPDATE_ALARM: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4023", "message": "알림 상태 업데이트에 실패하였습니다."},
+    FAIL_GET_UNREAD: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4024", "message": "읽지 않은 알림 조회에 실패하였습니다."},
+
+    FAIL_COMMENT_WRITE: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4025", "message": "댓글 작성에 실패하였습니다."},
+    FAIL_COMMENT_DELETE: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4026", "message": "댓글 삭제에 실패하였습니다."},
     
     // article err
-    ARTICLE_NOT_FOUND: {status: StatusCodes.NOT_FOUND, "isSuccess": false, "code": "ARTICLE4001", "message": "게시글이 없습니다."}
+    ARTICLE_NOT_FOUND: {status: StatusCodes.NOT_FOUND, "isSuccess": false, "code": "ARTICLE4001", "message": "게시글이 없습니다."},
+    FAIL_SEARCH_BOOK: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "ARTICLE4002", "message": "도서 검색에 실패했습니다."}
 }
