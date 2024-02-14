@@ -7,4 +7,4 @@ import { getRankingList } from "../controllers/rank.controller.js";
 
 export const rankRouter = express.Router({mergeParams: true});
 
-rankRouter.get('/', asyncHandler(getRankingList));
+rankRouter.get('/:cursorId', asyncHandler(getRankingList));

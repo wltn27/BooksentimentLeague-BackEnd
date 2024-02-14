@@ -8,7 +8,8 @@ import { getRankInfo, getUserRankInfo } from "./rank.sql.js";
 export const getRankingListDao = async (season, page_num, nickname = null) => {
     try {
         const conn = await pool.getConnection();
-        const [totalRank] = await conn.query(getRankInfo, [season, (page_num - 1) * 15]); 
+        const offset = (page_num - 1) * 15;
+        const [totalRank] = await conn.query(getRankInfo, [season, offset]); 
         if (totalRank.length === 0) {
             return {
                 message: `해당 시즌(season =${season})의 데이터가 없습니다 .`,
@@ -26,7 +27,8 @@ export const getRankingListDao = async (season, page_num, nickname = null) => {
             const [rows] = await conn.query(getUserRankInfo, [season]);
             nickname = nickname.replace(/"/g, '');
             const userRanking = rows.findIndex(row => row.nickname === nickname) + 1;
-            userRank = rows.find(row => row.nickname === nickname)|| [];
+      
+            userRank = rows.find(row => row.nickname == nickname)|| [];
             if(userRank.length > 0) {
                 userRank.ranking = userRanking;
             }
