@@ -36,12 +36,8 @@ export const getSentiment = `
 
 export const getSentimentCommentCount = `
 SELECT COUNT(*) as comment_num
-FROM user_comment as uc 
-JOIN (
-    SELECT comment_id
-    FROM comment
-    WHERE sentiment_id = ?
-) as c ON uc.comment_id = c.comment_id;` 
+FROM comment
+WHERE sentiment_id = ?`
 
 // 본인일 경우 follow_status 변경
 export const getNickname = `

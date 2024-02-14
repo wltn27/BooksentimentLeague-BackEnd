@@ -52,7 +52,7 @@ export const searchResponseDTO = (books, start_index) => {
       publisher: book.publisher,
       pubdate: book.pubdate,
       description: book.description,
-      avr_score: book.avr_score || 0,
+      avr_score: book.avr_score ? book.avr_score.toFixed(2) : 0,
       eval_num: book.eval_num || 0,
       user_score: book.user_score
     }));
