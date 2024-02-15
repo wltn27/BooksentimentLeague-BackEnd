@@ -75,7 +75,7 @@ export const getAlarmInfo = "SELECT title, content, read_at, created_at FROM ala
 
 // 센티멘트 리스트 조회
 export const getSentimentListSql = () => `
-    SELECT s.sentiment_title, s.book_title, u.nickname as nickname, s.sentiment_id, s.content,
+    SELECT s.sentiment_title, s.book_title, u.nickname as nickname, s.sentiment_id, s.content, s.sentiment_id,
         t.tier as tier,
         (SELECT COUNT(*) FROM user_sentiment us WHERE us.sentiment_id = s.sentiment_id) as total_likes,
         (SELECT COUNT(*) FROM user_sentiment us WHERE us.sentiment_id = s.sentiment_id AND us.scrap = true) as total_scraps,
@@ -86,11 +86,11 @@ export const getSentimentListSql = () => `
     JOIN user_tier ut ON u.user_id = ut.user_id
     JOIN tier t ON ut.tier_id = t.tier_id
     ORDER BY s.created_at DESC
-    LIMIT 3 OFFSET ?;
+    LIMIT 4 OFFSET ?;
 `;
 
 export const getFollowingSentimentListSql = () => `
-    SELECT s.sentiment_title, s.book_title, u.nickname as nickname, 
+    SELECT s.sentiment_title, s.book_title, u.nickname as nickname, s.sentiment_id,
         t.tier as tier,
         (SELECT COUNT(*) FROM user_sentiment us WHERE us.sentiment_id = s.sentiment_id) as total_likes,
         (SELECT COUNT(*) FROM user_sentiment us WHERE us.sentiment_id = s.sentiment_id AND us.scrap = true) as total_scraps,
@@ -104,6 +104,6 @@ export const getFollowingSentimentListSql = () => `
         SELECT following_id FROM follow WHERE follower_id = ?
     )
     ORDER BY s.created_at DESC
-    LIMIT 3 OFFSET ?;
+    LIMIT 4 OFFSET ?;
 `;
 
