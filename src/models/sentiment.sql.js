@@ -86,7 +86,7 @@ export const getSentimentListSql = () => `
     JOIN user_tier ut ON u.user_id = ut.user_id
     JOIN tier t ON ut.tier_id = t.tier_id
     ORDER BY s.created_at DESC
-    LIMIT 4 OFFSET ?;
+    LIMIT 15 OFFSET ?;
 `;
 
 export const getFollowingSentimentListSql = () => `
@@ -104,6 +104,6 @@ export const getFollowingSentimentListSql = () => `
         SELECT following_id FROM follow WHERE follower_id = ?
     )
     ORDER BY s.created_at DESC
-    LIMIT 4 OFFSET ?;
+    LIMIT 15 OFFSET ?;
 `;
 

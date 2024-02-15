@@ -432,7 +432,7 @@ export const removeComment = async (commentId) => {
 export const getSentimentListDao = async (page_num) => {
     try {
         const conn = await pool.getConnection();
-        const [list] = await conn.query(getSentimentListSql(), [(page_num-1) * 4]);
+        const [list] = await conn.query(getSentimentListSql(), [(page_num-1) * 15]);
 
         if (list.length == 0) {
             return { message :"조회된 센티멘트가 없습니다."};
@@ -451,7 +451,7 @@ export const getSentimentListDao = async (page_num) => {
 export const getSentimentFollowDao = async (userId, page_num) => {
     try {
         const conn = await pool.getConnection();
-        const [list] = await conn.query(getFollowingSentimentListSql(), [userId, (page_num-1) * 4]);
+        const [list] = await conn.query(getFollowingSentimentListSql(), [userId, (page_num-1) * 15]);
 
 
         if (list.length == 0) {
