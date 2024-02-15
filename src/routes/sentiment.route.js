@@ -37,7 +37,7 @@ alarmtRouter.get('/', asyncHandler(getAlarm));
 alarmtRouter.patch('/', asyncHandler(updateAlarm));
 
 // 센티멘트 리스트 조회
-sentimentRouter.get('/:cursorId', asyncHandler(sentimentList));
+sentimentRouter.get('/list/:cursorId', asyncHandler(sentimentList));
 
 // 팔로우한 사람의 센티멘트 리스트 조회
 sentimentRouter.get('/follow/:userId/:cursorId', asyncHandler(sentimentListFollowing));

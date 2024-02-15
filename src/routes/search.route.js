@@ -10,6 +10,6 @@ export const searchRouter = express.Router({mergeParams: true});
 searchRouter.get('/title', asyncHandler(getSearchBooks));
 
 searchRouter.get('/', asyncHandler(getSearchListAll));
-searchRouter.get('/book', asyncHandler(getSearchBooks));
+searchRouter.get('/book/:cursorId', asyncHandler(getSearchBooks));
 searchRouter.get('/sentiment/:cursorId', asyncHandler(getSearchListSentiment));
 searchRouter.get('/nickname/:cursorId', asyncHandler(getSearchListNick));

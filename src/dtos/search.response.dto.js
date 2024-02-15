@@ -4,7 +4,7 @@ export const sentimentResponseDTO = (data, cursorId) => {
     if(cursorId == undefined)
         cursorId = 0;
     const sentimentObject = [];
-
+    console.log(data.length);
     for (let i = 0; i < data.length; i++) {
         sentimentObject.push({
             "sentiment_id" : data[i].sentiment_id,
@@ -23,7 +23,7 @@ export const sentimentResponseDTO = (data, cursorId) => {
             "scrap_num":  data[i].scrap_num
         })
     }
-    return {"sentimentObject": sentimentObject, "cursorId": data.length + cursorId};
+    return {"sentimentObject": sentimentObject, "cursorId": parseInt(data.length) +  parseInt(cursorId)};
 }
 
 export const nicknameResponseDTO = (data, cursorId) => {
@@ -41,7 +41,7 @@ export const nicknameResponseDTO = (data, cursorId) => {
             "follow_status" : data[i].follow_status
         })
     }
-    return {"nicknameObject": nicknameObject, "cursorId": data.length + cursorId};
+    return {"nicknameObject": nicknameObject, "cursorId": parseInt(data.length) + parseInt(cursorId)};
 }
 
 export const searchResponseDTO = (books, start_index) => {
@@ -57,5 +57,5 @@ export const searchResponseDTO = (books, start_index) => {
       user_score: book.user_score
     }));
 
-    return {bookObject, cursorId : bookObject.length + start_index -1};
+    return {bookObject, cursorId : parseInt(bookObject.length) + parseInt(start_index) -1};
   };
