@@ -68,7 +68,7 @@ export const sentimentListDTO = (data) => {
         "book_image": item.book_image,
         "sentiment_title" : item.sentiment_title,
         "book_title" : item.book_title,
-        "nickname" : item.author_nickname,
+        "nickname" : item.nickname,
         "tier" : item.tier,
         "score" : item.score,
         "content": item.content,
