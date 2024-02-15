@@ -3,7 +3,7 @@ import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
-import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getNickname, insertUserSentiment, getSentimentId } from "./sentiment.sql.js";
+import { insertSentimentSql, confirmSentiment, getSentimentInfo, getUserId, getNicknameAndTier, insertUserSentiment, getSentimentId } from "./sentiment.sql.js";
 import { updateSentimentSql, deleteSentimentSql, deleteUserSentimentSql } from "./sentiment.sql.js";
 import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js";
 import { insertCommentQuery, insertUserCommentQuery, selectInsertedCommentQuery, findCommentByIdQuery,
@@ -144,8 +144,9 @@ export const getSentiment = async (sentimentID) => {
         const [userIdResult] = await pool.query(getUserId, [sentimentID]);
         const userId = userIdResult[0].user_id;
 
-        const [nicknameResult] = await pool.query(getNickname, userId);
+        const [nicknameResult] = await pool.query(getNicknameAndTier, userId);
         const nickname = nicknameResult[0].nickname;
+        const tier = nicknameResult[0].tier;
         const [imageResult] = await pool.query(getImageSql, [sentimentID]);
         
         if (imageResult.length > 0  && imageResult[0].image !== '' ) {
@@ -157,6 +158,7 @@ export const getSentiment = async (sentimentID) => {
         }
 
         sentiment[0].nickname = nickname;
+        sentiment[0].tier = tier;
 
         
         if (sentiment.length == 0) {
@@ -366,7 +368,8 @@ export const getComment = async (sentimentId) => {
     const [commentList] = await pool.query(getCommentList, sentimentId);
 
     for(let i =0; i < commentList.length; i++){
-        Object.assign(commentList[i], { nickname: (await pool.query(getNickname, commentList[i].user_id))[0][0].nickname });
+        Object.assign(commentList[i], { nickname: (await pool.query(getNicknameAndTier, commentList[i].user_id))[0][0].nickname });
+        Object.assign(commentList[i], { tier: (await pool.query(getNicknameAndTier, commentList[i].user_id))[0][0].tier });
     }
 
     conn.release();

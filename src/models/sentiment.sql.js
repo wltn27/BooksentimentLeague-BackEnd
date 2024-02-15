@@ -5,7 +5,12 @@ export const confirmSentiment = "SELECT EXISTS(SELECT 1 FROM sentiment WHERE use
 // 정보 불러오기
 export const getSentimentInfo = "SELECT * FROM sentiment WHERE sentiment_id = ?;";
 export const getImageSql = "SELECT image FROM image WHERE sentiment_id = ?;"
-export const getNickname = "SELECT nickname FROM user WHERE user_id = ?;";
+export const getNicknameAndTier = 
+    `SELECT nickname, t.tier as tier
+    FROM user as u
+    LEFT JOIN user_tier ut ON u.user_id = ut.user_id
+    LEFT JOIN tier t ON ut.tier_id = t.tier_id
+    WHERE u.user_id = ?;`
 export const getUserId = "SELECT user_id from sentiment where sentiment_id =?;";
 export const getSentimentId = "SELECT LAST_INSERT_ID() AS lastId;";
 // 센티멘트 삽입/삭제

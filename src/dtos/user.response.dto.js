@@ -146,7 +146,9 @@ export const sentimentResponseDTO = (data) => {
             "created_at":  formatDate(data[i].created_at),
             "comment_num":  data[i].comment_num,
             "like_num":  data[i].like_num,
-            "scrap_num":  data[i].scrap_num
+            "scrap_num":  data[i].scrap_num,
+            "author": data[i].author,
+            "publisher": data[i].publisher
         })
     }
     return {"sentimentObject": sentimentObject, "cursorId": data[data.length-1].sentiment_id};

@@ -75,7 +75,7 @@ WHERE follower_id IN (SELECT following_id FROM follow WHERE follower_id = ?)`
 
 // 유저 센티멘트 리스트 조회, 최대 10개 제한
 export const getSentiment = 
-`SELECT sentiment_id, book_image, sentiment_title, book_title, score, created_at FROM sentiment WHERE user_id = ? order by sentiment_id, created_at desc limit ? offset ?;`
+`SELECT sentiment_id, book_image, sentiment_title, book_title, score, created_at, author, publisher FROM sentiment WHERE user_id = ? order by sentiment_id, created_at desc limit ? offset ?;`
 
 // 유저 스크랩 리스트 조회, 최대 10개 제한
 export const getScrap = 

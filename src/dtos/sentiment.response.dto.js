@@ -12,7 +12,8 @@ export const sentimentResponseDTO = (data) => {
         "book_image": data[0].book_image,
         "author" : data[0].author,
         "publisher" : data[0].publisher,
-        "created_at": formatDate(data[0].created_at)
+        "created_at": formatDate(data[0].created_at),
+        "tier" : data[0].tier
     };
 };
 
@@ -28,6 +29,7 @@ export const commentResponseDTO = (data) => {
             "parent_id":  data[i].parent_id,
             "created_at":  formatDate(data[i].created_at),
             "content":  data[i].content,
+            "tier": data[i].tier
         })
     }
     return {"comment": commentObject};
