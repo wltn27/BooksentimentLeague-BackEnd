@@ -138,7 +138,9 @@ export const sentimentResponseDTO = (data) => {
             "like_num":  data[i].like_num,
             "scrap_num":  data[i].scrap_num,
             "author": data[i].author,
-            "publisher": data[i].publisher
+            "publisher": data[i].publisher,
+            "nickname": data[i].nickname,
+            "tier": data[i].tier
         })
     }
     return {"sentimentObject": sentimentObject, "cursorId": data[data.length-1].sentiment_id};
