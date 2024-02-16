@@ -50,6 +50,8 @@ export const status = {
 
     FAIL_COMMENT_WRITE: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4025", "message": "댓글 작성에 실패하였습니다."},
     FAIL_COMMENT_DELETE: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4026", "message": "댓글 삭제에 실패하였습니다."},
+
+    INVALID_INPUT: {status: StatusCodes.BAD_REQUEST, "isSuccess": false, "code": "MEMBER4027", "message": "입력값이 유효하지 않습니다."},
     
     // article err
     ARTICLE_NOT_FOUND: {status: StatusCodes.NOT_FOUND, "isSuccess": false, "code": "ARTICLE4001", "message": "게시글이 없습니다."},
