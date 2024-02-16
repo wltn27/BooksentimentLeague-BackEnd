@@ -7,11 +7,15 @@ import { getSentiment, getSentimentCommentCount, getNickname, getBookSentimentDa
 
 export const getSentimentList = async(searchWord, limit, cursorId) => {
     try{
-        // NaN 값이 들어오면 기본값으로 설정
-        limit = isNaN(limit) ? 10 : parseInt(limit);
-        cursorId = isNaN(cursorId) ? 0 : parseInt(cursorId);
-        //
         const conn = await pool.getConnection();
+
+        const validatedCursorId = Number(cursorId);
+        if (isNaN(validatedCursorId)) {
+            // cursorId가 유효하지 않을 경우 기본값 설정
+            cursorId = 0;
+        } else {
+            cursorId = validatedCursorId;
+        }
         
         const [sentimentObject] = await pool.query(getSentiment, [`%${searchWord}%`, `%${searchWord}%`, `%${searchWord}%`, limit, Number(cursorId)]);
 
