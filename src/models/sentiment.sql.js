@@ -3,10 +3,16 @@
 export const confirmSentiment = "SELECT EXISTS(SELECT 1 FROM sentiment WHERE user_id = ? AND book_title = ?) as isExistSentiment;";
 
 // 정보 불러오기
-export const getSentimentInfo = "SELECT * FROM sentiment WHERE sentiment_id = ?;";
+export const getSentimentInfo = 
+`SELECT *,
+        (SELECT COUNT(*) FROM user_sentiment us WHERE us.sentiment_id = s.sentiment_id) as total_likes,
+        (SELECT COUNT(*) FROM user_sentiment us WHERE us.sentiment_id = s.sentiment_id AND us.scrap = true) as total_scraps,
+        (SELECT COUNT(*) FROM comment c WHERE c.sentiment_id = s.sentiment_id) as total_comments 
+FROM sentiment as s WHERE sentiment_id = ?;`;
+
 export const getImageSql = "SELECT image FROM image WHERE sentiment_id = ?;"
 export const getNicknameAndTier = 
-    `SELECT nickname, t.tier as tier
+    `SELECT nickname, t.tier as tier, profile_image
     FROM user as u
     LEFT JOIN user_tier ut ON u.user_id = ut.user_id
     LEFT JOIN tier t ON ut.tier_id = t.tier_id

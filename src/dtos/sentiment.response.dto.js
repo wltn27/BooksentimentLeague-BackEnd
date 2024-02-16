@@ -2,6 +2,7 @@
 import { formatDate } from "./../dtos/user.response.dto.js"
 
 export const sentimentResponseDTO = (data) => {
+    console.log(data[0].profile_image)
     return {
         "nickname": data[0].nickname,
         "sentiment_title": data[0].sentiment_title,
@@ -13,7 +14,11 @@ export const sentimentResponseDTO = (data) => {
         "author" : data[0].author,
         "publisher" : data[0].publisher,
         "created_at": formatDate(data[0].created_at),
-        "tier" : data[0].tier
+        "tier" : data[0].tier,
+        "comment_num" : data[0].total_comments,
+        "like_num" : data[0].total_likes,
+        "scrap_num" : data[0].total_scraps,
+        "profile_image" : data[0].profile_image
     };
 };
 
@@ -26,6 +31,7 @@ export const commentResponseDTO = (data) => {
         commentObject.push({
             "comment_id": data[i].comment_id,
             "nickname":  data[i].nickname,
+            "profile_image": data[i].profile_image,
             "parent_id":  data[i].parent_id,
             "created_at":  formatDate(data[i].created_at),
             "content":  data[i].content,

@@ -145,8 +145,10 @@ export const getSentiment = async (sentimentID) => {
         const userId = userIdResult[0].user_id;
 
         const [nicknameResult] = await pool.query(getNicknameAndTier, userId);
+
         const nickname = nicknameResult[0].nickname;
         const tier = nicknameResult[0].tier;
+        const profile_image = nicknameResult[0].profile_image ?? '기본 프로필';
         const [imageResult] = await pool.query(getImageSql, [sentimentID]);
         
         if (imageResult.length > 0  && imageResult[0].image !== '' ) {
@@ -156,9 +158,10 @@ export const getSentiment = async (sentimentID) => {
             // 이미지가 없는 경우 image_path를 null로 설정
             sentiment[0].image_path = null;
         }
-
+  
         sentiment[0].nickname = nickname;
         sentiment[0].tier = tier;
+        sentiment[0].profile_image = profile_image;
 
         
         if (sentiment.length == 0) {
@@ -370,6 +373,7 @@ export const getComment = async (sentimentId) => {
     for(let i =0; i < commentList.length; i++){
         Object.assign(commentList[i], { nickname: (await pool.query(getNicknameAndTier, commentList[i].user_id))[0][0].nickname });
         Object.assign(commentList[i], { tier: (await pool.query(getNicknameAndTier, commentList[i].user_id))[0][0].tier });
+        Object.assign(commentList[i], { profile_image: (await pool.query(getNicknameAndTier, commentList[i].user_id))[0][0].profile_image ?? '기본 프로필' });
     }
 
     conn.release();
