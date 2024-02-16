@@ -30,16 +30,14 @@ export const getSentiment = async (req, res, next ) => {
 // 센티멘트 작성
 export const wrSentiment = async (req, res, next ) => {
     console.log("센티멘트 작성 요청");
-    console.log("body", req.body);
-    console.log("files", req.files);
+    
     res.send(response(status.SUCCESS, await insertSentiment(req.params.userId, req.body, req.files)));
 }
 
 // 센티멘트 수정
 export const rewrSentiment = async (req, res, next ) => {
     console.log("센티멘트 수정 요청");
-    console.log("body", req.body);
-    console.log("files", req.files); 
+ 
     /*
     const currentId = req.params.user-id;
     const postId = await pool.query(getUserId,[req.params.sentiment-id]);
@@ -68,7 +66,7 @@ export const wrComment = async (req, res, next) => {
         const { parent_id, content } = req.body;
         const comment = await insertComment(sentimentId, userId, parent_id, content);
         console.log("댓글 작성 성공!");
-        console.log(comment);
+
         res.status(StatusCodes.OK).json(comment);
     } catch (error) {
         console.error('Error in writeComment:', error);

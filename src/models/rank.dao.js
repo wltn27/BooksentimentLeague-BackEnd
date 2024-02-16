@@ -38,7 +38,6 @@ export const getRankingListDao = async (season, page_num, nickname = null) => {
             }
         }            
         conn.release();
-        console.log('totalRank: ', totalRank);
         return { totalRank, userRank };
     } catch (error) {
         console.error('Error: ', error);

@@ -4,7 +4,6 @@ export const sentimentResponseDTO = (data, cursorId) => {
     if(cursorId == undefined)
         cursorId = 0;
     const sentimentObject = [];
-    console.log(data.length);
     for (let i = 0; i < data.length; i++) {
         sentimentObject.push({
             "sentiment_id" : data[i].sentiment_id,

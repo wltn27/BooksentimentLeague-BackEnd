@@ -33,9 +33,6 @@ export const addSentiment = async (userId, data) => {
         const [confirm] = await pool.query(confirmSentiment, [userId, data.book_title]);
         const newDate = new Date();
 
-        console.log("Data: ", data);
-        console.log("Confirm Result:", confirm);
-
         if (confirm[0].isExistSentiment) {
             conn.release();
             throw new BaseError(status.SENTIMENT_ALREADY_EXIST);
@@ -56,32 +53,23 @@ export const addSentiment = async (userId, data) => {
 
         // user_sentiment 테이블 동기화
         const [sentimentIdResult] = await pool.query(getSentimentId);
-        //console.log('sentimentIdResult: ', sentimentIdResult);
         const sentimentId = sentimentIdResult[0].lastId;
-        //console.log('sentimentId: ',sentimentId);
         const [insertResult] = await pool.query(insertUserSentiment, [userId, sentimentId]);
-        //console.log('insertResult: ',insertResult);        
-     
+
         // 이미지가 있다면 DB에 삽입
         if (data.image) {
-            console.log('data.image : ', data.image);
             // 각 이미지 URL에 대해 반복
             for (const imageUrl of data.image) {
                 const imageResult = await pool.query(insertImageSql, [result[0].insertId, imageUrl]);
-                console.log("Result of Image Insert Query:", imageResult);
             }
         }
 
         // 티어 체크
         const [sentimentResult] = await pool.query(totalSentiment, userId);
-        //console.log('sentimentResult: ', sentimentResult);
         const sentimentCount = sentimentResult.length;
-        console.log('sentimentCount: ', sentimentCount);
 
         const [recommendResult] = await pool.query(totalRecommend, [userId]);
-        //console.log('recommendResult: ', recommendResult);
         const recommendCount = recommendResult[0].totalLikes;
-        console.log('recommendCount: ', recommendCount);
 
         let checkTier; // 체크한 티어 
         
@@ -109,20 +97,15 @@ export const addSentiment = async (userId, data) => {
         let currentTier = currentTierResult[0].currentTier;
         if(checkTier != currentTier) {
             const [tier] = await pool.query(updateTier, [checkTier, userId]);
-            console.log('tier: ', tier);
-            console.log('사용자 티어 상승');
             // 알람생성 해야함
             const title = '티어 상승 알림';
             const content = '마이페이지에서 티어를 확인하세요!';
             const createdAt = new Date(); // 생성날짜
             // DB에 알람 데이터 삽입
             const [alarmResult] = await pool.query(tierAlarm, [userId, title , content, createdAt]);
-            //console.log('alarmResult: ', alarmResult);
         };
         
         conn.release();
-        //console.log("return : ", result);
-        //console.log("return : ", result);
         return result[0].insertId; // sentimnet_id 반환
 
     } catch (err) {
@@ -184,7 +167,6 @@ export const modifySentiment = async (sentimentID, data) => {
         const conn = await pool.getConnection();
 
         const originalDate = new Date();
-        console.log(originalDate);
         // 데이터베이스에서 해당 sentimentID에 해당하는 센티멘트 정보를 가져옴
         const [sentiment] = await pool.query(getSentimentInfo, [sentimentID]);
 
@@ -195,7 +177,6 @@ export const modifySentiment = async (sentimentID, data) => {
 
         // 가져온 센티멘트 정보를 기반으로 수정할 데이터 업데이트
         const updateResult = await pool.query(updateSentimentSql, [data.sentiment_title, data.book_title, data.score, data.content, originalDate, sentimentID]);
-        console.log("updateResult: ", updateResult);
 
         conn.release();
 
@@ -212,7 +193,6 @@ export const eliminateSentiment = async (sentimentID) => {
     try {
         const conn = await pool.getConnection();
         const img = await pool.query(getImageSql, [sentimentID]);
-        console.log("img: ", img);
 
         // 이미지 DB 및 S3에서 삭제
         if (img[0].length > 0) {
@@ -220,7 +200,6 @@ export const eliminateSentiment = async (sentimentID) => {
 
             for (const imageInfo of imageInfos) {
                 const s3Url = imageInfo.image;
-                console.log("s3Url: ", s3Url);
 
                 if (!s3Url || !isValidUrl(s3Url)) {
                     console.error('s3ObjectUrl is undefined or empty.');
@@ -228,11 +207,9 @@ export const eliminateSentiment = async (sentimentID) => {
                 } else {
                     // URL에서 객체 키 추출
                     const key = new URL(s3Url).pathname.slice(1);
-                    console.log(key);
 
                     // 이미지 DB에서 삭제
                     const deleteImageResult = await pool.query(deleteImageSql, [sentimentID, key]);
-                    console.log('deleteImageResult:', deleteImageResult);
 
                     // S3에서 삭제
                     await deleteImageFromS3(key);
@@ -248,9 +225,6 @@ export const eliminateSentiment = async (sentimentID) => {
         // 삭제 SQL 실행
         const [result2] = await pool.query(deleteUserSentimentSql, [sentimentID]);
         const [result] = await pool.query(deleteSentimentSql, [sentimentID]);
-        
-        //console.log('result:', result);
-        //console.log('result2:', result2);
 
         // 삭제된 행이 없는 경우 에러 처리
         if (result.affectedRows === 0) {
@@ -281,21 +255,16 @@ export const eliminateSentiment = async (sentimentID) => {
 export const modifyImage = async (sentimentId, body, files) => {
     try {
         const conn = await pool.getConnection();
-        console.log('image_paths: ', body.image);
 
         const oldImg = await pool.query(getImageSql, [sentimentId]);
-        console.log('oldImg: ', oldImg);
 
         const imageArray = oldImg[0].map(imageInfo => imageInfo.image);
-        console.log('imageArray: ', imageArray);
 
         // body.image와 db에 삽입된 이미지를 비교하여 삭제할 이미지 추출
         const imagesToDelete = imageArray.filter(imageValue => !body.image || !body.image.includes(imageValue));
-        console.log('imagesToDelete: ', imagesToDelete);
 
         // imagesToDelete 배열에 있는 이미지 삭제
         for (const deleteImg of imagesToDelete) {
-            console.log('deleteImg: ', deleteImg);
             const imgUrl = new URL(deleteImg);
             const key = imgUrl.pathname.substring(1);
             await deleteImageFromS3(key); // S3에서 삭제
@@ -307,7 +276,6 @@ export const modifyImage = async (sentimentId, body, files) => {
             const newImages = Array.isArray(body.image) ? body.image : [body.image]; // body.image가 배열이 아니라면 배열로 변환
             for (const newImg of newImages) {
                 if (newImg !== '') { // 빈 문자열 체크
-                    console.log('body.image: ', newImg);
                     await pool.query(insertImageSql, [sentimentId, newImg]); // DB에 삽입
                 }
             }
@@ -318,7 +286,7 @@ export const modifyImage = async (sentimentId, body, files) => {
             for (const file of files) {
                 const newImage = file.location;
                 if (newImage !== '') { // 빈 문자열 체크
-                    console.log('files.location: ', newImage);
+
                     await pool.query(insertImageSql, [sentimentId, newImage]); // DB에 삽입
                 }
             }

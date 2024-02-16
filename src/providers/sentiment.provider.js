@@ -24,9 +24,8 @@ export const readComment = async (sentimentId) => {
 // 센티멘트 리스트 조회 
 export const sentimentListProv = async (page_num) => {
     const list = await getSentimentListDao(page_num);
-    console.log(list);
+
     if (Array.isArray(list) && list.length > 0) {
-        console.log('sentimentListDTO : ', sentimentListDTO(list));
         return sentimentListDTO(list);
     }
     return list;
@@ -36,7 +35,6 @@ export const sentimentListProv = async (page_num) => {
 export const sentimentFollowProv = async (userId, page_num) => {
     const list = await getSentimentFollowDao(userId, page_num);
     if (Array.isArray(list) && list.length > 0) {
-        console.log('sentimentListDTO : ', sentimentListDTO(list));
         return sentimentListDTO(list);
     }
     return list;

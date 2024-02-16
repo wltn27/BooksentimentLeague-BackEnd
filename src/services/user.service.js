@@ -136,7 +136,6 @@ export const saveVerificationCode = async (email, verificationCode) => {
 };
 
 export const sendEmail = async (to, subject, text) => {
-    console.log(`to: ${to} subject: ${subject} text: ${text}`);
     const mailOptions = {
       from: config.emailUser,
       to,
@@ -153,7 +152,6 @@ export const sendEmail = async (to, subject, text) => {
 };
 
 export const updateUserData = async (user_id, userData, file) => {
-    console.log(file);
     const result = await changeUserInfo(user_id, userData, file.location);
     if(!result){
         return new BaseError(status.INTERNAL_SERVER_ERROR);
@@ -266,7 +264,6 @@ export const scrapSentimentUser = async (userId, sentimentId) => {
 export const updateAlarmService = async (userId, alarmId) => {
     try {
       const readStatus = await updateAlarmDao(alarmId);
-      console.log('readStatus: ', readStatus);
       return readStatus;
   
     } catch (err) {

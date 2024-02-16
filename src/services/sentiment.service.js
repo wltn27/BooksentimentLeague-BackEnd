@@ -25,11 +25,10 @@ export const insertSentiment = async (userId, body, files) => {
     'publisher' : body.publisher,
     'season': 1 // body에 season 없음 -> req에 시즌이 없음 -> 1로 정해놓음 
   });
-  console.log('insertSentimentData : ', insertSentimentData);
+
   if (insertSentimentData == -1) { 
     throw new BaseError(status.SENTIMENT_ALREADY_EXIST);
   } else {
-    console.log('sentimentResponseDTO: ', sentimentResponseDTO(await getSentiment(insertSentimentData)))
     return sentimentResponseDTO(await getSentiment(insertSentimentData));
   }
 }
@@ -43,14 +42,9 @@ export const updateSentiment = async (sentimentId, body, files) => {
     if ( postId == currentId ) { // 현재 로그인한 사용자와 작성자의 id가 동일한지 확인 */
     const existingSentiment = await getSentiment(sentimentId);
     // 디버깅을 위한 로그
-    console.log('Existing Sentiment:', existingSentiment);
     if (!existingSentiment) {
       throw new BaseError(status.SENTIMENT_NOT_FOUND);
     }
-
-    // 이미지 삭제 로직
-    console.log('update Sentiment body: ', body);
-    
       
     //이미지 레코드 삭제
     await modifyImage(sentimentId, body, files);
@@ -98,7 +92,6 @@ export const deleteSentiment = async (sentimentId) => {
 export const insertComment = async (sentimentId, userId, parent_id, content) => {
     try {
         const newComment = await createComment(sentimentId, userId, parent_id, content);
-        console.log(newComment);
         return WriteCommentResponseDTO(newComment);
     } catch (error) {
         console.error('Error in insertComment:', error);
@@ -132,7 +125,6 @@ export const deleteComment = async (commentId, userData) => {
 export const getAlarmService = async (userId) => {
   try {
     const alarmData = await getAlarmDao(userId);
-    console.log('alarmDTO: ', alarmDTO(alarmData));
     return alarmDTO(alarmData);
   } catch (err) {
     console.error('Error:', err);
@@ -144,7 +136,6 @@ export const getAlarmService = async (userId) => {
 export const updateAlarmService = async (userId, alarmId) => {
   try {
     const readStatus = await updateAlarmDao(alarmId);
-    console.log('readStatus: ', readStatus);
     return readStatus;
   } catch (err) {
     console.error('Error:', err);

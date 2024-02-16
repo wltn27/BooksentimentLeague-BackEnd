@@ -2,7 +2,6 @@
 import { formatDate } from "./../dtos/user.response.dto.js"
 
 export const sentimentResponseDTO = (data) => {
-    console.log(data[0].profile_image)
     return {
         "nickname": data[0].nickname,
         "sentiment_title": data[0].sentiment_title,
@@ -65,7 +64,6 @@ export const alarmDTO = (data) => {
 };
 
 export const DeleteCommentResponseDTO = () => {
-    console.log("DeleteCommentResponseDTO clear");
     return {"message" : "댓글이 삭제되었습니다"};
 }
 

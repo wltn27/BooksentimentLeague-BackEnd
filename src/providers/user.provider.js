@@ -6,7 +6,6 @@ import { followerListDTO, followingListDTO, sentimentResponseDTO, alarmDTO, Unre
 export const readMyPage = async (user_id) => {
     
     const userData = await getMyPage(user_id);
-    console.log(userData);
 
     return userData;
 }
@@ -27,7 +26,6 @@ export const readSentimentList = async(user_id, num, cursorId) => {
     const sentimentObject = await getSentimentList(user_id, num, cursorId);
     if(sentimentObject == '')
         return {};
-    console.log(sentimentObject);
 
     return sentimentResponseDTO(sentimentObject);
 }

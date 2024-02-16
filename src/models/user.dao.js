@@ -52,7 +52,6 @@ export const getUser = async (userId) => {
 export const updateUserPassword = async (password, userId) => {
     try {
         const conn = await pool.getConnection();
-        console.log(userId)
         const [user] = await pool.query(changeUserPassword, [password, userId]);
 
         if(user.changedRows != 1){              // 비밀번호가 바뀌지 않았다면
@@ -176,7 +175,6 @@ export const changeUserInfo = async(user_id, userData, image_path) => {
         
         const oldImg = await pool.query(getImageSql, [user_id]);
 
-        console.log(oldImg[0]);
         // 기존에 프로필 이미지가 있다면 
         if(oldImg[0][0].profile_image != null){
             const imgUrl = new URL(oldImg[0][0].profile_image);
@@ -202,7 +200,6 @@ export const changeUserInfo = async(user_id, userData, image_path) => {
 export const updateUserFollow = async (followingId, userId) => {
     try {
         const conn = await pool.getConnection();
-        console.log(userId)
         await pool.query(insertFollow, [followingId, userId]);
 
         conn.release();
@@ -233,7 +230,6 @@ export const getFollowerList = async(user_id) => {
 export const updateUserUnFollow = async (followingId, userId) => {
     try {
         const conn = await pool.getConnection();
-        console.log(userId)
         await pool.query(deleteFollow, [followingId, userId]);
 
         conn.release();

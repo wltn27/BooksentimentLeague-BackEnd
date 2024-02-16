@@ -37,7 +37,6 @@ export const getSearchListAll = async (req, res, next ) => {
 // 검색결과 리스트(센티멘트) 조회
 export const getSearchListSentiment = async (req, res, next ) => {
     console.log("검색결과 리스트(센티멘트) 조회 요청");
-    console.log(req.params.cursorId)
 
     const searchListObject = await readSearchListSentiment(req.query.query, 10, req.params.cursorId);
 

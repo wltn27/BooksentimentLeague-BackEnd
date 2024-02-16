@@ -104,7 +104,6 @@ export const userLogin = async (req, res, next) => {
 }
 
 export const sendEmailVerification = async (req, res, next) => {
-    console.log("Received request:", req.body);
     const { email } = req.body;
     const verificationCode = Math.floor(100000 + Math.random() * 900000); // 6자리 인증번호 생성
 
@@ -210,7 +209,7 @@ export const myPage = async (req, res, next) => {
         const userData = await readMyPage(user_id);
         console.log("유저 데이터 받기 성공");
         const sentimentData = await readSentimentList(user_id, 3, 0);
-        console.log([userData, sentimentData]);
+        
         res.status(200).json([userData, sentimentData]);
     } else {
         res.status(500).json({"message" : "로그인 해오십쇼!"})
@@ -222,7 +221,6 @@ export const updateMyPage = async (req, res, next) => {
     const userData = req.body;
     console.log("마이페이지 수정을 요청하였습니다.");
  
-    console.log("file :", req.file);
     if (req.session[user_id] || true) {
         const result = await updateUserData(user_id, userData, req.file);
 
@@ -330,7 +328,7 @@ export const getUnreadNotifications = async (req, res) => {
     const userId = req.params.userId;
     try {
         const unreadCount = await getUnreadNotificationsCount(userId);
-        console.log(unreadCount);
+
         res.json({ unreadCount });
     } catch (error) {
         console.error('Error in getUnreadNotificationsCount:', error);
