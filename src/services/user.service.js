@@ -165,7 +165,7 @@ export const followUser = async (followingId, userId) => {
     try {
         // followingId와 userId가 유효한지 확인
         if (!followingId || !userId || followingId <= 0 || userId <= 0) {
-            console.error('Invalid followingId or userId:', error);
+            console.error('Invalid followingId or userId');
             throw new BaseError(status.INVALID_INPUT);
         }
 
