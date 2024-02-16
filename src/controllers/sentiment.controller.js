@@ -78,12 +78,12 @@ export const wrComment = async (req, res, next) => {
 export const delComment = async (req, res, next) => {
     try {
         console.log("댓글 삭제 요청!");
-        const { commentId } = req.params;
+        const { commentId, userId } = req.params;
         
-        const token = req.cookies.refreshToken;
-        const data = jwt.verify(token, process.env.REFRESH_SECRET);
-        const userData = await getUser(data.user_id); // 사용자 정보 반환
-        const comment = await deleteComment(commentId, userData);
+        // const token = req.cookies.refreshToken;
+        // const data = jwt.verify(token, process.env.REFRESH_SECRET);
+        // const userData = await getUser(data.user_id); // 사용자 정보 반환
+        const comment = await deleteComment(commentId, userId);
         
         console.log("댓글 삭제 성공!");
         res.status(StatusCodes.OK).json(comment);

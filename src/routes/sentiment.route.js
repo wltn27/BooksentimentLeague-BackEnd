@@ -28,7 +28,7 @@ sentimentRouter.delete('/:userId/delete/:sentimentId', asyncHandler(delSentiment
 sentimentRouter.post('/comments/:userId/write', asyncHandler(wrComment));
 
 // 댓글 삭제
-sentimentRouter.delete('/comments/:commentId/delete', asyncHandler(delComment));
+sentimentRouter.delete('/comments/:commentId/:userId/delete', asyncHandler(delComment));
 
 // 알림 조회
 alarmtRouter.get('/', asyncHandler(getAlarm));

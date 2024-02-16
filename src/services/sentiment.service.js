@@ -100,16 +100,17 @@ export const insertComment = async (sentimentId, userId, parent_id, content) => 
 }
 
 // 댓글 삭제
-export const deleteComment = async (commentId, userData) => {
+export const deleteComment = async (commentId, userId) => {
   try {
       // 삭제하려는 댓글이 존재하는지 확인
       const comment = await findCommentById(commentId);
       if (!comment) {
           throw new Error('댓글이 존재하지 않습니다.');
       }
-
+      console.log(parseInt(userId, 10));
+      console.log(comment.user_id);
       // 삭제하려는 댓글 작성자와 현재 사용자가 같은지 확인
-      if (comment.user_id !== userData[0].user_id) {
+      if (comment.user_id !== parseInt(userId, 10)) {
           throw new BaseError(status.COMMENT_NOT_DELETE);
       }
 
