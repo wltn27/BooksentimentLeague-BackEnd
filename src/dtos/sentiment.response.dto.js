@@ -3,6 +3,7 @@ import { formatDate } from "./../dtos/user.response.dto.js"
 
 export const sentimentResponseDTO = (data) => {
     return {
+        "user_id": data[0].user_id,
         "nickname": data[0].nickname,
         "sentiment_title": data[0].sentiment_title,
         "book_title": data[0].book_title,
