@@ -3,7 +3,7 @@ import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
-import { getRankInfo, getUserRankInfo } from "./rank.sql.js";
+import { getRankInfo, getUserRankInfo, getPageNum } from "./rank.sql.js";
 
 export const getRankingListDao = async (season, page_num, nickname = null) => {
     try {
@@ -27,7 +27,7 @@ export const getRankingListDao = async (season, page_num, nickname = null) => {
             const [rows] = await conn.query(getUserRankInfo, [season]);
             nickname = nickname.replace(/"/g, '');
             const userRanking = rows.findIndex(row => row.nickname === nickname) + 1;
-      
+        
             userRank = rows.find(row => row.nickname == nickname)|| [];
             if(userRank.length > 0) {
                 userRank.ranking = userRanking;
@@ -36,9 +36,12 @@ export const getRankingListDao = async (season, page_num, nickname = null) => {
                 return { totalRank, 
                         message : "조회된 유저가 없습니다." };
             }
-        }            
+        }      
+        
+        const total_num = (await conn.query(getPageNum))[0][0].total_num;
+
         conn.release();
-        return { totalRank, userRank };
+        return { totalRank, userRank, total_num };
     } catch (error) {
         console.error('Error: ', error);
         throw new BaseError(status.PARAMETER_IS_WRONG);

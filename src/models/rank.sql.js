@@ -46,3 +46,5 @@ export const getUserRankInfo = `
     ORDER BY 
         totalLikes DESC, totalScraps DESC, ut.tier_id DESC, u.user_id ASC;
 `;
+
+export const getPageNum = "SELECT COUNT(user_id) as total_num FROM user;"
