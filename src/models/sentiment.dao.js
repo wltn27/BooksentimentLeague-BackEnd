@@ -368,7 +368,7 @@ export const createComment = async (sentimentId, userId, parent_id, content) => 
         const title = parent_id ? "새로운 대댓글이 달렸습니다: " : "새로운 댓글이 달렸습니다: ";
         
         // 알림 추가
-        await conn.query(insertAlarmQuery, [sentimentUserId, title, content]);
+        await conn.query(insertAlarmQuery, [sentimentUserId, sentimentId, title, content]);
         await conn.commit();
         conn.release();
         return rows[0];

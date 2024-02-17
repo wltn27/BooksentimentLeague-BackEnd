@@ -75,7 +75,7 @@ WHERE follower_id IN (SELECT following_id FROM follow WHERE follower_id = ?)`
 
 // 유저 센티멘트 리스트 조회, 최대 10개 제한
 export const getSentiment = 
-`SELECT sentiment_id, book_image, sentiment_title, book_title, score, created_at, author, publisher, t.tier as tier, u.nickname
+`SELECT sentiment_id, book_image, sentiment_title, book_title, score, created_at, author, publisher, t.tier as tier, u.nickname as nickname
 FROM sentiment as s
 JOIN user u ON s.user_id = u.user_id
 JOIN user_tier ut ON u.user_id = ut.user_id
@@ -84,7 +84,11 @@ WHERE u.user_id = ? order by sentiment_id, created_at desc limit ? offset ?;`
 
 // 유저 스크랩 리스트 조회, 최대 10개 제한
 export const getScrap = 
-`SELECT sentiment_id, book_image, sentiment_title, book_title, score, created_at FROM sentiment
+`SELECT sentiment_id, book_image, sentiment_title, book_title, score, created_at, author, publisher, t.tier as tier, u.nickname as nickname
+FROM sentiment as s
+JOIN user u ON s.user_id = u.user_id
+JOIN user_tier ut ON u.user_id = ut.user_id
+JOIN tier t ON ut.tier_id = t.tier_id
 WHERE sentiment_id IN (SELECT sentiment_id from user_sentiment where user_id = ? AND scrap = 1)
 order by sentiment_id, created_at desc limit 10;`
 
@@ -160,5 +164,5 @@ export const checkUserSentimentScrapStatusQuery = `SELECT scrap FROM user_sentim
 // 알람 상태 업데이트
 export const alarmStatus = "UPDATE alarm SET read_at = 1 WHERE alarm_id=?;";
 export const getAlarmStatus = "SELECT read_at FROM alarm WHERE alarm_id=?";
-export const getAlarmInfo = "SELECT title, content, read_at, created_at FROM alarm WHERE user_id= ? ORDER BY created_at DESC;";
+export const getAlarmInfo = "SELECT sentiment_id, title, content, read_at, created_at FROM alarm WHERE user_id= ? ORDER BY created_at DESC;";
 export const getUnreadAlarmCount = "SELECT COUNT(*) AS unreadCount FROM alarm WHERE user_id = ? AND read_at = 0"

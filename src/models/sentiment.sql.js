@@ -43,7 +43,7 @@ export const insertUserCommentQuery = `
 
 // 방금 작성한 댓글에 대한 정보 검색
 export const selectInsertedCommentQuery = `
-    SELECT u.nickname, t.tier, c.created_at, u.profile_image, c.content,
+    SELECT u.nickname as nickname, t.tier as tier, c.created_at, u.profile_image, c.content,
            (SELECT COUNT(*) FROM user_comment WHERE comment_id = LAST_INSERT_ID() AND \`like\` = 1) as like_num,
            c.parent_id, c.comment_id
     FROM comment c
@@ -64,8 +64,8 @@ export const deleteUserCommentQuery = "DELETE FROM user_comment WHERE comment_id
 
 // 댓글/대댓글 작성 알림
 export const insertAlarmQuery = `
-    INSERT INTO alarm (user_id, title, content, read_at, created_at)
-    VALUES (?, ?, ?, 0, NOW());
+    INSERT INTO alarm (user_id, sentiment_id, title, content, read_at, created_at)
+    VALUES (?, ?, ?, ?, 0, NOW());
 `;
 
 // 티어 상승 조건 조회
