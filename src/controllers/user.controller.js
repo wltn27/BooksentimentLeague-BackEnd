@@ -94,7 +94,7 @@ export const userLogin = async (req, res, next) => {
                 isAuthenticated: true
             };
         }
-
+        console.log("req.session: ", req.session);
         console.log("로그인에 성공하였습니다.");
         return res.status(StatusCodes.OK).json(loginUserData);
 
@@ -174,11 +174,10 @@ export const userLogout = async (req, res, next) => {
             // 로그인된 상태
             console.log('로그아웃합니다.');
             
-            req.session.destroy(function(err) {
-                if (err) {throw err;}
-                console.log('세션을 삭제하고 로그아웃되었습니다.');
-            });
+            delete req.session[data.user_id];
         }
+
+        console.log("req.session: ", req.session);
 
         res.cookie('accessToken', '');
         res.status(200).json({"message" : "로그아웃에 성공하였습니다."});
