@@ -10,11 +10,12 @@ import { readSearchListSentiment, readSearchListNick, searchForBooks } from './.
 export const getSearchBooks = async (req, res) => {
     try {
       const title = req.query.query;
-      const start_index = parseInt(req.params.cursorId)+1;
+      const start_index = parseInt(req.params.cursorId ?? 0)+1;
+
       const bookData = await searchForBooks(title, 5, start_index, req.params.userId);   // 5개씩, 처음부터
       if(bookData == '')
         return res.status(StatusCodes.OK).json({message : "검색어에 맞는 결과가 없습니다."});
-      res.status(StatusCodes.OK).json({ bookData });
+      res.status(StatusCodes.OK).json(bookData);
     } catch (error) {
       console.error('Search Books Error:', error);
       return new BaseError(status.FAIL_SEARCH_BOOK);

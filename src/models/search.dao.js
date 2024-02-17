@@ -3,7 +3,7 @@ import { pool } from "../../config/db.config.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
-import { getSentiment, getSentimentCommentCount, getNickname, getBookSentimentData } from "./../models/search.sql.js";
+import { getSentiment, getSentimentCommentCount, getNickname, getBookSentimentData, getSentimentPageNum, getNicknamePageNum } from "./../models/search.sql.js";
 
 export const getSentimentList = async(searchWord, limit, cursorId) => {
     try{
@@ -23,8 +23,10 @@ export const getSentimentList = async(searchWord, limit, cursorId) => {
             Object.assign(sentimentObject[i], { comment_num: (await pool.query(getSentimentCommentCount, sentimentObject[i].sentiment_id))[0][0].comment_num });
         }
 
+        const total_num = (await conn.query(getSentimentPageNum, [`%${searchWord}%`, `%${searchWord}%`, `%${searchWord}%`]))[0][0].total_num;
+
         conn.release();
-        return sentimentObject;
+        return {sentimentObject, total_num};
     } catch (err) {
         console.error(err);
         throw new BaseError(status.fail_sentiment_list);
@@ -42,8 +44,9 @@ export const getNicknameList = async(searchWord, limit, cursorId, userId) => {
                 nicknameObject[i].follow_status = "myself";
         }
 
+        const total_num = (await conn.query(getNicknamePageNum, [`%${searchWord}%`, `%${searchWord}%`, `%${searchWord}%`]))[0][0].total_num;
         conn.release();
-        return nicknameObject;
+        return {nicknameObject, total_num};
     } catch (err) {
         console.error(err);
         throw new BaseError(status.fail_nickname_list);

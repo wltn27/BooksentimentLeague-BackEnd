@@ -1,8 +1,6 @@
 import { formatDate } from "./../dtos/user.response.dto.js";
 
-export const sentimentResponseDTO = (data, cursorId) => {
-    if(cursorId == undefined)
-        cursorId = 0;
+export const sentimentResponseDTO = (data) => {
     const sentimentObject = [];
     for (let i = 0; i < data.length; i++) {
         sentimentObject.push({
@@ -22,13 +20,10 @@ export const sentimentResponseDTO = (data, cursorId) => {
             "scrap_num":  data[i].scrap_num
         })
     }
-    return {"sentimentObject": sentimentObject, "cursorId": parseInt(data.length) +  parseInt(cursorId)};
+    return sentimentObject;
 }
 
-export const nicknameResponseDTO = (data, cursorId) => {
-    if(cursorId == undefined)
-        cursorId = 0;
-
+export const nicknameResponseDTO = (data) => {
     const nicknameObject = [];
 
     for (let i = 0; i < data.length; i++) {
@@ -40,11 +35,11 @@ export const nicknameResponseDTO = (data, cursorId) => {
             "follow_status" : data[i].follow_status
         })
     }
-    return {"nicknameObject": nicknameObject, "cursorId": parseInt(data.length) + parseInt(cursorId)};
+    return nicknameObject;
 }
 
 export const searchResponseDTO = (books, start_index) => {
-    const bookObject =  books.map(book => ({
+    return books.map(book => ({
       title: book.title,
       image: book.image,
       author: book.author,
@@ -55,6 +50,4 @@ export const searchResponseDTO = (books, start_index) => {
       eval_num: book.eval_num || 0,
       user_score: book.user_score
     }));
-
-    return {bookObject, cursorId : parseInt(bookObject.length) + parseInt(start_index) -1};
-  };
+};

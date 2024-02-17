@@ -30,7 +30,7 @@ export const searchForBooks = async (title, display, start_index, userId) => {
         }
     
         const data = await response.json();
-        
+     
         if(data.items == '')
             return [];
 
@@ -57,7 +57,6 @@ export const searchForBooks = async (title, display, start_index, userId) => {
             if(total_score != 0 && total_num != 0){
                 total_score /= total_num;
             }
-
                 return {
                     ...book,
                     avr_score: total_score, // 집계된 평균 점수
@@ -67,7 +66,7 @@ export const searchForBooks = async (title, display, start_index, userId) => {
         }));
         
         // DTO를 통해 최종 응답 데이터 형식으로 변환
-        return searchResponseDTO(booksWithSentiments, start_index);
+        return {"list" : searchResponseDTO(booksWithSentiments, start_index), "cursorId" : (parseInt(data.items.length) + parseInt(start_index) -1), "total_page_num" : Math.floor(data.total  / 5) + (data.total  % 5 > 0 ? 1 : 0)};
     }
     catch (err){
         console.error(err);
@@ -79,18 +78,18 @@ export const searchForBooks = async (title, display, start_index, userId) => {
 export const readSearchListSentiment = async (searchWord, limit, cursorId) => {
     let sentimentList = await getSentimentList(searchWord, limit, cursorId);
     
-    if(sentimentList == '') // 아무 검색 결과가 안 뜰 때 빈 배열 반환
+    if(sentimentList.sentimentObject == '') // 아무 검색 결과가 안 뜰 때 빈 배열 반환
         return [];
     
-    return sentimentResponseDTO(sentimentList, cursorId);
+    return {"list" : sentimentResponseDTO(sentimentList.sentimentObject), "cursorId" : (parseInt(sentimentList.sentimentObject.length) + parseInt(cursorId ?? 0)), "total_page_num" : Math.floor(sentimentList.total_num  / 10) + (sentimentList.total_num  % 10 > 0 ? 1 : 0)};
 }
 
 // 검색결과 리스트(닉네임) 조회
 export const readSearchListNick = async (searchWord, limit, cursorId, userId) => {
     let nicknameList = await getNicknameList(searchWord, limit, cursorId, userId);
-
+ 
     if(nicknameList == '') // 아무 검색 결과가 안 뜰 때 빈 배열 반환
         return [];
-    
-    return nicknameResponseDTO(nicknameList, cursorId);
+
+    return {"list" : nicknameResponseDTO(nicknameList.nicknameObject), "cursorId" : (parseInt(nicknameList.nicknameObject.length) + parseInt(cursorId ?? 0)), "total_page_num" : Math.floor(nicknameList.total_num  / 10) + (nicknameList.total_num  % 10 > 0 ? 1 : 0)};
 }

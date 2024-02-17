@@ -59,3 +59,11 @@ export const getNickname = `
         COUNT(f.following_id) DESC, u.user_id ASC
     LIMIT ? OFFSET ?;
 `;
+
+// 센티멘트 전체 개수 조회
+export const getSentimentPageNum = 
+"SELECT count(sentiment_id) as total_num FROM sentiment WHERE book_title LIKE ? or sentiment_title LIKE ? or content LIKE ?"
+
+// 닉네임 전체 개수 조회
+export const getNicknamePageNum = 
+"SELECT count(user_id) as total_num FROM user WHERE nickname LIKE ?"

@@ -58,6 +58,7 @@ app.use('/sentiments', sentimentRouter);
 app.use('/sentiments/:sentimentId', sentimentRouter);
 app.use('/ranks/', rankRouter);
 app.use('/users/:userId/notifications/:alarmId', alarmtRouter);
+app.use('/search', searchRouter);
 app.use('/search/:userId', searchRouter);
 
 app.get('/', (req, res, next) => {
