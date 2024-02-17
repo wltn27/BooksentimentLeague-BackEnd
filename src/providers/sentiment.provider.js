@@ -25,8 +25,8 @@ export const readComment = async (sentimentId) => {
 export const sentimentListProv = async (page_num) => {
     const list = await getSentimentListDao(page_num);
 
-    if (Array.isArray(list) && list.length > 0) {
-        return sentimentListDTO(list);
+    if (Array.isArray(list.list) && list.list.length > 0) {
+        return {"list" : sentimentListDTO(list.list, list.total_num), "total_page_num" : Math.floor(list.total_num / 15) + (list.total_num % 15 > 0 ? 1 : 0)};
     }
     return list;
 }
@@ -34,8 +34,8 @@ export const sentimentListProv = async (page_num) => {
 // 팔로우한 사람의 센티멘트 리스트 조회
 export const sentimentFollowProv = async (userId, page_num) => {
     const list = await getSentimentFollowDao(userId, page_num);
-    if (Array.isArray(list) && list.length > 0) {
-        return sentimentListDTO(list);
+    if (Array.isArray(list.list) && list.list.length > 0) {
+        return {"list" : sentimentListDTO(list.list, list.total_num), "total_page_num" : Math.floor(list.total_num / 15) + (list.total_num % 15 > 0 ? 1 : 0)};
     }
     return list;
 }

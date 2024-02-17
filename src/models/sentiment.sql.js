@@ -118,3 +118,17 @@ export const getFollowingSentimentListSql = () => `
     LIMIT 15 OFFSET ?;
 `;
 
+// 리스트 페이지 개수 구하기
+export const getPageNum = "SELECT COUNT(sentiment_id) as total_num FROM sentiment;";
+
+// 팔로잉 리스트 페이지 개수 구하기
+export const getFollowingPageNum = () => `
+SELECT COUNT(sentiment_id) as total_num
+FROM sentiment s
+WHERE s.user_id IN (
+    SELECT following_id FROM follow WHERE follower_id = ?
+)
+ORDER BY s.created_at DESC
+`;
+
+

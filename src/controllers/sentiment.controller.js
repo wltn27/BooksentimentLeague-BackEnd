@@ -119,6 +119,11 @@ export const sentimentList = async (req, res, next) => {
 
 // 팔로우한 사람 센티멘트 리스트 조회
 export const sentimentListFollowing = async (req, res, next) => {
+    try{
     console.log("팔로우한 사람의 센티멘트 리스트 조회 요청");
     res.send(response(status.SUCCESS, await sentimentFollowProv(req.params.userId, req.params.cursorId || 1)));
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
 }

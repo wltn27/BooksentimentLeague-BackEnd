@@ -10,7 +10,7 @@ import { insertCommentQuery, insertUserCommentQuery, selectInsertedCommentQuery,
          deleteCommentQuery, deleteUserCommentQuery, insertAlarmQuery,
          totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm, getCommentList } from "./../models/sentiment.sql.js";
 import { getAlarmInfo, alarmStatus, getAlarmStatus } from "./sentiment.sql.js";
-import { getSentimentListSql, getFollowingSentimentListSql } from "./sentiment.sql.js";
+import { getSentimentListSql, getFollowingSentimentListSql, getPageNum, getFollowingPageNum } from "./sentiment.sql.js";
 import { deleteImageFromS3 } from '../middleware/imageUploader.js';
 
 function isValidUrl(string) {
@@ -413,8 +413,10 @@ export const getSentimentListDao = async (page_num) => {
             return { message :"조회된 센티멘트가 없습니다."};
         }
 
+        const total_num = (await conn.query(getPageNum))[0][0].total_num;
+      
         conn.release();
-        return list;
+        return {list, total_num};
     } catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
@@ -428,13 +430,14 @@ export const getSentimentFollowDao = async (userId, page_num) => {
         const conn = await pool.getConnection();
         const [list] = await conn.query(getFollowingSentimentListSql(), [userId, (page_num-1) * 15]);
 
-
         if (list.length == 0) {
             return { message :"조회된 센티멘트가 없습니다."};
         }
 
+        const total_num = (await conn.query(getFollowingPageNum(), userId))[0][0].total_num;
         conn.release();
-        return list;
+
+        return {list, total_num};
     } catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
