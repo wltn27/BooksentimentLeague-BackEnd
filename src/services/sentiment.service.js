@@ -11,6 +11,7 @@ import { sentimentResponseDTO, WriteCommentResponseDTO, DeleteCommentResponseDTO
 
 // 센티멘트 작성
 export const insertSentiment = async (userId, body, files) => {
+  console.log(files);
   const img_array = files.map(file=>file.location);
   const insertSentimentData = await addSentiment(userId, {
     //'sentiment_id' : body.sentiment_id,
