@@ -107,11 +107,10 @@ export const deleteComment = async (commentId, userId) => {
       if (!comment) {
           throw new Error('댓글이 존재하지 않습니다.');
       }
-      console.log(parseInt(userId, 10));
-      console.log(comment.user_id);
+
       // 삭제하려는 댓글 작성자와 현재 사용자가 같은지 확인
       if (comment.user_id !== parseInt(userId, 10)) {
-          throw new BaseError(status.COMMENT_NOT_DELETE);
+          return new BaseError(status.COMMENT_NOT_DELETE);
       }
 
       await removeComment(commentId);
