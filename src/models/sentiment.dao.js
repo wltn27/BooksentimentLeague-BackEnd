@@ -25,6 +25,7 @@ function isValidUrl(string) {
 // Sentiment 데이터 삽입
 export const addSentiment = async (userId, data) => {
     try {
+        console.log()
         const conn = await pool.getConnection();
         // userId에 해당하는 닉네임 가져오기
         const [nicknameResult] = await pool.query(getNicknameAndTier, userId);
