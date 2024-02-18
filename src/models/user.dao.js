@@ -497,5 +497,6 @@ export const updateAlarmDao = async (alarmId) => {
 export const countUnreadNotifications = async (userId) => {
     const conn = await pool.getConnection();
     const [rows] = await pool.query(getUnreadAlarmCount, [userId]);
+    conn.release();
     return rows[0].unreadCount;
 }

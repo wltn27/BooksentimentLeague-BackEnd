@@ -149,7 +149,7 @@ export const sentimentResponseDTO = (data) => {
 }
 
 export const UnreadNotificationResponseDTO = (unreadCount) => {
-    return {unreadCount: unreadCount};
+    return { "unreadCount": unreadCount};
 };
 
 export const formatDate = (date) => {
