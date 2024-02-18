@@ -30,7 +30,6 @@ export const getSentiment = async (req, res, next ) => {
 // 센티멘트 작성
 export const wrSentiment = async (req, res, next ) => {
     console.log("센티멘트 작성 요청");
-    console.log(req.params.userId);
     res.send(response(status.SUCCESS, await insertSentiment(req.params.userId, req.body, req.files)));
 }
 
