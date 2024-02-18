@@ -28,6 +28,7 @@ export const addSentiment = async (userId, data) => {
         const conn = await pool.getConnection();
         // userId에 해당하는 닉네임 가져오기
         const [nicknameResult] = await pool.query(getNicknameAndTier, userId);
+        console.log("nicknameResult:", nicknameResult);
         const nickname = nicknameResult[0].nickname;
 
         const [confirm] = await pool.query(confirmSentiment, [userId, data.book_title]);
