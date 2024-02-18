@@ -107,7 +107,6 @@ export const addSentiment = async (userId, data) => {
         
         conn.release();
         return result[0].insertId; // sentimnet_id 반환
-
     } catch (err) {
         console.log(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);

@@ -153,9 +153,11 @@ export const sendEmail = async (to, subject, text) => {
 
 export const updateUserData = async (user_id, userData, file) => {
     const result = await changeUserInfo(user_id, userData, file.location);
+    
     if(!result){
         return new BaseError(status.INTERNAL_SERVER_ERROR);
     }
+    
     return result;
 };
 

@@ -145,7 +145,7 @@ export const sentimentResponseDTO = (data) => {
             "tier": data[i].tier
         })
     }
-    return {"sentimentObject": sentimentObject, "cursorId": data[data.length-1].sentiment_id};
+    return {"sentimentObject": sentimentObject, "cursorId": data.length};
 }
 
 export const UnreadNotificationResponseDTO = (unreadCount) => {
