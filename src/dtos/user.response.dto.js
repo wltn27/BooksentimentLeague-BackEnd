@@ -34,6 +34,7 @@ export const ScrapSentimentResponseDTO = (scrapStatus) => {
 // alarm DTO
 export const alarmDTO = (data) => {
     return data.map(item => ({
+        "alarm_id": item.alarm_id,
         "sentiment_id": item.sentiment_id,
         "title": item.title,
         "content": item.content,
