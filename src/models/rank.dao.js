@@ -18,7 +18,7 @@ export const getRankingListDao = async (season, page_num, nickname = null) => {
         }
 
         for (let i = 0; i < totalRank.length; i++) {
-            totalRank[i].ranking = i + 1;
+            totalRank[i].ranking = i + 1 + 15 * (page_num -1);
         }
 
         let userRank = [];
