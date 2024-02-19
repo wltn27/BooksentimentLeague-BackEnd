@@ -68,6 +68,14 @@ export const insertAlarmQuery = `
     VALUES (?, ?, ?, ?, 0, NOW());
 `;
 
+// 댓글 좋아요 수 반환
+export const getCommentLikeNum = 
+`select COUNT(uc.like) as like_num
+FROM user_comment uc
+inner join comment as c on uc.comment_id = c.comment_id
+inner join user as u on c.user_id = u.user_id
+where c.user_id = ?`
+
 // 티어 상승 조건 조회
 export const totalSentiment = "SELECT * FROM sentiment WHERE user_id = ?;";
 export const totalRecommend = "SELECT SUM(`like`) as totalLikes FROM user_sentiment WHERE user_id = ?;";

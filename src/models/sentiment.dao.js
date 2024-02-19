@@ -8,7 +8,7 @@ import { updateSentimentSql, deleteSentimentSql, deleteUserSentimentSql } from "
 import { getImageSql, insertImageSql, deleteImageSql } from "./sentiment.sql.js";
 import { insertCommentQuery, insertUserCommentQuery, selectInsertedCommentQuery, findCommentByIdQuery,
          deleteCommentQuery, deleteUserCommentQuery, insertAlarmQuery,
-         totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm, getCommentList } from "./../models/sentiment.sql.js";
+         totalSentiment, totalRecommend, updateTier, getTierId, tierAlarm, getCommentList, getCommentLikeNum } from "./../models/sentiment.sql.js";
 import { getAlarmInfo, alarmStatus, getAlarmStatus } from "./sentiment.sql.js";
 import { getSentimentListSql, getFollowingSentimentListSql, getPageNum, getFollowingPageNum } from "./sentiment.sql.js";
 import { deleteImageFromS3 } from '../middleware/imageUploader.js';
@@ -342,6 +342,7 @@ export const getComment = async (sentimentId) => {
         Object.assign(commentList[i], { nickname: (await pool.query(getNicknameAndTier, commentList[i].user_id))[0][0].nickname });
         Object.assign(commentList[i], { tier: (await pool.query(getNicknameAndTier, commentList[i].user_id))[0][0].tier });
         Object.assign(commentList[i], { profile_image: (await pool.query(getNicknameAndTier, commentList[i].user_id))[0][0].profile_image ?? '기본 프로필' });
+        Object.assign(commentList[i], { like_num: (await pool.query(getCommentLikeNum, commentList[i].user_id))[0][0].like_num });
     }
 
     conn.release();

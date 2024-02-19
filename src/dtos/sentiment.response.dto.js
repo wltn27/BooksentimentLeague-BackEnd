@@ -29,13 +29,15 @@ export const commentResponseDTO = (data) => {
 
     for (let i = 0; i < data.length; i++) {
         commentObject.push({
+            "user_id": data[i].user_id,
             "comment_id": data[i].comment_id,
             "nickname":  data[i].nickname,
             "profile_image": data[i].profile_image,
             "parent_id":  data[i].parent_id,
             "created_at":  formatDate(data[i].created_at),
             "content":  data[i].content,
-            "tier": data[i].tier
+            "tier": data[i].tier,
+            "like_num": data[i].like_num
         })
     }
     return {"comment": commentObject};
