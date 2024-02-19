@@ -112,6 +112,7 @@ export const changeUser = async (password, userId) => {
     if(!await updateUserPassword(password, userId)){
         return new BaseError(status.INTERNAL_SERVER_ERROR);
     }
+    console.log("비밀번호 변경 요청 userId:", userId);
     return {"message" : "비밀번호 변경에 성공하였습니다."};
 }
 
