@@ -100,7 +100,12 @@ export const findUser = async (email, verificationCode) => {
 
     await client.quit();
     
-    return {"message" : "인증 성공하였습니다."};
+    // userId 반환 추가
+    const userId = await getUserIdFromEmail(email);
+    return {
+        "message" : "인증 성공하였습니다.",
+        userId: userId
+    };
 }
 
 export const changeUser = async (password, userId) => {
