@@ -38,7 +38,7 @@ export const getRankingListDao = async (season, page_num, nickname = null) => {
             }
         }      
         
-        const total_num = (await conn.query(getPageNum))[0][0].total_num;
+        const total_num = (await conn.query(getPageNum, season))[0][0].total_num;
 
         conn.release();
         return { totalRank, userRank, total_num };

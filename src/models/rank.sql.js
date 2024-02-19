@@ -47,4 +47,8 @@ export const getUserRankInfo = `
         totalLikes DESC, totalScraps DESC, ut.tier_id DESC, u.user_id ASC;
 `;
 
-export const getPageNum = "SELECT COUNT(user_id) as total_num FROM user;"
+export const getPageNum = `
+SELECT COUNT(DISTINCT u.user_id) as total_num
+FROM user as u
+INNER JOIN
+    sentiment s ON u.user_id = s.user_id AND s.season = ?`
