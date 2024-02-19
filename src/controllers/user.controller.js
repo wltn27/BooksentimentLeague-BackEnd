@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { joinUser, checkingNick, checkingEmail, checkingAuth, loginUser, findUser, changeUser, saveVerificationCode, followUser, likeSentimentUser, likeCommentUser, scrapSentimentUser, 
-        updateUserData, sendEmail, updateAlarmService} from './../services/user.service.js';
+    updateUserProfile, updateUserMessage, sendEmail, updateAlarmService} from './../services/user.service.js';
 import { readMyPage, readFollowerList, readFollowingList, readSentimentList, readScrapList, getAlarmService, getUnreadNotificationsCount} from './../providers/user.provider.js';
 import { getUser } from "../models/user.dao.js";
 import { checkEmailResponseDTO, checkNickResponseDTO} from "./../dtos/user.response.dto.js"
@@ -215,13 +215,26 @@ export const myPage = async (req, res, next) => {
     }
 }
 
-export const updateMyPage = async (req, res, next) => {
+export const updateMyPageProfile = async (req, res, next) => {
     const user_id = req.params.userId;
-    const userData = req.body;
-    console.log("마이페이지 수정을 요청하였습니다.");
+    console.log("프로필 변경을 요청하였습니다.");
  
     if (req.session[user_id] || true) {
-        const result = await updateUserData(user_id, userData, req.file);
+        const result = await updateUserProfile(user_id, req.file);
+
+        res.status(200).json(result);
+    } else {
+        res.status(500).json({"message" : "로그인 해오십쇼"})
+    }
+}
+
+export const updateMyPageMessage = async (req, res, next) => {
+    const user_id = req.params.userId;
+    const status_message = req.body.status_message;
+    console.log("상태 메시지 수정을 요청하였습니다.");
+ 
+    if (req.session[user_id] || true) {
+        const result = await updateUserMessage(user_id, status_message);
 
         res.status(200).json(result);
     } else {

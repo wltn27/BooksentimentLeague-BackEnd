@@ -169,7 +169,7 @@ export const getMyPage = async(user_id) => {
 }
 
 // 마이 페이지 정보 수정하기
-export const changeUserInfo = async(user_id, userData, image_path) => {
+export const changeUserProfile = async(user_id, image_path) => {
     try{
         const conn = await pool.getConnection();
         
@@ -182,14 +182,32 @@ export const changeUserInfo = async(user_id, userData, image_path) => {
             await deleteImageFromS3(key); // S3에서 삭제
         }   
 
-        const [user] = await pool.query(updateUserData, [{'status_message': userData.status_message}, {'profile_image': image_path}, user_id]);
+        const [user] = await pool.query(updateUserData, [{'profile_image': image_path}, user_id]);
 
         if(user.changedRows != 1){              // 마이페이지 유저 정보가 바뀌지 않았다면
             return false;
         }
 
         conn.release();
-        return {'status_message': userData.status_message,'profile_image': image_path};   
+        return {'profile_image': image_path};   
+    }catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
+export const changeUserMessage = async(user_id, status_message) => {
+    try{
+        const conn = await pool.getConnection();
+
+        const [user] = await pool.query(updateUserData, [{'status_message': status_message}, user_id]);
+
+        if(user.changedRows != 1){              // 마이페이지 유저 정보가 바뀌지 않았다면
+            return false;
+        }
+
+        conn.release();
+        return {'status_message': status_message};   
     }catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);

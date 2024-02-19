@@ -3,7 +3,7 @@ import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 import { addUser, getUser,  existEmail, existNick, confirmPassword, getUserIdFromEmail, updateUserPassword, 
     updateUserFollow, existFollow, updateUserUnFollow, unlikeSentiment, likeSentiment, checkSentimentOwner, checkUserSentimentLikeStatus, unlikeComment, 
-    likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus, changeUserInfo, updateAlarmDao} from "../models/user.dao.js";
+    likeComment, checkCommentOwner, checkUserCommentLikeStatus, unscrapSentiment, scrapSentiment, checkUserSentimentScrapStatus, changeUserProfile, changeUserMessage, updateAlarmDao} from "../models/user.dao.js";
 import { signinResponseDTO, checkEmailResponseDTO, checkNickResponseDTO, loginResponseDTO, successResponseDTO , errorResponseDTO, 
         followResponseDTO, LikeSentimentResponseDTO, LikeCommentResponseDTO, ScrapSentimentResponseDTO} from "./../dtos/user.response.dto.js"   
 import { createClient } from 'redis';
@@ -159,8 +159,18 @@ export const sendEmail = async (to, subject, text) => {
     }
 };
 
-export const updateUserData = async (user_id, userData, file) => {
-    const result = await changeUserInfo(user_id, userData, file.location);
+export const updateUserProfile = async (user_id, file) => {
+    const result = await changeUserProfile(user_id, file.location);
+    
+    if(!result){
+        return new BaseError(status.INTERNAL_SERVER_ERROR);
+    }
+    
+    return result;
+};
+
+export const updateUserMessage = async (user_id, status_message) => {
+    const result = await changeUserMessage(user_id, status_message );
     
     if(!result){
         return new BaseError(status.INTERNAL_SERVER_ERROR);
